@@ -1,6 +1,8 @@
 const defaultState = {
   userId: null,
-  roleId: 3,// 4 member
+  roleId: null,// 4 member
+  fullname: "",
+  nickname: ""
 }
 
 function reducer(state = defaultState, action) {
@@ -9,7 +11,9 @@ function reducer(state = defaultState, action) {
       return {
         ...state,
         userId: action.payload.userId,
-        roleId: action.payload.roleId
+        roleId: action.payload.roleId,
+        fullname: action.payload.fullname,
+        nickname: action.payload.nickname,
       }
     }
     default:
