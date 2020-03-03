@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Cookies from 'js-cookie';
 
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -73,11 +74,12 @@ export default class Kelas extends Component {
 
   fetchDataCheckin = async () => {
     try {
-      let token = localStorage.getItem("token")
+      let token = Cookies.get('MEGAFIT_TKN')
       let { data } = await API.get('/checkin-checkout?checkin=true', { headers: { token } })
 
       this.setState({ dataCheckin: data.data, data: data.data, dataUser: null, searchUserId: '' })
     } catch (Error) {
+      alert("Server error")
       console.log(Error)
     }
   }
@@ -88,11 +90,11 @@ export default class Kelas extends Component {
     if (this.state.searchUserId) {
       try {
         this.setState({ proses: true, dataUser: null, hasCheckin: false })
-        let token = localStorage.getItem("token")
-        let { data } = await API.get(`/users/${this.state.searchUserId}`, { headers: { token } })
+        let token = Cookies.get('MEGAFIT_TKN')
+        let { data } = await API.get(`/users/${this.state.searchUserId}?idMember=${this.state.searchUserId}`, { headers: { token } })
         data.data.lockerKey = data.lockerKey || null
         data.data.checkId = data.checkId || null
-
+        console.log(data)
         if (data.data.tblMember) {
           data.data.tblMember.sisaHari = this.cekMembershipExpired(data.data.tblMember)
           this.setNotifColor(data.data.tblMember)
@@ -112,8 +114,15 @@ export default class Kelas extends Component {
         }
         this.setState({ proses: false })
       } catch (Error) {
-        console.log(Error)
-        this.setState({ proses: false })
+        if (Error.message === "Request failed with status code 400") {
+          alert("Id member/user id tidak ditemukan")
+          console.log(Error.code)
+          this.setState({ proses: false })
+        } else {
+          alert(Error)
+          console.log(Error.code)
+          this.setState({ proses: false })
+        }
       }
     } else {
       this.setState({ dataUser: null })
@@ -199,7 +208,7 @@ export default class Kelas extends Component {
   detailMember = async args => {
     try {
       this.setState({ proses: true, dataUser: null, hasCheckin: false })
-      let token = localStorage.getItem("token")
+      let token = Cookies.get('MEGAFIT_TKN')
       let { data } = await API.get(`/users/${args.userId}`, { headers: { token } })
       data.data.lockerKey = data.lockerKey || null
       data.data.checkId = data.checkId || null
@@ -218,6 +227,7 @@ export default class Kelas extends Component {
       }
       this.setState({ proses: false })
     } catch (Error) {
+      alert("Server error")
       console.log(Error)
       this.setState({ proses: false })
     }
@@ -406,7 +416,7 @@ export default class Kelas extends Component {
                 <TableBody>
                   {
                     this.state.dataCheckin.slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((el, index) => (
-                      <CardCheckIn data={el} key={index} checkoutMember={this.checkoutInCard} detailMember={this.detailMember}/>
+                      <CardCheckIn data={el} key={index} checkoutMember={this.checkoutInCard} detailMember={this.detailMember} />
                     ))
                   }
                 </TableBody>

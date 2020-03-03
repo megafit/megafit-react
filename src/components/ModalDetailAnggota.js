@@ -3,7 +3,9 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
 
+import CloseIcon from '@material-ui/icons/Close';
 
 // import { API } from '../config/API';
 
@@ -20,7 +22,6 @@ export default class ModalDetailAnggota extends Component {
       else {
         this.setState({ statusMember: this.props.data.flagActive ? 'Active' : 'Non active' })
       }
-      console.log(this.props.data)
     }
   }
 
@@ -37,9 +38,9 @@ export default class ModalDetailAnggota extends Component {
     }
   }
 
-  handleClose = () => {
+  handleCloseModalDetailAnggota = () => {
     this.setState({ open: false });
-    this.props.handleClose()
+    this.props.handleCloseModalDetailAnggota()
   };
 
   render() {
@@ -50,10 +51,10 @@ export default class ModalDetailAnggota extends Component {
         style={{
           display: 'flex',
           alignItems: 'center',
-          // justifyContent: 'center'
+          justifyContent: 'center'
         }}
         open={this.state.open}
-        onClose={this.handleClose}
+        onClose={this.handleCloseModalDetailAnggota}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -69,7 +70,11 @@ export default class ModalDetailAnggota extends Component {
             width: 500,
             overflow: 'hidden',
             paddingBottom: 50,
+            position: 'relative'
           }}>
+            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleCloseModalDetailAnggota}>
+              <CloseIcon />
+            </IconButton>
             <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
             </img>
             <h1 id="transition-modal-title" style={{ textAlign: 'center', marginTop:0 }} >Detail Anggota</h1>

@@ -45,9 +45,8 @@ export default class CardAnggota extends Component {
             <Avatar alt="icon" src={require('../asset/icon_user.png')} style={{ marginRight: 10 }} />
             {this.props.data.nickname}
           </TableCell>
-          <TableCell align="center">{this.props.data.email ? this.props.data.email : '-'}</TableCell>
-          <TableCell align="center">{this.props.data.tblRole.role}</TableCell>
-          <TableCell align="center">{this.state.statusMember}</TableCell>
+          <TableCell>{this.props.data.email ? this.props.data.email : '-'}</TableCell>
+          <TableCell>{this.props.data.tblRole.role}</TableCell>
         </TableRow>
       </>
     )

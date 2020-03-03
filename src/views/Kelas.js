@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
+
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
@@ -21,7 +23,8 @@ class Kelas extends Component {
 
   fetchData = async () => {
     try {
-      let token = localStorage.getItem('token')
+      let token = Cookies.remove('MEGAFIT_TKN');
+
       let temp = [
         { day: 'MON', date: 0, kelas: [] },
         { day: 'TUE', date: 0, kelas: [] },
@@ -55,11 +58,12 @@ class Kelas extends Component {
         data: temp
       })
     } catch (Error) {
+      alert("Server error")
       console.log(Error)
     }
   }
 
-  handleClick = async event => {
+  handleClickNext = async event => {
     event.preventDefault();
     let newDate = this.state.firstDateInWeek + 7
     await this.setState({
@@ -68,7 +72,30 @@ class Kelas extends Component {
     this.fetchData()
   }
 
+  handleClickPrev = async event => {
+    event.preventDefault();
+    let newDate = this.state.firstDateInWeek - 7
+    await this.setState({
+      firstDateInWeek: newDate
+    })
+    this.fetchData()
+  }
+
   render() {
+    function getWeeks(args) {
+      let theDay = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${args}`
+      var target = new Date(theDay);
+      var dayNr = (new Date(theDay).getDay() + 6) % 7;
+
+      target.setDate(target.getDate() - dayNr + 3);
+
+      var jan4 = new Date(target.getFullYear(), 0, 4);
+      var dayDiff = (target - jan4) / 86400000;
+      var weekNr = 1 + Math.ceil(dayDiff / 7);
+
+      return weekNr;
+    }
+
     return (
       <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
         <p style={{ fontSize: 35, marginBottom: 5 }}>Hi {this.props.nickname}, ikuti kelas favoritmu.</p>
@@ -80,7 +107,11 @@ class Kelas extends Component {
           <Typography color="textPrimary" style={{ fontSize: 12 }}>Jadwal kelas</Typography>
         </Breadcrumbs>
 
-        <a href="/#" onClick={this.handleClick} style={{ color: '#8EB52F' }} >lihat minggu depan ></a>
+        <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <a href="/#" onClick={this.handleClickPrev} style={{ color: '#8EB52F' }} >lihat minggu sebelumnya </a>
+          <p style={{ color: '#8EB52F', fontSize: 40 }} >Week {getWeeks(this.state.firstDateInWeek)}</p>
+          <a href="/#" onClick={this.handleClickNext} style={{ color: '#8EB52F' }} >lihat minggu sesudahnya </a>
+        </Grid>
 
         <Grid container>
           {
@@ -98,7 +129,7 @@ class Kelas extends Component {
   }
 }
 
-const mapStateToProps = ({nickname}) => {
+const mapStateToProps = ({ nickname }) => {
   return {
     nickname
   }

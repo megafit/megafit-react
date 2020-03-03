@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie';
+
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
@@ -6,9 +8,9 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
 
-// import CancelPresentationOutlinedIcon from '@material-ui/icons/CancelPresentationOutlined';
-// import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@material-ui/icons/Close';
 
 import { API } from '../config/API';
 
@@ -35,7 +37,7 @@ export default class ModalCheckin extends Component {
       if ((this.state.lockerKey && (this.state.lockerKey > 999)) || !this.state.lockerKey) {
         try {
 
-          let token = localStorage.getItem("token")
+          let token = Cookies.get('MEGAFIT_TKN')
           let data = {
             userId: this.props.dataUser.userId,
             lockerKey: this.state.lockerKey,
@@ -48,6 +50,7 @@ export default class ModalCheckin extends Component {
             this.props.handleClose()
           }
         } catch (Error) {
+          alert("Server error")
           console.log(Error)
         }
       }
@@ -63,7 +66,7 @@ export default class ModalCheckin extends Component {
     let hasCheckin, checkout
     try {
 
-      let token = localStorage.getItem("token")
+      let token = Cookies.get('MEGAFIT_TKN')
       let data = {
         lockerKey: !this.state.lupaKembalikanKunci,
       }
@@ -90,6 +93,7 @@ export default class ModalCheckin extends Component {
         }
       }
     } catch (Error) {
+      alert("Server error")
       console.log(Error)
     }
   }
@@ -99,7 +103,7 @@ export default class ModalCheckin extends Component {
     if (String(this.state.lockerKey) === String(this.props.dataUser.lockerKey)) {
       console.log("MASUK")
       try {
-        let token = localStorage.getItem("token")
+        let token = Cookies.get('MEGAFIT_TKN')
         let data = {
           lockerKey: 0,
         }
@@ -113,6 +117,7 @@ export default class ModalCheckin extends Component {
 
 
       } catch (Error) {
+        alert("Server error")
         console.log(Error)
       }
     } else {
@@ -159,9 +164,13 @@ export default class ModalCheckin extends Component {
             height: 'auto',
             width: 500,
             overflow: 'hidden',
-            paddingBottom: 25
+            paddingBottom: 25,
+            position: 'relative'
           }}>
-            <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
+            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleClose}>
+              <CloseIcon />
+            </IconButton>
+            <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center' }} height={140} alt="modal-background" >
             </img>
             <form style={{ paddingTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }} onSubmit={this.checkinMember}>
               <h1 id="transition-modal-title" style={{ margin: 0 }} >{this.props.titleModal}</h1>

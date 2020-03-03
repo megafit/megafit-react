@@ -3,7 +3,8 @@ import reducer from './reducer';
 // import {API} from '../config/API';
 
 const api = store => next => async action => {
-  // let token = localStorage.getItem('token')
+  // let token =     Cookies.remove('MEGAFIT_TKN');
+
 
   if(action.type=== 'FETCH_DATA_CLASS'){
 

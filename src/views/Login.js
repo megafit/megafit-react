@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
+import Cookies from 'js-cookie';
+
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Typography from '@material-ui/core/Typography';
@@ -43,7 +45,7 @@ class Login extends Component {
     try {
       data = await API.post('/users/signin', user)
       if (data) {
-        localStorage.setItem('token', data.data.token)
+        Cookies.set('MEGAFIT_TKN', data.data.token);
         
         let dataUser = {
           userId:data.data.userId,

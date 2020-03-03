@@ -1,7 +1,9 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
+
 import { makeStyles } from '@material-ui/core/styles';
-import {  withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Avatar from '@material-ui/core/Avatar';
@@ -15,12 +17,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
-import {setUser} from '../store/action'
+import { setUser } from '../store/action'
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    zIndex:1
+    zIndex: 1
   },
 }));
 
@@ -59,17 +61,17 @@ function ButtonAppBar(props) {
     prevOpen.current = open;
   }, [open]);
 
-  const signout = () =>{
-    localStorage.removeItem("token")
+  const signout = () => {
+    Cookies.remove('MEGAFIT_TKN');
     props.history.push("/")
-    props.setUser({userId:null, roleId:null, fullname:"", nickname:""})
+    props.setUser({ userId: null, roleId: null, fullname: "", nickname: "" })
   }
 
   return (
     <Grid className={classes.root}>
-      <AppBar position="fixed" style={{padding:0}}>
-        <Toolbar style={{ backgroundColor: "#FAFAFA", padding:0 }}>
-          <Grid style={{ display: "flex", position: "absolute", right: 50, height: "100%", alignItems:"center" }}>
+      <AppBar position="fixed" style={{ padding: 0 }}>
+        <Toolbar style={{ backgroundColor: "#FAFAFA", padding: 0 }}>
+          <Grid style={{ display: "flex", position: "absolute", right: 50, height: "100%", alignItems: "center" }}>
             <Button
               ref={anchorRef}
               aria-controls={open ? 'menu-list-grow' : undefined}
@@ -77,10 +79,10 @@ function ButtonAppBar(props) {
               onClick={handleToggle}
             >
               <Avatar alt="icon" src={require('../asset/icon_user.png')} style={{ marginRight: 10 }} />
-              <p style={{marginRight:10, color:"black"}}>{props.fullname}</p>
+              <p style={{ marginRight: 10, color: "black" }}>{props.fullname}</p>
               <KeyboardArrowDownIcon style={{ fontSize: 30, color: "#BDBDBD", }} />
             </Button>
-            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{width:150, alignSelf:'flex-end'}} >
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{ width: 150, alignSelf: 'flex-end' }} >
               {({ TransitionProps, placement }) => (
                 <Grow
                   {...TransitionProps}
@@ -107,8 +109,8 @@ const mapDispatchToProps = {
   setUser
 }
 
-const mapStateToProps = ({fullname}) => {
-  return{
+const mapStateToProps = ({ fullname }) => {
+  return {
     fullname
   }
 }

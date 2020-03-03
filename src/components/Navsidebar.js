@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
 import { Link, withRouter } from 'react-router-dom';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -24,8 +25,8 @@ function Navsidebar(props) {
   }
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      API.get('/users/check-token', { headers: { token: localStorage.getItem("token") } })
+    if (Cookies.get('MEGAFIT_TKN')) {
+      API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
           props.setUser({ userId: data.data.userId, roleId: data.data.roleId, fullname: data.data.fullname, nickname: data.data.nickname })
 

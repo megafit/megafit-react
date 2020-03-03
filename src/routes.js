@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -25,7 +26,7 @@ function Routes(props) {
   const classes = useStyles();
 
   return (
-    <main style={{ flexGrow: 1, marginLeft: !localStorage.getItem("token") ? 0 : props.roleId === 4 ? 200 : 100 }}>
+    <main style={{ flexGrow: 1, marginLeft: !Cookies.get('MEGAFIT_TKN') ? 0 : props.roleId === 4 ? 200 : 100 }}>
       <div className={classes.toolbar} />
       <Switch>
         <AuthenticatedRoute path="/kelas" component={Kelas} />
@@ -42,7 +43,7 @@ const AuthenticatedRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={props =>
-      localStorage.getItem("token") ? (
+      Cookies.get('MEGAFIT_TKN') ? (
         <Component {...props} />
       ) : (
           <Redirect to={{
