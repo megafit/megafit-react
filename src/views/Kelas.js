@@ -23,7 +23,7 @@ class Kelas extends Component {
 
   fetchData = async () => {
     try {
-      let token = Cookies.remove('MEGAFIT_TKN');
+      let token = Cookies.get('MEGAFIT_TKN');
 
       let temp = [
         { day: 'MON', date: 0, kelas: [] },
@@ -83,7 +83,8 @@ class Kelas extends Component {
 
   render() {
     function getWeeks(args) {
-      let theDay = `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${args}`
+      console.log(args)
+      let theDay = new Date(new Date().getFullYear(),new Date().getMonth(), args)
       var target = new Date(theDay);
       var dayNr = (new Date(theDay).getDay() + 6) % 7;
 
@@ -92,7 +93,7 @@ class Kelas extends Component {
       var jan4 = new Date(target.getFullYear(), 0, 4);
       var dayDiff = (target - jan4) / 86400000;
       var weekNr = 1 + Math.ceil(dayDiff / 7);
-
+       
       return weekNr;
     }
 

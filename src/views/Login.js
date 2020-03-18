@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
 import TextField from '@material-ui/core/TextField';
@@ -12,7 +12,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 
 import { API } from '../config/API';
-import {setUser} from '../store/action';
+import { setUser } from '../store/action';
 
 class Login extends Component {
   constructor(props) {
@@ -24,6 +24,17 @@ class Login extends Component {
       editableInput: true
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.roleId !== this.props.roleId) {
+      if (this.props.roleId === 4) {
+        this.props.history.push('/home')
+      } else {
+        this.props.history.push('/checkin')
+      }
+    }
+  }
+
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -46,12 +57,13 @@ class Login extends Component {
       data = await API.post('/users/signin', user)
       if (data) {
         Cookies.set('MEGAFIT_TKN', data.data.token);
-        
+
         let dataUser = {
-          userId:data.data.userId,
-          roleId:data.data.roleId,
-          fullname:data.data.fullname,
-          nickname:data.data.nickname}
+          userId: data.data.userId,
+          roleId: data.data.roleId,
+          fullname: data.data.fullname,
+          nickname: data.data.nickname
+        }
 
         this.props.setUser(dataUser)
         this.setState({
@@ -60,6 +72,12 @@ class Login extends Component {
           username: '',
           password: ''
         })
+
+        if (data.data.roleId === 4) {
+          this.props.history.push('/home')
+        } else {
+          this.props.history.push('/checkin')
+        }
       }
     } catch (err) {
       alert('Login failed')
@@ -137,4 +155,10 @@ const mapDispatchToProps = {
   setUser
 }
 
-export default connect(null, mapDispatchToProps)(Login)
+const mapStateToProps = ({ roleId }) => {
+  return {
+    roleId
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

@@ -49,6 +49,8 @@ import CardAnggota from '../components/CardAnggota';
 import ModalDetailAnggota from '../components/ModalDetailAnggota';
 import ModalImportAnggota from '../components/ModalImportAnggota';
 
+import Download from '../components/exportToExcel';
+
 import orderBy from 'lodash/orderBy';
 
 const invertDirection = {
@@ -57,49 +59,84 @@ const invertDirection = {
 }
 
 class Anggota extends Component {
-  state = {
-    activeStep: 0,
-    steps: ['Biodata', 'Data lanjutan'],
-    username: "",
-    password: "",
-    fullname: "",
-    nickname: "",
-    noKtp: "",
-    dateOfBirth: new Date(),
-    email: "",
-    phone: "",
-    gender: "",
-    igAccount: "",
-    roleId: "",
-    haveWhatsapp: false,
-    positionId: "",
-    isPermanent: "",
-    available: false,
-    ptSession: "",
-    activeExpired: new Date(),
-    packageMembershipId: "",
-    packagePTSelected: "",
-    searchingUser: "",
+  constructor(props) {
+    super(props)
+    this._isMounted = false
+    this.state = {
+      activeStep: 0,
+      steps: ['Biodata', 'Data lanjutan'],
+      username: "",
+      password: "",
+      fullname: "",
+      nickname: "",
+      noKtp: "",
+      dateOfBirth: new Date(),
+      email: "",
+      phone: "",
+      gender: "",
+      igAccount: "",
+      roleId: "",
+      haveWhatsapp: false,
+      positionId: "",
+      isPermanent: "",
+      available: false,
+      ptSession: "",
+      activeExpired: new Date(),
+      packageMembershipId: "",
+      packagePTSelected: "",
+      searchingUser: "",
 
-    dataPackageMembership: [],
-    dataPackagePT: [],
-    dataAnggota: [],
-    dataAnggotaSearch: [],
+      dataPackageMembership: [],
+      dataPackagePT: [],
+      dataAnggota: [],
+      dataAnggotaSearch: [],
 
-    page: 0,
-    rowsPerPage: 5,
+      page: 0,
+      rowsPerPage: 10,
 
-    openModalDetailAnggota: false,
-    dataUserSelected: {},
-    openModalImportAnggota: false,
+      openModalDetailAnggota: false,
+      dataUserSelected: {},
+      openModalImportAnggota: false,
 
-    columnToSort: "",
-    sortDirection: "desc",
-    nextRegister: false
+      columnToSort: "",
+      sortDirection: "desc",
+      nextRegister: false,
+
+      buttonSelected: 0,
+      selectAll: false,
+      statusCheckAll: false,
+
+      labelValue: [
+        {
+          label: "ID",
+          value: "id"
+        }, {
+          label: "Name",
+          value: "name"
+        }, {
+          label: "Tanggal Gabung",
+          value: "gabung"
+        }, {
+          label: "Kontak",
+          value: "kontak"
+        }, {
+          label: "Package",
+          value: "package"
+        }, {
+          label: "Sisa PT",
+          value: "sisaPT"
+        }, {
+          label: "Terakhir datang",
+          value: "lastCheckin"
+        }
+      ],
+
+    }
   }
 
   componentDidMount() {
-    this.fetchData()
+    this._isMounted = true
+    this._isMounted && this.fetchData()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -115,6 +152,11 @@ class Anggota extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this._isMounted = false
+  }
+
+
   fetchData = async () => {
     try {
       let token = Cookies.get('MEGAFIT_TKN')
@@ -128,7 +170,32 @@ class Anggota extends Component {
 
       let anggota = await API.get('/users', { headers: { token } })
 
-      this.setState({ dataPackageMembership, dataPackagePT, dataAnggotaSearch: anggota.data.data, dataAnggota: anggota.data.data })
+      let listAnggota = await anggota.data.data.filter(element =>
+        element.tblMember
+      )
+
+      //Prepare Data
+      let newData = []
+      await listAnggota.forEach(element => {
+        let sisaHari = Math.round(Math.round((new Date(element.tblMember.activeExpired).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)));
+        element.sisaHariMembership = sisaHari
+
+        let dateGabung = new Date(element.tblMember.activeDate)
+        element.gabung = `${dateGabung.getDate()}/${dateGabung.getMonth() + 1}/${dateGabung.getFullYear()}`
+        let dateLastCheckin = new Date(element.tblMember.lastCheckin)
+
+        element.dataReportAll = [{
+          id: element.tblMember.memberId,
+          name: element.nickname ? element.nickname : element.fullname,
+          gabung: `${dateGabung.getDate()}/${dateGabung.getMonth() + 1}/${dateGabung.getFullYear()}`,
+          kontak: `${element.email} ${element.phone && `(${element.phone})`}`,
+          package: element.tblMember.tblPackageMembership.package,
+          sisaPT: element.tblMember.ptSession,
+          lastCheckin: `${dateLastCheckin.getDate()}/${dateLastCheckin.getMonth() + 1}/${dateLastCheckin.getFullYear()}`,
+        }]
+      });
+
+      this._isMounted && this.setState({ dataPackageMembership, dataPackagePT, dataAnggotaSearch: listAnggota, dataAnggota: listAnggota })
 
     } catch (Error) {
       alert("Server error")
@@ -258,7 +325,7 @@ class Anggota extends Component {
     let newUserCheckin = await this.state.dataAnggota.filter(el => el.nickname.toLowerCase().match(new RegExp(this.state.searchingUser.toLowerCase())))
     this.setState({ dataAnggotaSearch: newUserCheckin })
     if (this.state.searchingUser === "") {
-      this.setState({ dataAnggotaSearch: this.state.data })
+      this.setState({ dataAnggotaSearch: this.state.dataAnggota })
     }
   }
 
@@ -287,10 +354,54 @@ class Anggota extends Component {
     }))
   }
 
+  buttonSelect = args => async () => {
+    this.setState({
+      buttonSelected: args
+    })
+
+    if (args === 0) {
+      this.setState({
+        dataAnggotaSearch: this.state.dataAnggota
+      })
+    } else {
+      if (args === 1) {
+        let dataAnggotaSearch = await this.state.dataAnggota.filter(el => el.sisaHariMembership >= 0)
+        this.setState({
+          dataAnggotaSearch
+        })
+      } else if (args === 2) {
+        let dataAnggotaSearch = await this.state.dataAnggota.filter(el => el.sisaHariMembership >= -7 && el.sisaHariMembership < 0)
+        this.setState({
+          dataAnggotaSearch
+        })
+      } else {
+        let dataAnggotaSearch = await this.state.dataAnggota.filter(el => el.sisaHariMembership < -7)
+        this.setState({
+          dataAnggotaSearch
+        })
+      }
+    }
+  }
+
+  handleChangeCheck = event => {
+    this.setState({
+      selectAll: event.target.checked,
+      statusCheckAll: event.target.checked,
+    })
+
+    // if (!event.target.checked) {
+    //   this.setState({
+    //     dataNilaiReport: [],
+    //     dataNilaiKPIM: [],
+    //     dataNilaiTAL: []
+    //   })
+    // }
+  };
+
   render() {
     return (
       <Grid style={{ display: 'flex' }}>
-        <Paper style={{ padding: 30, backgroundColor: 'white', height: '100%' }}>
+        {/* <Paper style={{ padding: 30, backgroundColor: 'white', height: '100%' }}>
           <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member/staff</Typography>
           <Stepper activeStep={this.state.activeStep} alternativeLabel style={{ paddingBottom: 5 }}>
             {this.state.steps.map(label => (
@@ -451,7 +562,7 @@ class Anggota extends Component {
 
                     {
                       this.state.roleId === 4
-                        ? this.state.roleId !== "" && <> {/* MEMBER */}
+                        ? this.state.roleId !== "" && <>  MEMBER 
                           <FormControl style={{ marginBottom: 15 }}>
                             <InputLabel id="packageMembership">Paket langganan</InputLabel>
                             <Select
@@ -499,7 +610,7 @@ class Anggota extends Component {
                             </Select>
                           </FormControl>
                         </>
-                        : this.state.roleId !== "" && <> {/* STAFF */}
+                        : this.state.roleId !== "" && <> STAFF
                           <FormControl style={{ marginBottom: 15 }}>
                             <InputLabel id="position">Posisi</InputLabel>
                             <Select
@@ -542,7 +653,7 @@ class Anggota extends Component {
                     }
 
                     {
-                      this.props.roleId === 2 && <> {/* MEMBER */}
+                      this.props.roleId === 2 && <> MEMBER 
                         <FormControl style={{ marginBottom: 15 }}>
                           <InputLabel id="packageMembership">Paket langganan</InputLabel>
                           <Select
@@ -619,19 +730,24 @@ class Anggota extends Component {
               </div>
             </form>
           </div>
-        </Paper>
+        </Paper> */}
         <Grid style={{ padding: 30, width: '100%' }}>
-          <Paper style={{ width: '95%', padding: 20 }}>
-            <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 30 }}>Daftar member/staf</Typography>
-            <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Grid style={{ width: '95%', display: 'flex', alignItems: 'center', marginBottom: 15, justifyContent: 'space-between' }}>
+            <Typography style={{ fontSize: 30, }}>Daftar Megarangers</Typography>
+            <Button style={{ backgroundColor: '#8eb52f', color: 'white' }}>
+              tambah baru
+            </Button>
+          </Grid>
+          <Paper style={{ width: '100%', padding: 20, margin: '0px auto' }}>
+
+            <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
               <Paper component="form" style={{
                 padding: '0px 4px',
                 display: 'flex',
                 alignItems: 'center',
-                width: '50%',
+                width: 400,
                 borderRadius: 30,
-                backgroundColor: '#e8f0d5',
-                marginBottom: 15
+                backgroundColor: '#e8f0d5'
               }}>
                 <InputBase
                   style={{
@@ -652,14 +768,43 @@ class Anggota extends Component {
                 color="default"
                 startIcon={<CloudUploadIcon />}
                 onClick={this.handleOpenModalImportAnggota}
-                style={{ marginBottom: 15 }}
               >Import anggota
+              </Button>
+            </Grid>
+            <Grid style={{ display: 'flex', marginBottom: 15 }}>
+              <Button variant="outlined" style={{ borderRadius: 15, padding: '0px 15px', marginRight: 10, backgroundColor: this.state.buttonSelected === 0 ? '#e8f0d5' : 'white', color: this.state.buttonSelected === 0 ? '#5f810c' : 'black' }} onClick={this.buttonSelect(0)}>
+                Semua
+              </Button>
+              <Button variant="outlined" style={{ borderRadius: 15, padding: '0px 15px', marginRight: 10, backgroundColor: this.state.buttonSelected === 1 ? '#e8f0d5' : 'white', color: this.state.buttonSelected === 1 ? '#5f810c' : 'black' }} onClick={this.buttonSelect(1)}>
+                aktif
+              </Button>
+              <Button variant="outlined" style={{ borderRadius: 15, padding: '0px 15px', marginRight: 10, backgroundColor: this.state.buttonSelected === 2 ? '#e8f0d5' : 'white', color: this.state.buttonSelected === 2 ? '#5f810c' : 'black' }} onClick={this.buttonSelect(2)}>
+                tenggang
+              </Button>
+              <Button variant="outlined" style={{ borderRadius: 15, padding: '0px 15px', marginRight: 10, backgroundColor: this.state.buttonSelected === 3 ? '#e8f0d5' : 'white', color: this.state.buttonSelected === 3 ? '#5f810c' : 'black' }} onClick={this.buttonSelect(3)}>
+                berhenti
               </Button>
             </Grid>
             <Table>
               <TableHead style={{ backgroundColor: '#f8f8f8' }}>
                 <TableRow>
-                  <TableCell style={{ marginLeft: 50, width: '40%' }} onClick={() => this.handleSort('nickname')}>
+                  <TableCell style={{ marginLeft: 50, width: '1%' }} onClick={() => this.handleSort('checklist')}>
+                    <Checkbox
+                      checked={this.state.statusCheckAll}
+                      onChange={this.handleChangeCheck}
+                      value="secondary"
+                      color="secondary"
+                    />
+                  </TableCell>
+                  <TableCell style={{ width: '5%' }} onClick={() => this.handleSort('memberId')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                      ID
+                      {
+                        this.state.columnToSort === 'memberId' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ width: '15%' }} onClick={() => this.handleSort('nickname')}>
                     <div style={{ display: 'flex', alignItems: 'center' }} >
                       Nama
                       {
@@ -667,19 +812,54 @@ class Anggota extends Component {
                       }
                     </div>
                   </TableCell>
-                  <TableCell style={{ width: '30%' }} align="center" onClick={() => this.handleSort('email')}>
+                  <TableCell style={{ width: '9%' }} align="center" onClick={() => this.handleSort('gabung')}>
                     <div style={{ display: 'flex', alignItems: 'center' }} >
-                      Email
+                      Gabung
                       {
-                        this.state.columnToSort === 'email' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                        this.state.columnToSort === 'gabung' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
                       }
                     </div>
                   </TableCell>
-                  <TableCell style={{ width: '30%' }} align="center" onClick={() => this.handleSort('roleId')}>
+                  <TableCell style={{ width: '15%' }}>
+                    Kontak
+                  </TableCell>
+                  <TableCell style={{ width: '10%' }} align="center" onClick={() => this.handleSort('tblMember.tblPackageMembership.package')}>
                     <div style={{ display: 'flex', alignItems: 'center' }} >
-                      Role
-                        {
-                        this.state.columnToSort === 'roleId' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      Paket
+                      {
+                        this.state.columnToSort === 'tblMember.tblPackageMembership.package' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ width: '10%' }} align="center" onClick={() => this.handleSort('tblMember.ptSession')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                      Sisa PT
+                      {
+                        this.state.columnToSort === 'tblMember.ptSession' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ width: '10%' }} align="center" onClick={() => this.handleSort('tblMember.lastCheckin')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                      Terakhir datang
+                      {
+                        this.state.columnToSort === 'tblMember.lastCheckin' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ width: '10%' }} align="center" onClick={() => this.handleSort('packagePTId')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                      PT
+                      {
+                        this.state.columnToSort === 'packagePTId' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                      }
+                    </div>
+                  </TableCell>
+                  <TableCell style={{ width: '15%' }} align="center" onClick={() => this.handleSort('status')}>
+                    <div style={{ display: 'flex', alignItems: 'center' }} >
+                      Status Penagihan
+                      {
+                        this.state.columnToSort === 'status' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
                       }
                     </div>
                   </TableCell>
@@ -694,7 +874,7 @@ class Anggota extends Component {
               </TableBody>
             </Table>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 20]}
+              rowsPerPageOptions={[10, 20, 50, 100]}
               component="div"
               count={this.state.dataAnggotaSearch.length}
               rowsPerPage={this.state.rowsPerPage}
@@ -713,7 +893,10 @@ class Anggota extends Component {
 
         <ModalDetailAnggota open={this.state.openModalDetailAnggota} data={this.state.dataUserSelected} handleCloseModalDetailAnggota={this.handleCloseModalDetailAnggota} />
 
-        <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} handleCloseModalImportAnggota={this.handleCloseModalImportAnggota} fetchDataAnggota={this.fetchData} />
+        {
+          this.state.openModalImportAnggota && <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} handleCloseModalImportAnggota={this.handleCloseModalImportAnggota} fetchDataAnggota={this.fetchData} />
+        }
+
 
       </Grid >
     )

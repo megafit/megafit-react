@@ -29,12 +29,6 @@ function Navsidebar(props) {
       API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
           props.setUser({ userId: data.data.userId, roleId: data.data.roleId, fullname: data.data.fullname, nickname: data.data.nickname })
-
-          if (data.data.roleId === 4) {
-            props.history.push('/home')
-          } else {
-            props.history.push('/checkin')
-          }
         })
         .catch(err => {
           console.log(err)
@@ -47,12 +41,14 @@ function Navsidebar(props) {
   }, [])
 
   useEffect(() => {
-    if (props.location.pathname === '/') {
+    if (props.location.pathname === '/home') {
       setSelectedIndex(1)
     } else if (props.location.pathname === '/kelas') {
       setSelectedIndex(2)
     } else if (props.location.pathname === '/checkin') {
       setSelectedIndex(3)
+    } else if (props.location.pathname === '/anggota') {
+      setSelectedIndex(4)
     }
   }, [props.location.pathname])
 
@@ -60,7 +56,7 @@ function Navsidebar(props) {
     if (props.roleId === 4) {
       props.history.push('/home')
     } else {
-      props.history.push('/checkin')
+      // props.history.push('/checkin')
     }
   }, [props.roleId, props.history])
 

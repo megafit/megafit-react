@@ -107,7 +107,6 @@ export default class Kelas extends Component {
 
           let hasCheckin = await this.state.data.find(el => el.userId === this.state.dataUser.userId)
 
-          console.log(hasCheckin)
           if (hasCheckin) {
             if (data.data.tblMember.sisaHari >= 0) this.setState({ open: true, titleModal: "Checkout", hasCheckin: true })
           }

@@ -6,7 +6,7 @@ import Divider from '@material-ui/core/Divider';
 import TextField from '@material-ui/core/TextField';
 import Chip from '@material-ui/core/Chip';
 
-import { API } from '../config/API';
+import { API, BaseURL } from '../config/API';
 import { Button } from '@material-ui/core';
 
 class Profil extends Component {
@@ -14,6 +14,7 @@ class Profil extends Component {
     data: {},
     ubahData: false,
     noWhatsapp: "",
+    qr: "",
     email: "",
     username: "",
     isEdit: false,
@@ -25,8 +26,23 @@ class Profil extends Component {
   }
 
   async componentDidMount() {
+    if (this.props.roleId !== 4) {
+      this.props.history.goBack()
+    }
+
+    this.fetchData()
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.userId !== this.props.userId) {
+      this.fetchData()
+    }
+  }
+
+  fetchData = async () => {
     try {
       if (this.props.userId) {
+        console.log("MASUK")
         let token = Cookies.get('MEGAFIT_TKN')
         let { data } = await API.get(`/users/${this.props.userId}`, { headers: { token } })
         this.setState({
@@ -34,14 +50,17 @@ class Profil extends Component {
           noWhatsapp: data.data.phone,
           email: data.data.email,
           username: data.data.username,
+          qr: data.data.tblMember.cardImage,
           sisaHari: this.cekMembershipExpired(data.data.tblMember)
         })
+        console.log(data)
       }
     } catch (Error) {
       alert("Server error")
       console.log(Error)
     }
   }
+
 
   ubahData = async () => {
     if (this.state.ubahData === false) {
@@ -118,7 +137,7 @@ class Profil extends Component {
         alert("Change password success")
       }
     } catch (Error) {
-      if(Error!=='Error: Request failed with status code 400') alert("Password lama salah")
+      if (Error !== 'Error: Request failed with status code 400') alert("Password lama salah")
       else alert("Server error")
       console.log(Error)
     }
@@ -141,7 +160,7 @@ class Profil extends Component {
         <Grid item lg={2} />
         <Grid item lg={4} md={6} sm={12} xs={12} style={{ padding: 30, paddingTop: 0 }}>
           <p style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>Member ID : {this.state.data.userId}</p>
-          <img src={require('../asset/29.png')} style={{ alignSelf: 'center' }} height={200} width={200} alt="logo-megafit" />
+          <img src={`${BaseURL}${this.state.qr}`} style={{ alignSelf: 'center' }} height={200} width={200} alt="logo-megafit" />
           <Grid style={{ display: 'flex' }}>
             <p style={{ margin: 0 }}>berlaku sampai</p>
             {
@@ -273,9 +292,10 @@ class Profil extends Component {
   }
 }
 
-const mapStateToProps = ({ userId }) => {
+const mapStateToProps = ({ userId, roleId }) => {
   return {
-    userId
+    userId,
+    roleId
   }
 }
 

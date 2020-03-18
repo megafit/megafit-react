@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+
 import Cookies from 'js-cookie';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,11 +31,11 @@ function Routes(props) {
     <main style={{ flexGrow: 1, marginLeft: !Cookies.get('MEGAFIT_TKN') ? 0 : props.roleId === 4 ? 200 : 100 }}>
       <div className={classes.toolbar} />
       <Switch>
+        <Route exact path="/" component={Login} />
+        <AuthenticatedRoute path="/home" component={Profil} />
         <AuthenticatedRoute path="/kelas" component={Kelas} />
         <AuthenticatedRoute path="/checkin" component={Checkin} />
-        <AuthenticatedRoute path="/home" component={Profil} />
         <AuthenticatedRoute path="/anggota" component={Anggota} />
-        <Route exact path="/" component={Login} />
       </Switch>
     </main>
   );
@@ -55,11 +57,10 @@ const AuthenticatedRoute = ({ component: Component, ...rest }) => (
   />
 )
 
-
 const mapStateToProps = ({ roleId }) => {
   return {
     roleId
   }
 }
 
-export default connect(mapStateToProps)(Routes);
+export default connect(mapStateToProps)(withRouter(Routes));
