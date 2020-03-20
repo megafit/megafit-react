@@ -40,9 +40,9 @@ export default class CardAnggota extends Component {
     ],
   }
 
-  componentDidMount() {
-    console.log(this.props.data)
-  }
+  // componentDidMount() {
+  //   console.log(this.props.data)
+  // }
 
   checkoutMember = () => {
     this.props.checkoutMember(this.props.data)
@@ -165,7 +165,7 @@ export default class CardAnggota extends Component {
                     ? <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Grid style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ margin: '0px 15px 10px 0px', textAlign: 'center', color: '#af5558' }}>Terlambat ({Math.abs(this.props.data.sisaHariMembership)} hari)</p>
-                        <Button variant="outlined" style={{ textTransform: 'none', color: '#af5558' }}>
+                        <Button variant="outlined" style={{ textTransform: 'none', color: '#af5558' }}  href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
                           kirim peringatan
                         </Button>
                       </Grid>
@@ -176,8 +176,8 @@ export default class CardAnggota extends Component {
                     : <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Grid style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ margin: '0px 15px 10px 0px', textAlign: 'center', }}>Sudah lewat tenggang</p>
-                        <Button variant="outlined" style={{ textTransform: 'none' }}>
-                          berhenti
+                        <Button variant="outlined" style={{ textTransform: 'none' }}  href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
+                          hubungi kembali
                       </Button>
                       </Grid>
                       <Button variant="contained" style={{ minWidth: 40, height: 30, padding: 0, marginLeft: 10 }} onClick={this.handleClickMenu}>
@@ -211,10 +211,10 @@ export default class CardAnggota extends Component {
             </MenuItem> */}
             <MenuItem>
               <Download
-              nameSheet="semua"
-              title="Semua"
-              labelValue={this.state.labelValue}
-              data={this.props.data.dataReportAll} />
+                nameSheet="semua"
+                title="Semua"
+                labelValueReportNilai={this.state.labelValue}
+                dataReportAll={this.props.data.dataReportAll} />
             </MenuItem>
           </MenuList>
         </Popover>
@@ -225,27 +225,27 @@ export default class CardAnggota extends Component {
           onClose={this.handleCloseSubMenu}
           anchorOrigin={{
             vertical: 'top',
-            horizontal: 'right',
+            horizontal: 'left',
           }}
           transformOrigin={{
             vertical: 'top',
-            horizontal: 'left',
+            horizontal: 'right',
           }}
         >
-          <MenuList style={{ width: 100 }} >
-            {/* {
+          <MenuList style={{ width: 150 }} >
+            {
               this.state.unduhLaporan.map((el, index) =>
-                <MenuItem key={index}> */}
-            <MenuItem>
-              <Download
-                nameSheet="semua"
-                title="semua"
-                labelValueReportNilai={this.state.labelValue}
-                data={this.props.data.dataReportAll} />
-            </MenuItem>
-            {/* </MenuItem>
+                <MenuItem key={index}>
+                  <MenuItem>
+                    <Download
+                      nameSheet={el}
+                      title={el}
+                      labelValueReportNilai={this.state.labelValue}
+                      dataReportAll={this.props.data.dataReportAll} />
+                  </MenuItem>
+                </MenuItem>
               )
-            } */}
+            }
           </MenuList>
         </Popover>
       </>

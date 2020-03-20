@@ -10,9 +10,9 @@ export default class exportToExcel extends React.Component {
   render() {
     return (
       <ExcelFile element={<p style={{ cursor: 'pointer', marign: 0 }}>{this.props.title}</p>}>
-        <ExcelSheet data={this.props.data} name={this.props.nameSheet}>
+        <ExcelSheet data={this.props.dataReportAll} name={this.props.nameSheet}>
           {
-            this.props.labelValue.map((el, index) => (
+            this.props.labelValueReportNilai.map((el, index) => (
               <ExcelColumn label={el.label} value={el.value} key={index} />
             ))
           }
