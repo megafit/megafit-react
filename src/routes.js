@@ -11,6 +11,7 @@ import Profil from './views/Profil';
 import Kelas from './views/Kelas';
 import Checkin from './views/Checkin';
 import Anggota from './views/Anggota';
+import Gym from './views/Gym';
 import Login from './views/Login';
 
 
@@ -36,6 +37,7 @@ function Routes(props) {
         <AuthenticatedRoute path="/kelas" component={Kelas} />
         <AuthenticatedRoute path="/checkin" component={Checkin} />
         <AuthenticatedRoute path="/anggota" component={Anggota} />
+        <AuthenticatedRoute path="/gym" component={Gym} />
       </Switch>
     </main>
   );

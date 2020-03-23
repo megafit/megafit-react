@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 
 import Modal from '@material-ui/core/Modal';
+import Grid from '@material-ui/core/Grid';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
@@ -28,9 +29,9 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 // import Switch from '@material-ui/core/Switch';
 import LockIcon from '@material-ui/icons/Lock';
-import SearchIcon from '@material-ui/icons/Search';
+// import SearchIcon from '@material-ui/icons/Search';
 
-import CloseIcon from '@material-ui/icons/Close';
+// import CloseIcon from '@material-ui/icons/Close';
 
 import { API } from '../config/API';
 
@@ -101,7 +102,7 @@ export default class ModalCreateEditUser extends Component {
     try {
       let token = Cookies.get('MEGAFIT_TKN')
       let allPackageMembership = await API.get('package-memberships', { headers: { token } })
-      
+
       let dataPackageMembership = allPackageMembership.data.data.filter(el => el.tblCategoryMembership.isMembership
       )
 
@@ -173,10 +174,10 @@ export default class ModalCreateEditUser extends Component {
 
 
       // if (this.state.roleId === 4) {
-        let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
-        newData.append("packageMembershipId", this.state.packageMembershipId)
-        newData.append("activeExpired", this.state.activeExpired)
-        newData.append("ptSession", ptSession.times)
+      let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
+      newData.append("packageMembershipId", this.state.packageMembershipId)
+      newData.append("activeExpired", this.state.activeExpired)
+      newData.append("ptSession", ptSession.times)
       // } else {
       //   newData.append("positionId", this.state.positionId)
       //   newData.append("isPermanent", this.state.isPermanent)
@@ -233,6 +234,7 @@ export default class ModalCreateEditUser extends Component {
           alignItems: 'center',
           justifyContent: 'center'
         }}
+        scroll='paper'
         open={this.props.open}
         onClose={this.props.handleModalDetailAnggota}
         closeAfterTransition
@@ -247,7 +249,7 @@ export default class ModalCreateEditUser extends Component {
             boxShadow: 5,
             borderRadius: 20,
             height: 'auto',
-            width: 500,
+            width: 900,
             overflow: 'hidden',
             paddingBottom: 50,
             position: 'relative'
@@ -261,106 +263,110 @@ export default class ModalCreateEditUser extends Component {
               ))}
             </Stepper>
             <div>
-              <form autoComplete="off" onSubmit={this.submit} style={{ display: 'flex', flexDirection: 'column', width: 350, margin: '30px auto', marginTop: 0 }}>
+              <form autoComplete="off" onSubmit={this.submit} style={{ display: 'flex', flexDirection: 'column', width: '80%', margin: '30px auto', marginTop: 0 }}>
                 {
                   this.state.activeStep === 0
-                    ? <>
-                      <TextField
-                        id="fullname"
-                        label="Fullname"
-                        value={this.state.fullname}
-                        onChange={this.handleChange('fullname')}
-                        margin="normal"
-                        variant="outlined"
-                        style={{ marginBottom: 15 }}
-                        disabled={this.state.proses}
-                      />
-                      <TextField
-                        id="nickname"
-                        label="Nickname"
-                        value={this.state.nickname}
-                        onChange={this.handleChange('nickname')}
-                        margin="normal"
-                        variant="outlined"
-                        style={{ marginBottom: 15 }}
-                        disabled={this.state.proses}
-                      />
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          disableToolbar
-                          variant="inline"
-                          format="MM/dd/yyyy"
+                    ? <Grid conteiner style={{ display: 'flex' }}>
+                      <Grid item md={6} style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
+                        <TextField
+                          id="fullname"
+                          label="Fullname"
+                          value={this.state.fullname}
+                          onChange={this.handleChange('fullname')}
                           margin="normal"
-                          id="tnaggalLahir"
-                          label="Tanggal Lahir"
-                          value={this.state.dateOfBirth}
-                          onChange={this.handleDateChange('dateOfBirth')}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                          style={{ marginBottom: 20 }}
+                          variant="outlined"
+                          style={{ marginBottom: 15 }}
+                          disabled={this.state.proses}
                         />
-                      </MuiPickersUtilsProvider>
-                      <FormControl component="fieldset" >
-                        <FormLabel component="legend">Gender</FormLabel>
-                        <RadioGroup aria-label="gender" name="gender" value={this.state.gender} onChange={this.handleChange("gender")}>
-                          <FormControlLabel
-                            value="female"
-                            control={<Radio color="primary" />}
-                            label="Female"
+                        <TextField
+                          id="nickname"
+                          label="Nickname"
+                          value={this.state.nickname}
+                          onChange={this.handleChange('nickname')}
+                          margin="normal"
+                          variant="outlined"
+                          style={{ marginBottom: 15 }}
+                          disabled={this.state.proses}
+                        />
+                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                          <KeyboardDatePicker
+                            disableToolbar
+                            variant="inline"
+                            format="MM/dd/yyyy"
+                            margin="normal"
+                            id="tnaggalLahir"
+                            label="Tanggal Lahir"
+                            value={this.state.dateOfBirth}
+                            onChange={this.handleDateChange('dateOfBirth')}
+                            KeyboardButtonProps={{
+                              'aria-label': 'change date',
+                            }}
+                            style={{ marginBottom: 20 }}
                           />
-                          <FormControlLabel
-                            value="male"
-                            control={<Radio color="primary" />}
-                            label="Male"
-                          />
-                        </RadioGroup>
-                      </FormControl>
-                      <TextField
-                        id="noKtp"
-                        type="number"
-                        label="No KTP"
-                        value={this.state.noKtp}
-                        onChange={this.handleChange('noKtp')}
-                        margin="normal"
-                        variant="outlined"
-                        style={{ marginBottom: 15 }}
-                        disabled={this.state.proses}
-                      />
-                      <TextField
-                        id="email"
-                        label="Email"
-                        type="email"
-                        value={this.state.email}
-                        onChange={this.handleChange('email')}
-                        margin="normal"
-                        variant="outlined"
-                        style={{ marginBottom: 15 }}
-                        disabled={this.state.proses}
-                      />
-                      <TextField
-                        id="phone"
-                        type="number"
-                        label="Phone"
-                        value={this.state.phone}
-                        onChange={this.handleChange('phone')}
-                        margin="normal"
-                        variant="outlined"
-                        disabled={this.state.proses}
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={this.state.haveWhatsapp}
-                            onChange={this.handleChangeChecked('haveWhatsapp')}
-                            value="haveWhatsapp"
-                            color="primary"
-                          />
-                        }
-                        label="Have whatsapp"
-                        style={{ marginTop: -10, marginBottom: 15 }}
-                      />
-                    </>
+                        </MuiPickersUtilsProvider>
+                        <FormControl component="fieldset" >
+                          <FormLabel component="legend">Gender</FormLabel>
+                          <RadioGroup aria-label="gender" name="gender" value={this.state.gender} onChange={this.handleChange("gender")}>
+                            <FormControlLabel
+                              value="female"
+                              control={<Radio color="primary" />}
+                              label="Female"
+                            />
+                            <FormControlLabel
+                              value="male"
+                              control={<Radio color="primary" />}
+                              label="Male"
+                            />
+                          </RadioGroup>
+                        </FormControl>
+                      </Grid>
+                      <Grid item md={6} style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
+                        <TextField
+                          id="noKtp"
+                          type="number"
+                          label="No KTP"
+                          value={this.state.noKtp}
+                          onChange={this.handleChange('noKtp')}
+                          margin="normal"
+                          variant="outlined"
+                          style={{ marginBottom: 15 }}
+                          disabled={this.state.proses}
+                        />
+                        <TextField
+                          id="email"
+                          label="Email"
+                          type="email"
+                          value={this.state.email}
+                          onChange={this.handleChange('email')}
+                          margin="normal"
+                          variant="outlined"
+                          style={{ marginBottom: 15 }}
+                          disabled={this.state.proses}
+                        />
+                        <TextField
+                          id="phone"
+                          type="number"
+                          label="Phone"
+                          value={this.state.phone}
+                          onChange={this.handleChange('phone')}
+                          margin="normal"
+                          variant="outlined"
+                          disabled={this.state.proses}
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={this.state.haveWhatsapp}
+                              onChange={this.handleChangeChecked('haveWhatsapp')}
+                              value="haveWhatsapp"
+                              color="primary"
+                            />
+                          }
+                          label="Have whatsapp"
+                          style={{ marginTop: -10, marginBottom: 15 }}
+                        />
+                      </Grid>
+                    </Grid>
                     : <>
                       <TextField
                         id="username"

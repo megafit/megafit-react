@@ -101,12 +101,17 @@ function Navsidebar(props) {
                   <List component="nav" style={{ color: "white" }} >
                     <Link to='/checkin' onClick={event => handleListItemClick(event, 3)} style={{ textDecoration: "none" }}>
                       <ListItem button selected={selectedIndex === 3} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/checkin.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-megafit" />
+                        <img src={require('../asset/checkin.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-checkin" />
                       </ListItem>
                     </Link>
                     <Link to='/anggota' onClick={event => handleListItemClick(event, 4)} style={{ textDecoration: "none" }}>
                       <ListItem button selected={selectedIndex === 4} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/anggota.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-megafit" />
+                        <img src={require('../asset/anggota.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-anggota" />
+                      </ListItem>
+                    </Link>
+                    <Link to='/gym' onClick={event => handleListItemClick(event, 5)} style={{ textDecoration: "none" }}>
+                      <ListItem button selected={selectedIndex === 5} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                        <img src={require('../asset/gym.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-gym" />
                       </ListItem>
                     </Link>
                   </List>
