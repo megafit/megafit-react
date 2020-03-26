@@ -13,6 +13,7 @@ import Checkin from './views/Checkin';
 import Anggota from './views/Anggota';
 import Gym from './views/Gym';
 import Login from './views/Login';
+import AddProduct from './views/AddProduct';
 
 
 const useStyles = makeStyles(theme => ({
@@ -37,6 +38,7 @@ function Routes(props) {
         <AuthenticatedRoute path="/kelas" component={Kelas} />
         <AuthenticatedRoute path="/checkin" component={Checkin} />
         <AuthenticatedRoute path="/anggota" component={Anggota} />
+        <AuthenticatedRoute path="/gym/addProduct" component={AddProduct} />
         <AuthenticatedRoute path="/gym" component={Gym} />
       </Switch>
     </main>

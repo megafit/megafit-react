@@ -79,11 +79,11 @@ export default class ListProduct extends Component {
           onChangeIndex={this.handleChangeIndex}
           style={{ height: '100%' }}>
 
-          {/* SEMUA */}
+          {/* Product */}
           <TabPanel value={this.state.value} index={0} style={{ height: '85vh' }}>
             <Grid style={{ width: '100%', display: 'flex', alignItems: 'center', marginBottom: 15, justifyContent: 'space-between' }}>
               <Typography style={{ fontSize: 30, }}>Daftar Produk</Typography>
-              <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={this.handleModalDetailAnggota}>
+              <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={()=>this.props.history.push('/gym/addProduct')}>
                 tambah baru
             </Button>
             </Grid>
