@@ -103,10 +103,10 @@ export default class ModalCreateEditUser extends Component {
       let token = Cookies.get('MEGAFIT_TKN')
       let allPackageMembership = await API.get('package-memberships', { headers: { token } })
 
-      let dataPackageMembership = allPackageMembership.data.data.filter(el => el.tblCategoryMembership.isMembership
+      let dataPackageMembership = allPackageMembership.data.data.filter(el => el.tblSubCategoryMembership.categoryMembershipId === 1
       )
 
-      let dataPackagePT = allPackageMembership.data.data.filter(el => !el.tblCategoryMembership.isMembership
+      let dataPackagePT = allPackageMembership.data.data.filter(el => el.tblSubCategoryMembership.categoryMembershipId === 2
       )
 
       this._isMounted && this.setState({ dataPackageMembership, dataPackagePT })

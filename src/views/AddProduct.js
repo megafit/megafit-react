@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
+import Cookies from 'js-cookie';
 
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Radio from '@material-ui/core/Radio';
 import Button from '@material-ui/core/Button';
-import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
 import Paper from '@material-ui/core/Paper';
 import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+
+import { API } from '../config/API';
 
 export default class AddProduct extends Component {
   constructor(props) {
@@ -26,12 +25,12 @@ export default class AddProduct extends Component {
       idDef: '',
       hargaGrosir: [
         {
-          harga: '',
-          hari: '',
+          price: '',
+          times: '',
           id: ''
         }, {
-          harga: '',
-          hari: '',
+          price: '',
+          times: '',
           id: ''
         },
       ],
@@ -41,6 +40,26 @@ export default class AddProduct extends Component {
       periodeAwal: '',
       periodeAkhir: '',
       sebagaiUtama: false,
+      dataCategoryMembership: [],
+    }
+  }
+
+  componentDidMount() {
+    this.fetchDataCategoryMembership()
+  }
+
+  fetchDataCategoryMembership = async () => {
+    try {
+      let token = Cookies.get('MEGAFIT_TKN')
+
+      let allCategoryMemberships = await API.get('/category-memberships', { headers: { token } })
+
+      this.setState({
+        dataCategoryMembership: allCategoryMemberships.data.data
+      })
+
+    } catch (err) {
+      console.log(err)
     }
   }
 
@@ -54,8 +73,8 @@ export default class AddProduct extends Component {
 
   addGrosirPrice = () => {
     let newArray = [...this.state.hargaGrosir, {
-      harga: '',
-      hari: '',
+      price: '',
+      times: '',
       id: ''
     }]
 
@@ -80,6 +99,24 @@ export default class AddProduct extends Component {
     }))
   }
 
+  submit = () => {
+    let newObj = {
+      packageMembershipId:this.state.idDef,
+      package:this.state.nameProduct,
+      categoryMembershipId:this.state.idCategori,
+      times:this.state.hariDef,
+      price:this.state.hargaDef,
+      startPromo:this.state.periodeAwal,
+      endPromo:this.state.periodeAkhir,
+      access:this.state.access,
+      adminFee:this.state.adminFee,
+      grosirPrice:this.state.hargaGrosir,
+      isMainPackage: this.state.sebagaiUtama
+    }
+
+    console.log(newObj)
+  }
+
   render() {
     return (
       <>
@@ -101,8 +138,11 @@ export default class AddProduct extends Component {
                     value={this.state.idCategori}
                     onChange={this.handleChange('idCategori')}
                   >
-                    <MenuItem value={3}>Staff</MenuItem>
-                    <MenuItem value={4}>Member</MenuItem>
+                    {
+                      this.state.dataCategoryMembership.map(el =>
+                        <MenuItem value={el.categoryMembershipId} key={el.categoryMembershipId}>{el.categoryMembership}</MenuItem>
+                      )
+                    }
                   </Select>
                 </FormControl>
               </Grid>
@@ -267,13 +307,12 @@ export default class AddProduct extends Component {
               <Grid item sm={10}>
                 <FormControl variant="outlined" style={{ width: 200 }} margin='dense'>
                   <Select
-                    labelId="role"
-                    id="role"
-                    value={this.state.idCategori}
-                    onChange={this.handleChange('idCategori')}
+                    labelId="access"
+                    id="access"
+                    value={this.state.access}
+                    onChange={this.handleChange('access')}
                   >
-                    <MenuItem value={3}>Staff</MenuItem>
-                    <MenuItem value={4}>Member</MenuItem>
+                    <MenuItem value="Unlimited">Unlimited</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -305,7 +344,7 @@ export default class AddProduct extends Component {
                 value="berlakuPeriodeMember"
                 color="primary"
               />
-              <p style={{ margin: 0 }}>berlaku untuk member yang bergabung dari periode</p>
+              <p style={{ margin: '0px 10px 0px 0px' }}>berlaku untuk member yang bergabung dari periode</p>
               <TextField
                 id="periodeAwal"
                 value={this.state.periodeAwal}
@@ -354,7 +393,7 @@ export default class AddProduct extends Component {
             <Button variant="outlined" style={{ marginRight: 10 }}>
               Simpan & tambah  baru
             </Button>
-            <Button variant="contained" style={{ color: 'white', backgroundColor: '#8eb52f' }}>
+            <Button variant="contained" style={{ color: 'white', backgroundColor: '#8eb52f' }} onClick={this.submit}>
               Simpan
             </Button>
           </Grid>
