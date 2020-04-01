@@ -5,8 +5,14 @@ export function setUser(payload) {
   }
 }
 
-export function fetchDataClass(payload){
+export function fetchDataSubCategoryMemberships(){
   return{
-    type:'FETCH_DATA_CLASS'
+    type:'FETCH_DATA_SUB_CATEGORY_MEMBERSHIPS'
+  }
+}
+
+export function fetchDataCategoryMemberships(){
+  return{
+    type:'FETCH_DATA_CATEGORY_MEMBERSHIPS'
   }
 }

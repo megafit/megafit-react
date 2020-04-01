@@ -1,10 +1,10 @@
-import React, { Component } from 'react'
-import Cookies from 'js-cookie';
-
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-  Grid, Tabs, Tab, Divider, Box, Typography, Button, Paper, InputBase, IconButton, MenuItem, Select, Checkbox
+  Grid, Tabs, Tab, Divider, Box, Typography, Button, Paper, InputBase, IconButton, MenuItem, Select,
+  // Checkbox
 } from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
@@ -12,7 +12,7 @@ import SwipeableViews from 'react-swipeable-views';
 
 import CardSubCategoryMembership from '../components/CardSubCategoryMembership'
 
-import { API } from '../config/API';
+import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../store/action';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -37,25 +37,34 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-export default class ListProduct extends Component {
+class ListProduct extends Component {
   state = {
     value: 0,
-    searchingUser: '',
-    filterCategory: '',
-    dataAllSubCategoryMemberships: [],
+    searchingPackage: '',
+    filterCategory: '-',
+    data: [],
   }
 
   componentDidMount() {
     this.fetchDataProduct()
+    this.props.fetchDataCategoryMemberships()
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.filterCategory !== this.state.filterCategory) {
+      this.handleSearching()
+    }
+
+    if (prevState.searchingPackage !== this.state.searchingPackage) {
+      this.handleSearching()
+    }
   }
 
   fetchDataProduct = async () => {
-    let token = Cookies.get('MEGAFIT_TKN')
-
-    let dataSubCategoryMemberships = await API.get('/sub-category-memberships', { headers: { token } })
-
+    await this.props.fetchDataSubCategoryMemberships()
+    console.log(this.props.dataSubCategoryMemberships)
     this.setState({
-      dataAllSubCategoryMemberships: dataSubCategoryMemberships.data.data
+      data: this.props.dataSubCategoryMemberships
     })
   }
 
@@ -71,6 +80,26 @@ export default class ListProduct extends Component {
     console.log(event.target.name, event.target.checked)
     this.setState({ [event.target.name]: event.target.checked });
   };
+
+  handleSearching = async () => {
+    let tempData
+    if (this.state.filterCategory === "-") {
+      tempData = this.props.dataSubCategoryMemberships
+    } else {
+      let data = await this.props.dataSubCategoryMemberships.filter(el => el.categoryMembershipId === this.state.filterCategory)
+      tempData = data
+    }
+
+    if (this.state.searchingPackage === "") {
+      this.setState({
+        data: tempData
+      })
+    } else {
+      let hasilSearch = await tempData.filter(el => el.subCategoryMembership.toLowerCase().match(new RegExp(this.state.searchingPackage.toLowerCase())))
+
+      this.setState({ data: hasilSearch })
+    }
+  }
 
   render() {
     return (
@@ -115,10 +144,10 @@ export default class ListProduct extends Component {
                       marginLeft: 10,
                       flex: 1, color: '#77942f'
                     }}
-                    placeholder="cari member"
+                    placeholder="cari package"
                     inputProps={{ 'aria-label': 'id member' }}
-                    onChange={this.handleChange('searchingUser')}
-                    value={this.state.searchingUser}
+                    onChange={this.handleChange('searchingPackage')}
+                    value={this.state.searchingPackage}
                   />
                   <IconButton type="submit" style={{ padding: 5, color: '#77942f' }} aria-label="search" onClick={this.searchMember}>
                     <SearchIcon />
@@ -126,7 +155,7 @@ export default class ListProduct extends Component {
                 </Paper>
 
                 <Paper component="form" style={{
-                  padding: '0px 4px',
+                  padding: '0px 15px',
                   display: 'flex',
                   alignItems: 'center',
                   width: 300,
@@ -134,6 +163,7 @@ export default class ListProduct extends Component {
                   backgroundColor: '#e8f0d5'
                 }}>
                   <Select
+                    disableUnderline={true}
                     labelId="role"
                     id="role"
                     placeholder="FilterCategory"
@@ -141,20 +171,25 @@ export default class ListProduct extends Component {
                     onChange={this.handleChange('filterCategory')}
                     style={{ width: 300 }}
                   >
-                    <MenuItem value="">Filter Category</MenuItem>
+                    <MenuItem value="-">Filter Category</MenuItem>
+                    {
+                      this.props.dataCategoryMemberships.map(el =>
+                        <MenuItem value={el.categoryMembershipId} key={el.categoryMembershipId}>{el.categoryMembership}</MenuItem>
+                      )
+                    }
                   </Select>
                 </Paper>
               </Grid>
 
-              <Grid container style={{ backgroundColor: '#f8f8f8', padding: '5px 10px', alignItems: 'center' }}>
-                <Grid item md={4} sm={4} xs={4}>
-                  <Checkbox
+              <Grid container style={{ backgroundColor: '#f8f8f8', padding: '10px 20px', alignItems: 'center' }}>
+                <Grid item md={4} sm={4} xs={4} style={{ paddingLeft: 15 }}>
+                  {/* <Checkbox
                     checked={this.state.checked}
                     onChange={this.handleChangeCheck}
                     value="secondary"
                     color="secondary"
-                  />
-            Produk
+                  /> */}
+                  Produk
                 </Grid>
                 <Grid item md={4} sm={4} xs={4}>
                   Pengaturan harga
@@ -166,8 +201,8 @@ export default class ListProduct extends Component {
             </Paper>
 
             {
-              this.state.dataAllSubCategoryMemberships.map((element, index) =>
-                <CardSubCategoryMembership data={element} key={index}/>
+              this.state.data.map((element, index) =>
+                <CardSubCategoryMembership data={element} key={index} />
               )
             }
           </TabPanel>
@@ -178,3 +213,17 @@ export default class ListProduct extends Component {
     )
   }
 }
+
+const mapStateToProps = ({ dataSubCategoryMemberships, dataCategoryMemberships }) => {
+  return {
+    dataSubCategoryMemberships,
+    dataCategoryMemberships
+  }
+}
+
+const mapDispatchToProps = {
+  fetchDataSubCategoryMemberships,
+  fetchDataCategoryMemberships
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ListProduct)

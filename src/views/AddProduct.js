@@ -1,20 +1,24 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControl from '@material-ui/core/FormControl';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import Paper from '@material-ui/core/Paper';
-import Switch from '@material-ui/core/Switch';
+import {
+  Grid, Typography, TextField, Button, FormControl, MenuItem, Select, Checkbox, Paper, Switch
+} from '@material-ui/core';
+
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
+
+import swal from 'sweetalert';
 
 import { API } from '../config/API';
 
-export default class AddProduct extends Component {
+import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../store/action';
+
+class AddProduct extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -24,28 +28,59 @@ export default class AddProduct extends Component {
       hariDef: '',
       idDef: '',
       hargaGrosir: [
-        {
-          price: '',
-          times: '',
-          id: ''
-        }, {
-          price: '',
-          times: '',
-          id: ''
-        },
+        // {
+        //   price: '',
+        //   times: '',
+        //   id: ''
+        // },
       ],
       access: '',
       adminFee: '',
       berlakuPeriodeMember: false,
-      periodeAwal: '',
-      periodeAkhir: '',
+      periodeAwal: new Date(),
+      periodeAkhir: new Date(),
       sebagaiUtama: false,
       dataCategoryMembership: [],
     }
   }
 
-  componentDidMount() {
-    this.fetchDataCategoryMembership()
+  async componentDidMount() {
+    await this.props.fetchDataCategoryMemberships()
+
+    if (this.props.location.state) {
+      let data = this.props.location.state.data
+      let hargaGrosir = []
+
+      data.tblPackageMemberships.forEach((element, index) => {
+        if (index !== 0) {
+          let obj = {
+            price: element.price,
+            times: Number(data.categoryMembershipId) === 1 ? element.times : element.sessionPtHours,
+            id: element.packageMembershipId
+          }
+          hargaGrosir.push(obj)
+        }
+      });
+
+      this.setState({
+        idCategori: data.categoryMembershipId,
+        nameProduct: data.subCategoryMembership,
+        hargaDef: data.tblPackageMemberships[0].price,
+        hariDef: Number(data.categoryMembershipId) === 1 ? data.tblPackageMemberships[0].times : data.tblPackageMemberships[0].sessionPtHours,
+        idDef: data.tblPackageMemberships[0].packageMembershipId,
+        hargaGrosir,
+        access: data.access,
+        adminFee: data.adminFee,
+        berlakuPeriodeMember: (data.startPromo && data.endPromo) ? true : false,
+        periodeAwal: data.startPromo || new Date(),
+        periodeAkhir: data.endPromo || new Date(),
+        sebagaiUtama: data.isMainPackage,
+      })
+    }
+  }
+
+  componentWillUnmount() {
+    this.resetForm()
   }
 
   fetchDataCategoryMembership = async () => {
@@ -73,9 +108,9 @@ export default class AddProduct extends Component {
 
   addGrosirPrice = () => {
     let newArray = [...this.state.hargaGrosir, {
-      price: '',
-      times: '',
-      id: ''
+      "price": '',
+      "times": '',
+      "id": ''
     }]
 
     this.setState({
@@ -99,22 +134,72 @@ export default class AddProduct extends Component {
     }))
   }
 
-  submit = () => {
-    let newObj = {
-      packageMembershipId:this.state.idDef,
-      package:this.state.nameProduct,
-      categoryMembershipId:this.state.idCategori,
-      times:this.state.hariDef,
-      price:this.state.hargaDef,
-      startPromo:this.state.periodeAwal,
-      endPromo:this.state.periodeAkhir,
-      access:this.state.access,
-      adminFee:this.state.adminFee,
-      grosirPrice:this.state.hargaGrosir,
-      isMainPackage: this.state.sebagaiUtama
-    }
+  handleDateChange = name => date => {
+    this.setState({ [name]: date })
+  };
 
-    console.log(newObj)
+  submit = async () => {
+    try {
+      let newObj = {
+        packageMembershipId: this.state.idDef,
+        package: this.state.nameProduct,
+        categoryMembershipId: this.state.idCategori,
+        price: this.state.hargaDef,
+        access: this.state.access,
+        adminFee: this.state.adminFee,
+        grosirPrice: this.state.hargaGrosir,
+        isMainPackage: this.state.sebagaiUtama
+      }
+
+      if (this.state.categoryMembershipId === 1) {
+        newObj.times = this.state.hariDef
+      } else if (this.state.categoryMembershipId === 2) {
+        newObj.sessionPtHours = this.state.hariDef
+      } else if (this.state.categoryMembershipId === 3) {
+        newObj.times = 1
+      } else {
+        newObj.times = 30
+      }
+
+      if (this.state.berlakuPeriodeMember) {
+        newObj.startPromo = this.state.periodeAwal
+        newObj.endPromo = this.state.periodeAkhir
+      }
+
+
+      let token = Cookies.get('MEGAFIT_TKN')
+      if (this.props.location.state.data) {
+        await API.put(`/sub-category-memberships/${this.props.location.state.data.id}`, newObj, { headers: { token } })
+        swal("Edit Package Memberships Success", "", "success")
+      } else {
+        await API.post('/sub-category-memberships', newObj, { headers: { token } })
+        swal("Add Package Memberships Success", "", "success")
+      }
+
+      this.props.fetchDataSubCategoryMemberships()
+      this.props.history.goBack()
+
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  resetForm = () => {
+    this.setState({
+      idCategori: '',
+      nameProduct: '',
+      hargaDef: '',
+      hariDef: '',
+      idDef: '',
+      hargaGrosir: [
+      ],
+      access: '',
+      adminFee: '',
+      berlakuPeriodeMember: false,
+      periodeAwal: new Date(),
+      periodeAkhir: new Date(),
+      sebagaiUtama: false,
+    })
   }
 
   render() {
@@ -139,7 +224,7 @@ export default class AddProduct extends Component {
                     onChange={this.handleChange('idCategori')}
                   >
                     {
-                      this.state.dataCategoryMembership.map(el =>
+                      this.props.dataCategoryMemberships.map(el =>
                         <MenuItem value={el.categoryMembershipId} key={el.categoryMembershipId}>{el.categoryMembership}</MenuItem>
                       )
                     }
@@ -239,14 +324,14 @@ export default class AddProduct extends Component {
 
             {
               this.state.hargaGrosir.map((el, index) =>
-                <Grid container style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }} key={index}>
+                <Grid container style={{ display: 'flex', alignItems: 'center' }} key={index}>
                   <Grid item sm={2} />
                   <Grid item style={{ display: 'flex', alignItems: 'center' }}>
                     <p style={{ margin: '0px 10px 0px 0px' }}>{index + 1}. Rp</p>
                     <TextField
-                      id={`harga${index}`}
-                      value={el.harga}
-                      onChange={this.handleChangeGrosirPrice(index, 'harga')}
+                      id={`price${index}`}
+                      value={el.price}
+                      onChange={this.handleChangeGrosirPrice(index, 'price')}
                       margin="normal"
                       variant="outlined"
                       style={{ width: 150, marginBottom: 15 }}
@@ -259,9 +344,9 @@ export default class AddProduct extends Component {
                     />
                     <p style={{ margin: '0px 10px 0px 10px' }}>/</p>
                     <TextField
-                      id={`hari${index}`}
-                      value={el.hari}
-                      onChange={this.handleChangeGrosirPrice(index, 'hari')}
+                      id={`times${index}`}
+                      value={el.times}
+                      onChange={this.handleChangeGrosirPrice(index, 'times')}
                       margin="normal"
                       variant="outlined"
                       style={{ width: 50, marginBottom: 15 }}
@@ -345,35 +430,40 @@ export default class AddProduct extends Component {
                 color="primary"
               />
               <p style={{ margin: '0px 10px 0px 0px' }}>berlaku untuk member yang bergabung dari periode</p>
-              <TextField
-                id="periodeAwal"
-                value={this.state.periodeAwal}
-                onChange={this.handleChange('periodeAwal')}
-                margin="normal"
-                variant="outlined"
-                style={{ width: 150, marginBottom: 15 }}
-                disabled={this.state.proses}
-                inputProps={{
-                  style: {
-                    padding: 10
-                  }
-                }}
-              />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="periodeAwal"
+                  value={this.state.periodeAwal}
+                  onChange={this.handleDateChange('periodeAwal')}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                  style={{ marginBottom: 20, width: 150 }}
+                  disabled={!this.state.berlakuPeriodeMember}
+                />
+              </MuiPickersUtilsProvider>
               <p style={{ margin: '0px 10px' }}>s/d</p>
-              <TextField
-                id="periodeAkhir"
-                value={this.state.periodeAkhir}
-                onChange={this.handleChange('periodeAkhir')}
-                margin="normal"
-                variant="outlined"
-                style={{ width: 150, marginBottom: 15 }}
-                disabled={this.state.proses}
-                inputProps={{
-                  style: {
-                    padding: 10
-                  }
-                }}
-              />
+              <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <KeyboardDatePicker
+                  disableToolbar
+                  variant="inline"
+                  format="MM/dd/yyyy"
+                  margin="normal"
+                  id="periodeAkhir"
+                  value={this.state.periodeAkhir}
+                  onChange={this.handleDateChange('periodeAkhir')}
+                  KeyboardButtonProps={{
+                    'aria-label': 'change date',
+                  }}
+                  style={{ marginBottom: 20, width: 150 }}
+                  disabled={!this.state.berlakuPeriodeMember}
+                />
+              </MuiPickersUtilsProvider>
+
             </Grid>
             <Grid style={{ display: 'flex', alignItems: 'center' }}>
               <p style={{ margin: 0 }}>tetapkan sebagai Utama dalam kategori</p>
@@ -387,12 +477,12 @@ export default class AddProduct extends Component {
             </Grid>
           </Paper>
           <Grid style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="outlined" style={{ marginRight: 10 }}>
+            <Button variant="outlined" style={{ marginRight: 10 }} onClick={this.props.history.goBack}>
               batal
             </Button>
-            <Button variant="outlined" style={{ marginRight: 10 }}>
+            {/* <Button variant="outlined" style={{ marginRight: 10 }}>
               Simpan & tambah  baru
-            </Button>
+            </Button> */}
             <Button variant="contained" style={{ color: 'white', backgroundColor: '#8eb52f' }} onClick={this.submit}>
               Simpan
             </Button>
@@ -403,3 +493,18 @@ export default class AddProduct extends Component {
     )
   }
 }
+
+const mapDispatchToProps = {
+  fetchDataSubCategoryMemberships,
+  fetchDataCategoryMemberships
+}
+
+const mapStateToProps = ({ loading, error, dataCategoryMemberships }) => {
+  return {
+    loading,
+    error,
+    dataCategoryMemberships
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddProduct)
