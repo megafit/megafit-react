@@ -75,7 +75,7 @@ export default class ModalDetailAnggota extends Component {
             <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleCloseModalDetailAnggota}>
               <CloseIcon />
             </IconButton>
-            <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
+            <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
             </img>
             <h1 id="transition-modal-title" style={{ textAlign: 'center', marginTop:0 }} >Detail Anggota</h1>
             <Grid style={{ marginLeft: 100 }}>

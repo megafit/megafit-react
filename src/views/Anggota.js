@@ -26,9 +26,9 @@ import { API } from '../config/API';
 import { Typography } from '@material-ui/core';
 
 import CardAnggota from '../components/CardAnggota';
-import ModalDetailAnggota from '../components/ModalDetailAnggota';
-import ModalImportAnggota from '../components/ModalImportAnggota';
-import ModalCreateEditUser from '../components/ModalCreateEditUser';
+import ModalDetailAnggota from '../components/modal/ModalDetailAnggota';
+import ModalImportAnggota from '../components/modal/ModalImportAnggota';
+import ModalCreateEditUser from '../components/modal/ModalCreateEditUser';
 
 // import Download from '../components/exportToExcel';
 
@@ -44,6 +44,7 @@ class Anggota extends Component {
     super(props)
     this._isMounted = false
     this.state = {
+      searchingUser: '',
       dataPackageMembership: [],
       dataPackagePT: [],
       dataAnggota: [],
@@ -363,11 +364,11 @@ class Anggota extends Component {
                       color="secondary"
                     />
                   </TableCell>
-                  <TableCell style={{ width: '5%' }} onClick={() => this.handleSort('memberId')}>
+                  <TableCell style={{ width: '5%' }} onClick={() => this.handleSort('tblMember.memberId')}>
                     <div style={{ display: 'flex', alignItems: 'center' }} >
                       ID
                       {
-                        this.state.columnToSort === 'memberId' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                        this.state.columnToSort === 'tblMember.memberId' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
                       }
                     </div>
                   </TableCell>
@@ -422,11 +423,11 @@ class Anggota extends Component {
                       }
                     </div>
                   </TableCell>
-                  <TableCell style={{ width: '15%' }} align="center" onClick={() => this.handleSort('status')}>
+                  <TableCell style={{ width: '15%' }} align="center" onClick={() => this.handleSort('sisaHariMembership')}>
                     <div style={{ display: 'flex', alignItems: 'center' }} >
                       Status Penagihan
                       {
-                        this.state.columnToSort === 'status' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
+                        this.state.columnToSort === 'sisaHariMembership' ? (this.state.sortDirection === "desc" ? <ArrowDropUpOutlinedIcon /> : <ArrowDropDownOutlinedIcon />) : null
                       }
                     </div>
                   </TableCell>

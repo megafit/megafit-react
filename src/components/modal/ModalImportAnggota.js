@@ -10,7 +10,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 
 import CloseIcon from '@material-ui/icons/Close';
 
-import { API } from '../config/API';
+import { API } from '../../config/API';
 
 export default class ModalImportAnggota extends Component {
   state = {
@@ -95,7 +95,7 @@ export default class ModalImportAnggota extends Component {
             <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleCloseModalImportAnggota}>
               <CloseIcon />
             </IconButton>
-            <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
+            <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >
             </img>
             {
               this.state.completed && <LinearProgress variant="determinate" value={this.state.completed} />

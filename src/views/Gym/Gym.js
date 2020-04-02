@@ -10,9 +10,9 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import SwipeableViews from 'react-swipeable-views';
 
-import CardSubCategoryMembership from '../components/CardSubCategoryMembership'
+import CardSubCategoryMembership from '../../components/CardSubCategoryMembership'
 
-import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../store/action';
+import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../../store/action';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;

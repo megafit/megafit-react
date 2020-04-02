@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 
 import CloseIcon from '@material-ui/icons/Close';
 
-import { API } from '../config/API';
+import { API } from '../../config/API';
 
 export default class ModalCheckin extends Component {
   state = {
@@ -170,7 +170,7 @@ export default class ModalCheckin extends Component {
             <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleClose}>
               <CloseIcon />
             </IconButton>
-            <img src={require('../asset/background-modal.png')} style={{ alignSelf: 'center' }} height={140} alt="modal-background" >
+            <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center' }} height={140} alt="modal-background" >
             </img>
             <form style={{ paddingTop: 0, display: 'flex', flexDirection: 'column', alignItems: 'center' }} onSubmit={this.checkinMember}>
               <h1 id="transition-modal-title" style={{ margin: 0 }} >{this.props.titleModal}</h1>

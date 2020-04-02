@@ -14,9 +14,9 @@ import {
 
 import swal from 'sweetalert';
 
-import { API } from '../config/API';
+import { API } from '../../config/API';
 
-import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../store/action';
+import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../../store/action';
 
 class AddProduct extends Component {
   constructor(props) {

@@ -7,14 +7,14 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 // import Home from './views/Home';
+import Login from './views/Login';
 import Profil from './views/Profil';
 import Kelas from './views/Kelas';
 import Checkin from './views/Checkin';
 import Anggota from './views/Anggota';
-import Gym from './views/Gym';
-import Login from './views/Login';
-import AddProduct from './views/AddProduct';
-
+import Gym from './views/Gym/Gym';
+import AddProduct from './views/Gym/AddProduct';
+import POS from './views/POS';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -40,6 +40,7 @@ function Routes(props) {
         <AuthenticatedRoute path="/anggota" component={Anggota} />
         <AuthenticatedRoute path="/gym/addProduct" component={AddProduct} />
         <AuthenticatedRoute path="/gym" component={Gym} />
+        <AuthenticatedRoute path="/pos" component={POS} />
       </Switch>
     </main>
   );

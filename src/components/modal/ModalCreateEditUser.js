@@ -33,7 +33,7 @@ import LockIcon from '@material-ui/icons/Lock';
 
 // import CloseIcon from '@material-ui/icons/Close';
 
-import { API } from '../config/API';
+import { API } from '../../config/API';
 
 export default class ModalCreateEditUser extends Component {
   constructor(props) {

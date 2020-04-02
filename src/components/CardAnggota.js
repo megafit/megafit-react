@@ -165,7 +165,7 @@ export default class CardAnggota extends Component {
                     ? <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Grid style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ margin: '0px 15px 10px 0px', textAlign: 'center', color: '#af5558' }}>Terlambat ({Math.abs(this.props.data.sisaHariMembership)} hari)</p>
-                        <Button variant="outlined" style={{ textTransform: 'none', color: '#af5558' }}  href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
+                        <Button variant="outlined" style={{ textTransform: 'none', color: '#af5558' }} href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
                           kirim peringatan
                         </Button>
                       </Grid>
@@ -176,7 +176,7 @@ export default class CardAnggota extends Component {
                     : <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <Grid style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ margin: '0px 15px 10px 0px', textAlign: 'center', }}>Sudah lewat tenggang</p>
-                        <Button variant="outlined" style={{ textTransform: 'none' }}  href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
+                        <Button variant="outlined" style={{ textTransform: 'none' }} href="https://api.whatsapp.com/send?phone=6281383386284" target="_blank">
                           hubungi kembali
                       </Button>
                       </Grid>
@@ -209,17 +209,17 @@ export default class CardAnggota extends Component {
             {/* <MenuItem onClick={this.handleClickSubMenu}>
               <p style={{ margin: 0 }}>unduh</p>
             </MenuItem> */}
-            <MenuItem>
-              <Download
-                nameSheet="semua"
-                title="Semua"
+            <MenuItem style={{ height: 40 }}>
+              <Download                
+                nameSheet="unduh"
+                title="Unduh"
                 labelValueReportNilai={this.state.labelValue}
                 dataReportAll={this.props.data.dataReportAll} />
             </MenuItem>
           </MenuList>
         </Popover>
 
-        <Popover id="Sub menu unduh"
+        {/* <Popover id="Sub menu unduh"
           open={this.state.openSubMenu}
           anchorEl={this.state.anchorElSubMenu}
           onClose={this.handleCloseSubMenu}
@@ -247,7 +247,7 @@ export default class CardAnggota extends Component {
               )
             }
           </MenuList>
-        </Popover>
+        </Popover> */}
       </>
     )
   }

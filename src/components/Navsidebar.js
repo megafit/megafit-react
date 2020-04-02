@@ -114,6 +114,11 @@ function Navsidebar(props) {
                         <img src={require('../asset/gym.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-gym" />
                       </ListItem>
                     </Link>
+                    <Link to='/pos' onClick={event => handleListItemClick(event, 6)} style={{ textDecoration: "none" }}>
+                      <ListItem button selected={selectedIndex === 6} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                        <img src={require('../asset/POS.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pos" />
+                      </ListItem>
+                    </Link>
                   </List>
                 </>
             }

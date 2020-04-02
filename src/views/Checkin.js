@@ -11,7 +11,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ModalCheck from '../components/ModalCheckin';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -26,6 +25,7 @@ import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import WhereToVoteOutlinedIcon from '@material-ui/icons/WhereToVoteOutlined';
 
+import ModalCheck from '../components/modal/ModalCheckin';
 import CardCheckIn from '../components/CardCheck';
 
 import { API } from '../config/API';
