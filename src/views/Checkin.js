@@ -45,7 +45,6 @@ export default class Kelas extends Component {
     lockerKey: '',
     searchUserId: '',
     searchingUser: '',
-    countMegarangers: 23,
     proses: false,
     open: false,
     titleModal: "Checkin",
