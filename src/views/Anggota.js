@@ -1,7 +1,6 @@
 import 'date-fns';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Cookies from 'js-cookie';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -22,7 +21,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ArrowDropUpOutlinedIcon from '@material-ui/icons/ArrowDropUpOutlined';
 import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
 
-import { API } from '../config/API';
 import { Typography } from '@material-ui/core';
 
 import CardAnggota from '../components/CardAnggota';
@@ -33,6 +31,8 @@ import ModalCreateEditUser from '../components/modal/ModalCreateEditUser';
 // import Download from '../components/exportToExcel';
 
 import orderBy from 'lodash/orderBy';
+
+import { fetchDataMember } from '../store/action';
 
 const invertDirection = {
   asc: "desc",
@@ -119,17 +119,10 @@ class Anggota extends Component {
 
   fetchData = async () => {
     try {
-      let token = Cookies.get('MEGAFIT_TKN')
-
-      let anggota = await API.get('/users', { headers: { token } })
-
-      let listAnggota = await anggota.data.data.filter(element =>
-        element.tblMember
-      )
+      await this.props.fetchDataMember()
+      let listAnggota = this.props.dataAllMember
 
       //Prepare Data
-
-      console.log(listAnggota)
       await listAnggota.forEach(element => {
         let sisaHari = Math.round(Math.round((new Date(element.tblMember.activeExpired).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)));
         element.sisaHariMembership = sisaHari
@@ -473,10 +466,15 @@ class Anggota extends Component {
   }
 }
 
-const mapStateToProps = ({ roleId }) => {
+const mapDispatchToProps = {
+  fetchDataMember
+}
+
+const mapStateToProps = ({ roleId, dataAllMember }) => {
   return {
-    roleId
+    roleId,
+    dataAllMember
   }
 }
 
-export default connect(mapStateToProps)(Anggota)
+export default connect(mapStateToProps, mapDispatchToProps)(Anggota)

@@ -6,6 +6,7 @@ const defaultState = {
   loading: false,
   dataSubCategoryMemberships: [],
   dataCategoryMemberships: [],
+  dataPackageMemberships: []
 }
 
 function reducer(state = defaultState, action) {
@@ -31,6 +32,27 @@ function reducer(state = defaultState, action) {
         ...state,
         loading: false,
         dataCategoryMemberships: action.payload.dataCategoryMemberships
+      }
+    }
+    case 'FETCH_DATA_PACKAGE_MEMBERSHIPS_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        dataPackageMemberships: action.payload.dataPackageMemberships
+      }
+    }
+    case 'FETCH_DATA_STAFF_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        dataAllStaff: action.payload.dataStaff
+      }
+    }
+    case 'FETCH_DATA_MEMBER_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        dataAllMember: action.payload.dataMember
       }
     }
     case 'FETCH_DATA_LOADING': {

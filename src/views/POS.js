@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
 import {
-  Grid, Paper, InputBase, IconButton, Avatar, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button, Chip
+  Grid, Paper, InputBase, IconButton, Avatar, Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography, TextField, Button, Chip, Select, MenuItem
 } from '@material-ui/core';
 
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 import SearchIcon from '@material-ui/icons/Search';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
-import CloseIcon from '@material-ui/icons/Close';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
 import swal from 'sweetalert';
 
-import { API } from '../config/API';
+import CardItemOrderPOS from '../components/CardItemOrderPOS';
 
-export default class POS extends Component {
+import { API } from '../config/API';
+import { fetchDataPackageMemberships, fetchDataStaff } from '../store/action';
+
+class POS extends Component {
   constructor(props) {
     super(props)
     this._isMounted = false
@@ -32,6 +33,40 @@ export default class POS extends Component {
       sendOnline: '',
       searchUserId: '',
       dataMember1: null,
+      packageMembershipsNow: {},
+      orderList: [],
+      hasPerpanjang: false,
+      hasCuti: false,
+      totalPrice: 0,
+      salesSelected: null,
+      idSales: '',
+      changeSales: true,
+    }
+  }
+
+  async componentDidMount() {
+    await this.props.fetchDataPackageMemberships()
+    await this.props.fetchDataStaff()
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.dataMember1 !== this.state.dataMember1) {
+      if (this.state.dataMember1) {
+        let packageSelected = this.props.dataPackageMemberships.find(el => el.packageMembershipId === this.state.dataMember1.tblMember.packageMembershipId)
+
+        this.setState({
+          packageMembershipsNow: packageSelected
+        })
+      }
+    }
+
+    if (prevState.idSales !== this.state.idSales) {
+      let salesSelected = await this.props.dataAllStaff.find(el => el.userId === this.state.idSales)
+
+      this.handleChangeSales()
+      this.setState({
+        salesSelected
+      })
     }
   }
 
@@ -40,9 +75,17 @@ export default class POS extends Component {
   };
 
   handleBayar = () => {
-    this.setState({
-      bayar: !this.state.bayar
-    })
+    console.log(this.state.orderList.length, this.state.idSales)
+    if (this.state.orderList.length === 0) {
+      swal('Daftar pesanan masih kosong','', 'warning')
+    } else if (this.state.idSales === '') {
+      swal('Pilih sales terlebih dahulu','', 'warning')
+    } else {
+      console.log("MASUK")
+      this.setState({
+        bayar: !this.state.bayar
+      })
+    }
   }
 
   handleStateBayar = (option, state) => {
@@ -65,6 +108,7 @@ export default class POS extends Component {
         let token = Cookies.get('MEGAFIT_TKN')
         let { data } = await API.get(`/users/${this.state.searchUserId}?idMember=${this.state.searchUserId}`, { headers: { token } })
 
+        console.log(data.data)
         this.setState({
           dataMember1: data.data
         })
@@ -78,6 +122,52 @@ export default class POS extends Component {
     }
   }
 
+  perpanjangPaket = async () => {
+    let newOrder = this.state.orderList
+    newOrder.push(this.state.packageMembershipsNow)
+
+    this.setState({
+      hasPerpanjang: true,
+      orderList: newOrder
+    })
+  }
+
+  deleteOrder = args => {
+    let newArray = this.state.orderList
+    let packageDelete = this.state.orderList[args]
+
+    newArray.splice(args, 1)
+
+    if (packageDelete.packageMembershipId === this.state.packageMembershipsNow.packageMembershipId) {
+      this.setState({
+        orderList: newArray,
+        hasPerpanjang: false
+      })
+    } else {
+      this.setState({
+        orderList: newArray
+      })
+    }
+  }
+
+  setTotalPrice = (ket, args) => {
+    let newTotalPrice
+    if (ket === '-') {
+      newTotalPrice = Number(this.state.totalPrice) - Number(args)
+    } else {
+      newTotalPrice = Number(args) + Number(this.state.totalPrice)
+    }
+    this.setState({
+      totalPrice: newTotalPrice
+    })
+  }
+
+  handleChangeSales = () => {
+    this.setState({
+      changeSales: !this.state.changeSales
+    })
+  }
+
   render() {
     function getDate(args) {
       let day = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]
@@ -87,6 +177,21 @@ export default class POS extends Component {
       let minute = new Date(args).getMinutes() > 10 ? new Date(args).getMinutes() : `0${new Date(args).getMinutes()}`
 
       return `${day[new Date(args).getDay()]}, ${date}/${month}/${new Date(args).getFullYear()} - ${hour}:${minute}`
+    }
+
+    function convertRupiah(args) {
+      let separator
+      var number_string = args.toString(),
+        sisa = number_string.length % 3,
+        rupiah = number_string.substr(0, sisa),
+        ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+      if (ribuan) {
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+      }
+
+      return rupiah
     }
 
     return (
@@ -128,7 +233,6 @@ export default class POS extends Component {
               {
                 this.state.dataMember1
                   ? <>
-
                     {/* Photo Profil */}
                     <Grid container style={{ marginBottom: 10 }}>
                       <Grid item style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 10, padding: '0px 10px' }}>
@@ -136,16 +240,16 @@ export default class POS extends Component {
                         <p style={{ margin: 0, fontWeight: 'bold' }}>{this.state.dataMember1.nickname}</p>
                         {
                           this.state.dataMember1.flagActive
-                            ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 5 }}>
+                            ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}>
                               <CheckCircleOutlinedIcon style={{ color: '#8EB52F' }} />
                               <p style={{ margin: 0, marginLeft: 5 }}>active member</p>
                             </Grid>
                             : this.state.dataMember1.tblMember.sisaHari <= -7
-                              ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 5 }}>
+                              ? <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}>
                                 <CancelOutlinedIcon style={{ color: '#bf0000' }} />
                                 <p style={{ margin: 0, marginLeft: 5 }}>nonactive member</p>
                               </Grid>
-                              : <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 5 }}>
+                              : <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 5 }}>
                                 <Chip
                                   label="masa tenggang"
                                   color="secondary"
@@ -153,8 +257,22 @@ export default class POS extends Component {
                               </Grid>
                         }
                       </Grid>
-                      <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, opacity: this.state.bayar ? 0.2 : 1 }} />
-                      <img src={require('../asset/cuti.png')} height={100} width={100} alt="logo-cuti" style={{ opacity: this.state.bayar ? 0.2 : 1 }} />
+                      {
+                        this.state.bayar
+                          ? <>
+                            <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, opacity: 0.2 }} />
+                            <img src={require('../asset/cuti.png')} height={100} width={100} alt="logo-cuti" style={{ opacity: 0.2 }} />
+                          </>
+                          : <>
+                            {
+                              this.state.hasPerpanjang
+                                ? <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, opacity: 0.2 }} />
+                                : <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, cursor: 'pointer' }} onClick={this.perpanjangPaket} />
+                            }
+                            <img src={require('../asset/cuti.png')} height={100} width={100} alt="logo-cuti" style={{ cursor: 'pointer' }} />
+                          </>
+                      }
+
                     </Grid>
 
                     <Divider />
@@ -176,33 +294,11 @@ export default class POS extends Component {
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          <TableRow>
-                            <TableCell>
-                              Anggota Presale
-                            </TableCell>
-                            <TableCell>
-                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                {
-                                  this.state.bayar
-                                    ? <p style={{ margin: '0px 10px' }}>1</p>
-                                    : <>
-                                      <AddCircleOutlineIcon style={{ color: '#c8c8c8' }} />
-                                      <p style={{ margin: '0px 10px' }}>1</p>
-                                      <RemoveCircleOutlineIcon style={{ color: '#c8c8c8' }} />
-                                    </>
-
-                                }
-
-                              </div>
-                            </TableCell>
-
-                            <TableCell style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                              Rp 300.000
-        {
-                                !this.state.bayar && <CloseIcon style={{ color: '#c8c8c8', width: 18 }} />
-                              }
-                            </TableCell>
-                          </TableRow>
+                          {
+                            this.state.orderList.map((el, index) =>
+                              <CardItemOrderPOS bayar={this.state.bayar} data={el} key={index} order={index} deleteOrder={this.deleteOrder} setTotalPrice={this.setTotalPrice} />
+                            )
+                          }
                         </TableBody>
                       </Table>
                       {
@@ -214,12 +310,25 @@ export default class POS extends Component {
                       <p style={{ margin: '0px 5px 0px 0px' }}>sales:</p>
                       {
                         this.state.bayar
-                          ? <p style={{ margin: '0px 5px 0px 0px' }}>caca</p>
-                          : <>
-                            <Avatar alt="icon" src={require('../asset/icon_user.png')} style={{ width: 25, height: 25, margin: '0px 5px 0px 0px' }} />
-                            <p style={{ margin: '0px 5px 0px 0px' }}>caca</p>
-                            <EditOutlinedIcon style={{ color: '#c8c8c8', width: 20 }} />
-                          </>
+                          ? <p style={{ margin: '0px 5px 0px 0px' }}>{this.state.salesSelected.nickname}</p>
+                          : this.state.changeSales
+                            ? <Select
+                              labelId="role"
+                              id="role"
+                              value={this.state.idSales}
+                              onChange={this.handleChange('idSales')}
+                            >
+                              {
+                                this.props.dataAllStaff.map(el => <MenuItem value={el.userId} key={el.userId}>{el.nickname}</MenuItem>)
+                              }
+                            </Select>
+                            : <>
+                              <Avatar alt="icon" src={require('../asset/icon_user.png')} style={{ width: 25, height: 25, margin: '0px 5px 0px 0px' }} />
+                              {
+                                this.state.salesSelected && <p style={{ margin: '0px 5px 0px 0px' }}>{this.state.salesSelected.nickname}</p>
+                              }
+                              <EditOutlinedIcon style={{ color: '#c8c8c8', width: 20, cursor: 'pointer' }} onClick={this.handleChangeSales} />
+                            </>
                       }
 
 
@@ -228,7 +337,7 @@ export default class POS extends Component {
 
                     <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 30, marginTop: '10px 0px' }}>
                       <p style={{ margin: 0 }}>Total</p>
-                      <p style={{ margin: 0, fontSize: 20 }}>Rp 300.000</p>
+                      <p style={{ margin: 0, fontSize: 20 }}>Rp {convertRupiah(this.state.totalPrice)}</p>
                     </Grid>
 
                     <Grid style={{ display: 'flex', justifyContent: 'space-between', paddingRight: 10 }}>
@@ -242,7 +351,7 @@ export default class POS extends Component {
                             <img src={require('../asset/bayar.png')} height={38} width={50} alt="logo-bayar" style={{ marginBottom: 10 }} />
                             <p style={{ color: 'white', margin: 0, fontWeight: 'bold' }}>BAYAR</p>
                           </Grid>
-                          : <Grid style={{ backgroundColor: '#8eb52f', width: 90, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 10, borderRadius: 10 }} onClick={this.handleBayar}>
+                          : <Grid style={{ backgroundColor: '#8eb52f', width: 90, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 10, borderRadius: 10, cursor: 'pointer' }} onClick={this.handleBayar}>
                             <img src={require('../asset/bayar.png')} height={38} width={50} alt="logo-bayar" style={{ marginBottom: 10 }} />
                             <p style={{ color: 'white', margin: 0, fontWeight: 'bold' }}>BAYAR</p>
                           </Grid>
@@ -320,7 +429,7 @@ export default class POS extends Component {
                       onChange={this.handleChange('noReferensi')}
                       margin="normal"
                       variant="outlined"
-                      style={{ marginBottom: 15, marginLeft: 20, width: 500 }}
+                      style={{ marginBottom: 15, marginLeft: 20, width: 400 }}
                       disabled={this.state.proses}
                     />
                     : <TextField
@@ -330,7 +439,7 @@ export default class POS extends Component {
                       onChange={this.handleChange('sendOnline')}
                       margin="normal"
                       variant="outlined"
-                      style={{ marginBottom: 15, marginLeft: 20, width: 500 }}
+                      style={{ marginBottom: 15, marginLeft: 20, width: 400 }}
                       disabled={this.state.proses}
                     />
                 }
@@ -461,3 +570,17 @@ export default class POS extends Component {
     )
   }
 }
+
+const mapStateToProps = ({ dataPackageMemberships, dataAllStaff }) => {
+  return {
+    dataPackageMemberships,
+    dataAllStaff
+  }
+}
+
+const mapDispatchToProps = {
+  fetchDataPackageMemberships,
+  fetchDataStaff
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(POS)

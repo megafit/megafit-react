@@ -16,3 +16,21 @@ export function fetchDataCategoryMemberships(){
     type:'FETCH_DATA_CATEGORY_MEMBERSHIPS'
   }
 }
+
+export function fetchDataPackageMemberships(){
+  return{
+    type:'FETCH_DATA_PACKAGE_MEMBERSHIPS'
+  }
+}
+
+export function fetchDataStaff(){
+  return{
+    type:'FETCH_DATA_STAFF'
+  }
+}
+
+export function fetchDataMember(){
+  return{
+    type:'FETCH_DATA_MEMBER'
+  }
+}
