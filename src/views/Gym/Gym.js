@@ -123,7 +123,7 @@ class ListProduct extends Component {
           <TabPanel value={this.state.value} index={0} style={{ height: '85vh' }}>
             <Grid style={{ width: '100%', display: 'flex', alignItems: 'center', marginBottom: 15, justifyContent: 'space-between' }}>
               <Typography style={{ fontSize: 30, }}>Daftar Produk</Typography>
-              <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={() => this.props.history.push('/gym/addProduct')}>
+              <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={() => this.props.history.push('/gym/add-product')}>
                 tambah baru
             </Button>
             </Grid>

@@ -92,7 +92,7 @@ class CardSubCategoryMembership extends Component {
   }
 
   edit = () => {
-    this.props.history.push('/gym/addProduct', { data: this.props.data })
+    this.props.history.push('/gym/add-product', { data: this.props.data })
   }
 
   render() {

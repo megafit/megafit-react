@@ -6,8 +6,9 @@ import Cookies from 'js-cookie';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
-// import Home from './views/Home';
 import Login from './views/Login';
+import Home from './views/Home';
+import Paket from './views/Paket';
 import Profil from './views/Profil';
 import Kelas from './views/Kelas';
 import Checkin from './views/Checkin';
@@ -15,6 +16,8 @@ import Anggota from './views/Anggota';
 import Gym from './views/Gym/Gym';
 import AddProduct from './views/Gym/AddProduct';
 import POS from './views/POS';
+import PT from './views/PT/PT';
+import DetailUserPT from './views/PT/DetailUserJadwalPT';
 
 const useStyles = makeStyles(theme => ({
   toolbar: {
@@ -34,13 +37,17 @@ function Routes(props) {
       <div className={classes.toolbar} />
       <Switch>
         <Route exact path="/" component={Login} />
-        <AuthenticatedRoute path="/home" component={Profil} />
+        <AuthenticatedRoute path="/home/paket" component={Paket} />
+        <AuthenticatedRoute path="/home" component={Home} />
+        <AuthenticatedRoute path="/profil" component={Profil} />
         <AuthenticatedRoute path="/kelas" component={Kelas} />
         <AuthenticatedRoute path="/checkin" component={Checkin} />
         <AuthenticatedRoute path="/anggota" component={Anggota} />
-        <AuthenticatedRoute path="/gym/addProduct" component={AddProduct} />
+        <AuthenticatedRoute path="/gym/add-product" component={AddProduct} />
         <AuthenticatedRoute path="/gym" component={Gym} />
         <AuthenticatedRoute path="/pos" component={POS} />
+        <AuthenticatedRoute path="/pt/detail-user" component={DetailUserPT} />
+        <AuthenticatedRoute path="/pt" component={PT} />
       </Switch>
     </main>
   );

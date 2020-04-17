@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ButtonAppBar(props) {
+function AppNavBar(props) {
   const classes = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -67,6 +67,10 @@ function ButtonAppBar(props) {
     props.setUser({ userId: null, roleId: null, fullname: "", nickname: "" })
   }
 
+  const profil = () => {
+    props.history.push("/profil")
+  }
+
   return (
     <Grid className={classes.root}>
       <AppBar position="fixed" style={{ padding: 0 }}>
@@ -82,7 +86,7 @@ function ButtonAppBar(props) {
               <p style={{ marginRight: 10, color: "black" }}>{props.fullname}</p>
               <KeyboardArrowDownIcon style={{ fontSize: 30, color: "#BDBDBD", }} />
             </Button>
-            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{ width: 150, alignSelf: 'flex-end' }} >
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{ width: 200, alignSelf: 'flex-end' }} >
               {({ TransitionProps, placement }) => (
                 <Grow
                   {...TransitionProps}
@@ -91,6 +95,10 @@ function ButtonAppBar(props) {
                   <Paper>
                     <ClickAwayListener onClickAway={handleClose}>
                       <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
+                        {
+                          props.roleId === 4 &&
+                            <MenuItem onClick={profil}>Profile</MenuItem>
+                        }
                         <MenuItem onClick={signout}>Signout</MenuItem>
                       </MenuList>
                     </ClickAwayListener>
@@ -109,10 +117,11 @@ const mapDispatchToProps = {
   setUser
 }
 
-const mapStateToProps = ({ fullname }) => {
+const mapStateToProps = ({ fullname, roleId }) => {
   return {
-    fullname
+    fullname,
+    roleId
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ButtonAppBar))
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AppNavBar))

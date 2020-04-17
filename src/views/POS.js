@@ -262,6 +262,7 @@ class POS extends Component {
                           ? <>
                             <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, opacity: 0.2 }} />
                             <img src={require('../asset/cuti.png')} height={100} width={100} alt="logo-cuti" style={{ opacity: 0.2 }} />
+                            <img src={require('../asset/upgrade.png')} height={100} width={100} alt="logo-upgrade" style={{ opacity: 0.2 }} />
                           </>
                           : <>
                             {
@@ -270,6 +271,7 @@ class POS extends Component {
                                 : <img src={require('../asset/pos1.png')} height={100} width={100} alt="logo-pos1" style={{ marginRight: 10, cursor: 'pointer' }} onClick={this.perpanjangPaket} />
                             }
                             <img src={require('../asset/cuti.png')} height={100} width={100} alt="logo-cuti" style={{ cursor: 'pointer' }} />
+                            <img src={require('../asset/upgrade.png')} height={100} width={100} alt="logo-upgrade" style={{ cursor: 'pointer' }} />
                           </>
                       }
 

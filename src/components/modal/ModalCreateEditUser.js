@@ -294,7 +294,7 @@ export default class ModalCreateEditUser extends Component {
                             variant="inline"
                             format="MM/dd/yyyy"
                             margin="normal"
-                            id="tnaggalLahir"
+                            id="tanggalLahir"
                             label="Tanggal Lahir"
                             value={this.state.dateOfBirth}
                             onChange={this.handleDateChange('dateOfBirth')}

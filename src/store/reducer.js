@@ -1,12 +1,15 @@
 const defaultState = {
   userId: null,
-  roleId: null,// 4 member
+  roleId: null, // 1 superadmin, 2 admin, 3 staff, 4 member
+  positionId: null, // 1 superadmin, 2 customer service, 3 pt
   fullname: "",
   nickname: "",
   loading: false,
+  lockerKey: null,
   dataSubCategoryMemberships: [],
   dataCategoryMemberships: [],
-  dataPackageMemberships: []
+  dataPackageMemberships: [],
+  dataUserDetail: null
 }
 
 function reducer(state = defaultState, action) {
@@ -18,6 +21,15 @@ function reducer(state = defaultState, action) {
         roleId: action.payload.roleId,
         fullname: action.payload.fullname,
         nickname: action.payload.nickname,
+        positionId: action.payload.positionId
+      }
+    }
+    case 'FETCH_DATA_USER_DETAIL_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        dataUserDetail: action.payload.dataUserDetail,
+        lockerKey: action.payload.lockerKey
       }
     }
     case 'FETCH_DATA_SUB_CATEGORY_MEMBERSHIPS_SUCCESS': {

@@ -34,3 +34,10 @@ export function fetchDataMember(){
     type:'FETCH_DATA_MEMBER'
   }
 }
+
+export function fetchDataUserDetail(payload){
+  return{
+    type:'FETCH_DATA_USER_DETAIL',
+    payload
+  }
+}

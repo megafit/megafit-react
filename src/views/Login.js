@@ -62,7 +62,8 @@ class Login extends Component {
           userId: data.data.userId,
           roleId: data.data.roleId,
           fullname: data.data.fullname,
-          nickname: data.data.nickname
+          nickname: data.data.nickname,
+          positionId: data.data.positionId
         }
 
         this.props.setUser(dataUser)

@@ -93,7 +93,7 @@ export default class Kelas extends Component {
         let { data } = await API.get(`/users/${this.state.searchUserId}?idMember=${this.state.searchUserId}`, { headers: { token } })
         data.data.lockerKey = data.lockerKey || null
         data.data.checkId = data.checkId || null
-        console.log(data)
+
         if (data.data.tblMember) {
           data.data.tblMember.sisaHari = this.cekMembershipExpired(data.data.tblMember)
           this.setNotifColor(data.data.tblMember)

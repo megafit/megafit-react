@@ -11,7 +11,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
-import EventNoteOutlinedIcon from '@material-ui/icons/EventNoteOutlined';
+// import EventNoteOutlinedIcon from '@material-ui/icons/EventNoteOutlined';
 
 import { setUser } from '../store/action';
 
@@ -28,7 +28,7 @@ function Navsidebar(props) {
     if (Cookies.get('MEGAFIT_TKN')) {
       API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
-          props.setUser({ userId: data.data.userId, roleId: data.data.roleId, fullname: data.data.fullname, nickname: data.data.nickname })
+          props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId })
         })
         .catch(err => {
           console.log(err)
@@ -49,6 +49,12 @@ function Navsidebar(props) {
       setSelectedIndex(3)
     } else if (props.location.pathname === '/anggota') {
       setSelectedIndex(4)
+    }else if (props.location.pathname === '/gym') {
+      setSelectedIndex(5)
+    }else if (props.location.pathname === '/pos') {
+      setSelectedIndex(6)
+    }else if (props.location.pathname === '/pt') {
+      setSelectedIndex(7)
     }
   }, [props.location.pathname])
 
@@ -88,12 +94,12 @@ function Navsidebar(props) {
                         <ListItemText primary="Beranda" style={{ fontSize: 20, color: "white" }} />
                       </ListItem>
                     </Link>
-                    <Link to='/kelas' onClick={event => handleListItemClick(event, 2)} style={{ textDecoration: "none" }}>
+                    {/* <Link to='/kelas' onClick={event => handleListItemClick(event, 2)} style={{ textDecoration: "none" }}>
                       <ListItem button selected={selectedIndex === 2} style={{ display: 'flex', justifyContent: 'center', borderTopLeftRadius: 50, borderBottomLeftRadius: 50, paddingLeft: 30, marginBottom: 5 }}>
                         <EventNoteOutlinedIcon style={{ fontSize: 30, color: "white", marginRight: 10 }} />
                         <ListItemText primary="Kelas" style={{ fontSize: 20, color: "white" }} />
                       </ListItem>
-                    </Link>
+                    </Link> */}
                   </List>
                 </>
                 : <>
@@ -117,6 +123,11 @@ function Navsidebar(props) {
                     <Link to='/pos' onClick={event => handleListItemClick(event, 6)} style={{ textDecoration: "none" }}>
                       <ListItem button selected={selectedIndex === 6} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
                         <img src={require('../asset/POS.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pos" />
+                      </ListItem>
+                    </Link>
+                    <Link to='/pt' onClick={event => handleListItemClick(event, 7)} style={{ textDecoration: "none" }}>
+                      <ListItem button selected={selectedIndex === 7} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                        <img src={require('../asset/menu_pt.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pt" />
                       </ListItem>
                     </Link>
                   </List>

@@ -7,8 +7,27 @@ import { API } from '../config/API';
 const api = store => next => async action => {
   let token = Cookies.get('MEGAFIT_TKN');
 
+  if (action.type === 'FETCH_DATA_USER_DETAIL') {
+    try {
+      next({
+        type: 'FETCH_DATA_LOADING'
+      })
 
-  if (action.type === 'FETCH_DATA_SUB_CATEGORY_MEMBERSHIPS') {
+      let getData = await API.get(`/users/${action.payload}`, { headers: { token } })
+
+      next({
+        type: 'FETCH_DATA_USER_DETAIL_SUCCESS',
+        payload: { dataUserDetail: getData.data.data, lockerKey: getData.data.lockerKey }
+      })
+
+    } catch (err) {
+      console.log(err)
+      next({
+        type: 'FETCH_DATA_ERROR',
+        payload: err
+      })
+    }
+  } else if (action.type === 'FETCH_DATA_SUB_CATEGORY_MEMBERSHIPS') {
     try {
       next({
         type: 'FETCH_DATA_LOADING'
