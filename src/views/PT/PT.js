@@ -8,13 +8,53 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 import CardHariSesiPT from '../../components/CardHariSesiPT';
 
+import { fetchDataClassPt } from '../../store/action';
 
 class PT extends Component {
   state = {
     openPopover: false,
     anchorEl: null,
-    weekSelected: 32,
-    days: ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU", "MINGGU"]
+    weekSelected: 0,
+    week: []
+  }
+
+  async componentDidMount() {
+    let week = []
+    for (let i = this.getNumberOfWeek(new Date()); i < 53; i++) {
+      week.push(i)
+    }
+
+    let date = new Date(new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() - (new Date().getDay() - 1))
+
+    await this.props.fetchDataClassPt({ date, week: this.getNumberOfWeek(new Date()), year: new Date().getFullYear() })
+
+    this.setState({
+      week,
+      weekSelected: this.getNumberOfWeek(new Date())
+    })
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.weekSelected !== this.state.weekSelected) {
+      if (prevState.weekSelected !== 0) {
+        let date = new Date(new Date().getFullYear(),
+          new Date().getMonth(),
+          new Date().getDate() - (new Date().getDay() - 1))
+
+        let selisihWeek = this.state.weekSelected - this.getNumberOfWeek(date)
+
+        let newDate = new Date(new Date(date).getFullYear(),
+          new Date(date).getMonth(),
+          new Date(date).getDate() + (selisihWeek * 7))
+
+        this.handleClose()
+
+        await this.props.fetchDataClassPt({ date: newDate, week: this.state.weekSelected, year: new Date(newDate).getFullYear() })
+
+      }
+    }
   }
 
   handleClick = (event) => {
@@ -35,7 +75,39 @@ class PT extends Component {
     this.setState({ [name]: event.target.value });
   };
 
+  getNumberOfWeek = date => {
+    let theDay = date
+    var target = new Date(theDay);
+    var dayNr = (new Date(theDay).getDay() + 6) % 7;
+
+    target.setDate(target.getDate() - dayNr + 3);
+
+    var jan4 = new Date(target.getFullYear(), 0, 4);
+    var dayDiff = (target - jan4) / 86400000;
+    var weekNr = 1 + Math.ceil(dayDiff / 7);
+
+    return weekNr;
+  }
+
+  thisWeek = () => {
+    this.setState({
+      weekSelected: this.getNumberOfWeek(new Date())
+    })
+  }
+
+  changeWeek = () => {
+    this.setState({
+      weekSelected: this.getNumberOfWeek(new Date()) + 1
+    })
+  }
+
   render() {
+    function getDate(data) {
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+
+      if (data[0]) return `${new Date(data[0].date).getDate()} ${months[new Date(data[0].date).getMonth()]} - ${new Date(data[data.length - 1].date).getDate()} ${months[new Date(data[data.length - 1].date).getMonth()]}`
+    }
+
     return (
       <>
         <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
@@ -45,9 +117,9 @@ class PT extends Component {
             <p style={{ margin: 0, fontSize: 20, marginRight: 20 }}>Jadwal Kelas</p>
             <Grid style={{ display: 'flex', alignItems: 'center' }}>
               <DateRangeOutlinedIcon />
-              <p style={{ margin: 0 }}>15 oktober - 22 oktober</p>
+              <p style={{ margin: 0 }}>{getDate(this.props.dataClassPt)}</p>
               <Grid style={{ border: '0.1px solid #e1e1e1', padding: '5px 10px', borderRadius: 10, marginLeft: 20, display: 'flex', alignItems: 'center', width: 150, justifyContent: 'space-between', cursor: 'pointer' }} onClick={this.handleClick}>
-                week 32
+                week {this.state.weekSelected}
                 <ArrowDropDownIcon />
               </Grid>
             </Grid>
@@ -55,11 +127,11 @@ class PT extends Component {
 
           <Grid container spacing={3}>
             {
-              this.state.days.map((day, index) =>
-                <CardHariSesiPT key={index} data={day}/> 
+              this.props.dataClassPt.map((classPT, index) =>
+                <CardHariSesiPT key={index} data={classPT} weekSelected={this.state.weekSelected} />
               )
             }
-            
+
           </Grid>
         </Grid>
 
@@ -78,8 +150,8 @@ class PT extends Component {
           }}
         >
           <Grid style={{ width: 200, padding: 10 }} >
-            <Button style={{ color: '#70bc6a', width: '100%', marginBottom: 10 }}> Minggu ini </Button>
-            <Button style={{ color: '#70bc6a', width: '100%', marginBottom: 10 }}> Minggu depan </Button>
+            <Button style={{ color: '#70bc6a', width: '100%', marginBottom: 10 }} onClick={this.thisWeek}> Minggu ini </Button>
+            <Button style={{ color: '#70bc6a', width: '100%', marginBottom: 10 }} onClick={this.changeWeek}> Minggu depan </Button>
             <p style={{ margin: 0 }}>Custom</p>
             <Select
               variant="outlined"
@@ -89,12 +161,15 @@ class PT extends Component {
               onChange={this.handleChange('weekSelected')}
               style={{ width: '100%', padding: 0 }}
             >
-              <MenuItem value={32} >week 32</MenuItem>
-              <MenuItem value={33} >week 33</MenuItem>
+              {
+                this.state.week.map(week =>
+                  <MenuItem value={week} key={week}>week {week}</MenuItem>
+                )
+              }
             </Select>
-            <Grid style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
-              <Button style={{ width: 80 }}>Batal</Button>
-              <Button style={{ width: 80, color: 'white', backgroundColor: '#57b150' }}>Simpan</Button>
+            <Grid style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
+              <Button style={{ width: 80 }} onClick={this.handleClose}>Batal</Button>
+              {/* <Button style={{ width: 80, color: 'white', backgroundColor: '#57b150' }}>Simpan</Button> */}
             </Grid>
           </Grid>
         </Popover>
@@ -104,10 +179,16 @@ class PT extends Component {
   }
 }
 
-const mapStateToProps = ({ nickname, positionId }) => {
+const mapDispatchToProps = {
+  fetchDataClassPt
+}
+
+const mapStateToProps = ({ nickname, positionId, dataClassPt }) => {
   return {
     nickname,
-    positionId
+    positionId,
+    dataClassPt
   }
 }
-export default connect(mapStateToProps)(PT)
+
+export default connect(mapStateToProps, mapDispatchToProps)(PT)

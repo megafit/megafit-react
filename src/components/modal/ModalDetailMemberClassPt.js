@@ -5,7 +5,7 @@ import { Modal, Backdrop, Fade, Grid, Button, Typography, IconButton } from '@ma
 import CloseIcon from '@material-ui/icons/Close';
 // import { API } from '../config/API';
 
-export default class ModalStartPTSession extends Component {
+export default class ModalDetailMemberClassPt extends Component {
   state = {
     date: '',
     time: ''

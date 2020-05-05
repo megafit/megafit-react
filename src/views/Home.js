@@ -20,7 +20,7 @@ import AddIcon from '@material-ui/icons/Add';
 import InstagramIcon from '@material-ui/icons/Instagram';
 
 import ModalKetentuanSyarat from '../components/modal/ModalKetentuanSyarat'
-import ModalForm from '../components/modal/ModalForm';
+import ModalFormMember from '../components/modal/ModalFormMember';
 import ModalSelectTimePT from '../components/modal/ModalSelectTimePT';
 import ModalStartPTSession from '../components/modal/ModalStartPTSession';
 
@@ -37,7 +37,7 @@ class Home extends Component {
     openModalKetentuanSyarat: false,
     openModalForm: false,
     openModalSelectTimePT: false,
-    openModalStartPTSession: true,
+    openModalStartPTSession: false,
 
     hasJadwalkan: false
   }
@@ -71,9 +71,13 @@ class Home extends Component {
   };
 
   handleModalKetentuanSyarat = () => {
-    this.setState({
-      openModalKetentuanSyarat: !this.state.openModalKetentuanSyarat
-    })
+    if(!this.props.hasConfirmTermAndCondition){
+      this.setState({
+        openModalKetentuanSyarat: !this.state.openModalKetentuanSyarat
+      })
+    }else{
+      this.handleModalSelectTimePT()
+    }
   }
 
   handleModalForm = () => {
@@ -337,7 +341,7 @@ class Home extends Component {
         }
 
         {
-          this.state.openModalForm && <ModalForm open={this.state.openModalForm} close={this.handleModalForm} next={this.nextToSelectTime} />
+          this.state.openModalForm && <ModalFormMember open={this.state.openModalForm} close={this.handleModalForm} next={this.nextToSelectTime} />
         }
 
         {
@@ -357,12 +361,13 @@ const mapDispatchToProps = {
   fetchDataUserDetail
 }
 
-const mapStateToProps = ({ userId, nickname, dataUserDetail, lockerKey }) => {
+const mapStateToProps = ({ userId, nickname, dataUserDetail, lockerKey, hasConfirmTermAndCondition }) => {
   return {
     userId,
     nickname,
     dataUserDetail,
-    lockerKey
+    lockerKey,
+    hasConfirmTermAndCondition
   }
 }
 

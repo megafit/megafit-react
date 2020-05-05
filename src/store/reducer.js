@@ -4,12 +4,14 @@ const defaultState = {
   positionId: null, // 1 superadmin, 2 customer service, 3 pt
   fullname: "",
   nickname: "",
+  hasConfirmTermAndCondition: false,
   loading: false,
   lockerKey: null,
   dataSubCategoryMemberships: [],
   dataCategoryMemberships: [],
   dataPackageMemberships: [],
-  dataUserDetail: null
+  dataUserDetail: null,
+  dataClassPt: []
 }
 
 function reducer(state = defaultState, action) {
@@ -21,7 +23,8 @@ function reducer(state = defaultState, action) {
         roleId: action.payload.roleId,
         fullname: action.payload.fullname,
         nickname: action.payload.nickname,
-        positionId: action.payload.positionId
+        positionId: action.payload.positionId,
+        hasConfirmTermAndCondition: action.payload.hasConfirmTermAndCondition
       }
     }
     case 'FETCH_DATA_USER_DETAIL_SUCCESS': {
@@ -65,6 +68,20 @@ function reducer(state = defaultState, action) {
         ...state,
         loading: false,
         dataAllMember: action.payload.dataMember
+      }
+    }
+    case 'FETCH_DATA_CLASS_PT_SUCCESS': {
+      return {
+        ...state,
+        loading: false,
+        dataClassPt: action.payload.dataClassPt
+      }
+    }
+    case 'FETCH_DATA_CLASS_PT_LOADING': {
+      return {
+        ...state,
+        loading: true,
+        dataClassPt: []
       }
     }
     case 'FETCH_DATA_LOADING': {

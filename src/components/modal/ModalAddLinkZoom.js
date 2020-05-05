@@ -1,14 +1,21 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie';
 
-import { Modal, Backdrop, Fade, Grid, Button, Typography, IconButton } from '@material-ui/core';
+import { Modal, Backdrop, Fade, Grid, Button, Typography, IconButton, TextField } from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
-// import { API } from '../config/API';
+
+import { API } from '../../config/API';
+
+import swal from 'sweetalert';
 
 export default class ModalAddLinkZoom extends Component {
   state = {
-    date: '',
-    time: ''
+    linkZoom: ''
+  }
+
+  componentDidMount() {
+    this.setState({ linkZoom: this.props.dataClass.linkZoom || '' })
   }
 
   handleChange = name => event => {
@@ -17,6 +24,16 @@ export default class ModalAddLinkZoom extends Component {
 
   cancel = () => {
     this.props.close()
+  }
+
+  submit = async () => {
+    try {
+      let token = Cookies.get('MEGAFIT_TKN')
+      await API.put(`/classes/${this.props.dataClass.classPtId}?classPT=true`, { linkZoom: this.state.linkZoom }, { headers: { token } })
+      swal("Link zoom berhasil ditambahkan", "", "success")
+    } catch (err) {
+      swal("please try again")
+    }
   }
 
   render() {
@@ -57,17 +74,24 @@ export default class ModalAddLinkZoom extends Component {
               </img>
 
               <Grid style={{ padding: 30, paddingTop: 10 }}>
-                <Typography style={{ fontSize: 25, textAlign: 'center' }}>
-                  Klik <b>MULAI</b> untuk memulai sesi atau klik <b>BATAL</b> untuk membatalkan sesi
-                </Typography>
-                <p style={{ margin: 0, textAlign: 'center', fontStyle: 'italic' }}>pastikan internet kamu lancar</p>
+                <Typography style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>Masukan link zoom</Typography>
+                <TextField
+                  id="linkZoom"
+                  label="Link Zoom"
+                  value={this.state.linkZoom}
+                  onChange={this.handleChange('linkZoom')}
+                  margin="normal"
+                  variant="outlined"
+                  style={{ marginBottom: 15, width: '100%' }}
+                  disabled={this.state.proses}
+                />
 
-                <Grid style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+                <Grid style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
                   <Button style={{ width: 130, marginRight: 20 }} onClick={this.cancel}>
                     Batal
                 </Button>
-                  <Button style={{ backgroundColor: '#d8d8d8', width: 130 }} onClick={this.props.jadwalkan}>
-                    Mulai
+                  <Button style={{ backgroundColor: '#d8d8d8', width: 130 }} onClick={this.submit}>
+                    Simpan
                 </Button>
                 </Grid>
               </Grid>

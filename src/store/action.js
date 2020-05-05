@@ -41,3 +41,10 @@ export function fetchDataUserDetail(payload){
     payload
   }
 }
+
+export function fetchDataClassPt(payload){
+  return{
+    type:'FETCH_DATA_CLASS_PT',
+    payload
+  }
+}

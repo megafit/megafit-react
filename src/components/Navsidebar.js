@@ -28,7 +28,7 @@ function Navsidebar(props) {
     if (Cookies.get('MEGAFIT_TKN')) {
       API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
-          props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId })
+          props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId, hasConfirmTermAndCondition: data.hasConfirmTermAndCondition })
         })
         .catch(err => {
           console.log(err)
