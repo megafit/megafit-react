@@ -24,7 +24,7 @@ import ModalFormMember from '../components/modal/ModalFormMember';
 import ModalSelectTimePT from '../components/modal/ModalSelectTimePT';
 import ModalStartPTSession from '../components/modal/ModalStartPTSession';
 
-import { fetchDataUserDetail } from '../store/action';
+import { fetchDataUserDetail, fetchDataMyJoinedClassPt } from '../store/action';
 
 class Home extends Component {
   state = {
@@ -39,7 +39,10 @@ class Home extends Component {
     openModalSelectTimePT: false,
     openModalStartPTSession: false,
 
-    hasJadwalkan: false
+    hasJadwalkan: false,
+    classPt: [],
+    myJoinedClassPt: [],
+    hasJoinedClassPt: false
   }
 
   async componentDidMount() {
@@ -56,10 +59,35 @@ class Home extends Component {
         this.fetchData()
       }
     }
+
+    if (prevProps.dataMyJoinedClassPt !== this.props.dataMyJoinedClassPt) {
+      console.log("MASUK LAGI")
+      let closestClass = this.props.dataMyJoinedClassPt[0]
+      if (closestClass) {
+        this.setState({
+          hasJoinedClassPt: true
+        })
+      } else {
+        this.setState({
+          hasJoinedClassPt: false
+        })
+      }
+      // if (new Date().getDate() === closestClass.tblClassPt.date && this.getNumberOfWeek() === closestClass.tblClassPt.week &&
+      //   new Date().getMonth() + 1 === closestClass.tblClassPt.month &&
+      //   new Date().getFullYear() === closestClass.tblClassPt.year &&
+      //   new Date().getHours() >= (Number(closestClass.tblClassPt.time.slice(0, 2)) - 1) &&
+      //   new Date().getHours() < (Number(closestClass.tblClassPt.time.slice(0, 2)) )
+      // ) {
+      // this.setState({
+      //   hasJoinedClassPt: true
+      // })
+      // }
+    }
   }
 
   fetchData = async () => {
     await this.props.fetchDataUserDetail(this.props.userId)
+    await this.props.fetchDataMyJoinedClassPt(this.getDate())
   }
 
   handleChange = name => event => {
@@ -71,11 +99,11 @@ class Home extends Component {
   };
 
   handleModalKetentuanSyarat = () => {
-    if(!this.props.hasConfirmTermAndCondition){
+    if (!this.props.hasConfirmTermAndCondition) {
       this.setState({
         openModalKetentuanSyarat: !this.state.openModalKetentuanSyarat
       })
-    }else{
+    } else {
       this.handleModalSelectTimePT()
     }
   }
@@ -93,7 +121,6 @@ class Home extends Component {
   }
 
   handleModalStartPTSession = () => {
-    console.log("kepanggil")
     this.setState({
       openModalStartPTSession: !this.state.openModalStartPTSession
     })
@@ -116,6 +143,31 @@ class Home extends Component {
     this.handleModalSelectTimePT()
   }
 
+  getDate = () => {
+    let date = new Date().getDate()
+    let month = new Date().getMonth() + 1
+    let year = new Date().getFullYear()
+
+    if (date < 10) date = `0${date}`
+    if (month < 10) month = `0${month}`
+
+    return `${year}-${month}-${date}`
+  }
+
+  getNumberOfWeek = () => {
+    let theDay = new Date()
+    var target = new Date();
+    var dayNr = (new Date(theDay).getDay() + 6) % 7;
+
+    target.setDate(target.getDate() - dayNr + 3);
+
+    var jan4 = new Date(target.getFullYear(), 0, 4);
+    var dayDiff = (target - jan4) / 86400000;
+    var weekNr = 1 + Math.ceil(dayDiff / 7);
+
+    return weekNr;
+  }
+
   render() {
     function formatDate(args) {
       let newDate = new Date(args)
@@ -123,6 +175,15 @@ class Home extends Component {
       let month = newDate.getMonth() + 1 < 10 ? `0${newDate.getMonth() + 1}` : newDate.getMonth() + 1
 
       return `${date}/${month}/${newDate.getFullYear()}`
+    }
+
+    function getTimeCloestClass(args) {
+      let day = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"]
+      let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+      let newDate = new Date(args.tblClassPt.year, args.tblClassPt.month - 1, args.tblClassPt.date)
+
+      return `${day[newDate.getDay()]} ${months[args.tblClassPt.month - 1]} ${args.tblClassPt.date} | ${args.tblClassPt.time.slice(0, 5)}`
     }
 
     // function cekSisaHari(args) {
@@ -196,19 +257,21 @@ class Home extends Component {
                       </Grid>
 
                       {
-                        this.state.hasJadwalkan
+                        this.state.hasJoinedClassPt
                           ? <Grid style={{ marginLeft: 10 }}>
                             <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalStartPTSession}>
                               mulai / batal
                         </Button>
                             <Grid style={{ display: 'flex' }}>
-                              <p style={{ margin: 0, color: 'white' }}>SENIN Jan 13 | 09:00</p>
+                              {
+                                this.props.dataMyJoinedClassPt[0] && <p style={{ margin: 0, color: 'white' }}>{getTimeCloestClass(this.props.dataMyJoinedClassPt[0])}</p>
+                              }
                               {/* <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.ptSession)}</p> */}
                             </Grid>
                           </Grid>
                           : <Grid style={{ marginLeft: 10 }}>
-                            <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalKetentuanSyarat}>
-                              mulai sesi
+                            <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalKetentuanSyarat} disabled={this.props.dataUserDetail && this.props.dataUserDetail.tblMember.ptSession === 0}>
+                              pilih sesi
                           </Button>
                             <Grid style={{ display: 'flex' }}>
                               <p style={{ margin: 0, color: 'white' }}>aktif s/d</p>
@@ -349,7 +412,7 @@ class Home extends Component {
         }
 
         {
-          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} />
+          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} />
         }
 
       </>
@@ -358,16 +421,18 @@ class Home extends Component {
 }
 
 const mapDispatchToProps = {
-  fetchDataUserDetail
+  fetchDataUserDetail,
+  fetchDataMyJoinedClassPt
 }
 
-const mapStateToProps = ({ userId, nickname, dataUserDetail, lockerKey, hasConfirmTermAndCondition }) => {
+const mapStateToProps = ({ userId, nickname, dataUserDetail, lockerKey, hasConfirmTermAndCondition, dataMyJoinedClassPt }) => {
   return {
     userId,
     nickname,
     dataUserDetail,
     lockerKey,
-    hasConfirmTermAndCondition
+    hasConfirmTermAndCondition,
+    dataMyJoinedClassPt
   }
 }
 

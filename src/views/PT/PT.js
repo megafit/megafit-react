@@ -1,24 +1,27 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
-import { Grid, Popover, Button, Select, MenuItem } from '@material-ui/core';
+import { Grid, Popover, Button, Select, MenuItem, Tooltip } from '@material-ui/core';
 
 import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import CardHariSesiPT from '../../components/CardHariSesiPT';
 
-import { fetchDataClassPt } from '../../store/action';
+import { fetchDataClassPt, resetClassPt } from '../../store/action';
 
 class PT extends Component {
   state = {
     openPopover: false,
     anchorEl: null,
     weekSelected: 0,
-    week: []
+    week: [],
+    loading: false,
   }
 
   async componentDidMount() {
+    this.props.resetClassPt()
     let week = []
     for (let i = this.getNumberOfWeek(new Date()); i < 53; i++) {
       week.push(i)
@@ -36,25 +39,28 @@ class PT extends Component {
     })
   }
 
-  async componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevState.weekSelected !== this.state.weekSelected) {
       if (prevState.weekSelected !== 0) {
-        let date = new Date(new Date().getFullYear(),
-          new Date().getMonth(),
-          new Date().getDate() - (new Date().getDay() - 1))
-
-        let selisihWeek = this.state.weekSelected - this.getNumberOfWeek(date)
-
-        let newDate = new Date(new Date(date).getFullYear(),
-          new Date(date).getMonth(),
-          new Date(date).getDate() + (selisihWeek * 7))
-
-        this.handleClose()
-
-        await this.props.fetchDataClassPt({ date: newDate, week: this.state.weekSelected, year: new Date(newDate).getFullYear() })
-
+        this.refresh()
       }
     }
+  }
+
+  fetchDataClassPt = async () => {
+    let date = new Date(new Date().getFullYear(),
+      new Date().getMonth(),
+      new Date().getDate() - (new Date().getDay() - 1))
+
+    let selisihWeek = this.state.weekSelected - this.getNumberOfWeek(date)
+
+    let newDate = new Date(new Date(date).getFullYear(),
+      new Date(date).getMonth(),
+      new Date(date).getDate() + (selisihWeek * 7))
+
+    this.handleClose()
+
+    await this.props.fetchDataClassPt({ date: newDate, week: this.state.weekSelected, year: new Date(newDate).getFullYear() })
   }
 
   handleClick = (event) => {
@@ -101,6 +107,12 @@ class PT extends Component {
     })
   }
 
+  refresh = async () => {
+    this.setState({ loading: true })
+    await this.fetchDataClassPt()
+    this.setState({ loading: false })
+  }
+
   render() {
     function getDate(data) {
       const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
@@ -113,8 +125,14 @@ class PT extends Component {
         <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
           <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo cek jadwalnya.</p>
 
+
           <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <p style={{ margin: 0, fontSize: 20, marginRight: 20 }}>Jadwal Kelas</p>
+            <Grid style={{ display: 'flex', alignItems: 'center' }}>
+              <p style={{ margin: 0, fontSize: 20, marginRight: 5 }}>Jadwal Kelas</p>
+              <Tooltip title="Refresh" aria-label="refresh" placement="bottom-start">
+                <RefreshIcon style={{ cursor: 'pointer' }} onClick={() => this.refresh()} />
+              </Tooltip>
+            </Grid>
             <Grid style={{ display: 'flex', alignItems: 'center' }}>
               <DateRangeOutlinedIcon />
               <p style={{ margin: 0 }}>{getDate(this.props.dataClassPt)}</p>
@@ -125,14 +143,19 @@ class PT extends Component {
             </Grid>
           </Grid>
 
-          <Grid container spacing={3}>
-            {
-              this.props.dataClassPt.map((classPT, index) =>
-                <CardHariSesiPT key={index} data={classPT} weekSelected={this.state.weekSelected} />
-              )
-            }
+          {
+            this.state.loading 
+              ? <img src={require('../../asset/loading.gif')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 25 }} height={150} width={150} alt="loading" />
+              : <Grid container spacing={3}>
+                {
+                  this.props.dataClassPt.map((classPT, index) =>
+                    <CardHariSesiPT key={index} data={classPT} weekSelected={this.state.weekSelected} fetchDataClassPt={this.fetchDataClassPt} refresh={this.refresh}/>
+                  )
+                }
 
-          </Grid>
+              </Grid>
+          }
+
         </Grid>
 
 
@@ -180,11 +203,13 @@ class PT extends Component {
 }
 
 const mapDispatchToProps = {
-  fetchDataClassPt
+  fetchDataClassPt,
+  resetClassPt
 }
 
-const mapStateToProps = ({ nickname, positionId, dataClassPt }) => {
+const mapStateToProps = ({ loading, nickname, positionId, dataClassPt }) => {
   return {
+    loading,
     nickname,
     positionId,
     dataClassPt

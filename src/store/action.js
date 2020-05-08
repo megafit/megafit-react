@@ -48,3 +48,16 @@ export function fetchDataClassPt(payload){
     payload
   }
 }
+
+export function resetClassPt(){
+  return{
+    type:'RESET_CLASS_PT'
+  }
+}
+
+export function fetchDataMyJoinedClassPt(payload){
+  return{
+    type:'FETCH_DATA_MY_JOINED_CLASS_PT',
+    payload
+  }
+}

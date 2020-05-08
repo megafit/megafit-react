@@ -125,13 +125,12 @@ const api = store => next => async action => {
   } else if (action.type === 'FETCH_DATA_CLASS_PT') {
     try {
       next({
-        type: 'FETCH_DATA_CLASS_PT_LOADING'
+        type: 'FETCH_DATA_LOADING'
       })
 
-console.log(">>>>>>>>>>>>>>>>>>> MASUK NIH")
       let data = []
 
-      let getData = await API.get(`/classes?classPT=true&week=${action.payload.week}&year=${action.payload.year}`, { headers: { token } })
+      let getData = await API.get(`/class-pts?hour=${new Date().getHours()}&week=${action.payload.week}&year=${action.payload.year}`, { headers: { token } })
 
       for (let i = 0; i < 7; i++) {
         let day = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU", "MINGGU"]
@@ -161,7 +160,7 @@ console.log(">>>>>>>>>>>>>>>>>>> MASUK NIH")
 
         await timeClassPt.forEach(async el => { // Assign class pt perjam
           let classPt = await getData.data.data.find(element => `${el.jam.slice(0, 5)}:00` === element.time && element.date === new Date(action.payload.date).getDate() + i)
-          if(classPt) el.classPt = classPt
+          if (classPt) el.classPt = classPt
         })
 
         data.push({ day: day[i], date: newDate, data: timeClassPt })
@@ -169,8 +168,26 @@ console.log(">>>>>>>>>>>>>>>>>>> MASUK NIH")
 
       next({
         type: 'FETCH_DATA_CLASS_PT_SUCCESS',
-        // payload: { dataClassPt: getData.data.data }
         payload: { dataClassPt: data }
+      })
+
+    } catch (err) {
+      next({
+        type: 'FETCH_DATA_ERROR',
+        payload: err
+      })
+    }
+  } else if (action.type === 'FETCH_DATA_MY_JOINED_CLASS_PT') {
+    try {
+      next({
+        type: 'FETCH_DATA_LOADING'
+      })
+
+      let getData = await API.get(`/class-pts?date=${action.payload}&hour=${new Date().getHours()}`, { headers: { token } })
+      // console.log(getData.data.data)
+      next({
+        type: 'FETCH_DATA_MY_JOINED_CLASS_PT_SUCCESS',
+        payload: { dataMyJoinedClassPt: getData.data.data }
       })
 
     } catch (err) {

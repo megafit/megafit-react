@@ -29,7 +29,9 @@ export default class ModalAddLinkZoom extends Component {
   submit = async () => {
     try {
       let token = Cookies.get('MEGAFIT_TKN')
-      await API.put(`/classes/${this.props.dataClass.classPtId}?classPT=true`, { linkZoom: this.state.linkZoom }, { headers: { token } })
+      await API.put(`/class-pts/${this.props.dataClass.classPtId}`, { linkZoom: this.state.linkZoom }, { headers: { token } })
+      this.props.fetchNewDataClassPt()
+      this.props.close()
       swal("Link zoom berhasil ditambahkan", "", "success")
     } catch (err) {
       swal("please try again")

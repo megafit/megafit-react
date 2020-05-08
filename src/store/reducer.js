@@ -11,7 +11,8 @@ const defaultState = {
   dataCategoryMemberships: [],
   dataPackageMemberships: [],
   dataUserDetail: null,
-  dataClassPt: []
+  dataClassPt: [],
+  dataMyJoinedClassPt: [],
 }
 
 function reducer(state = defaultState, action) {
@@ -77,10 +78,16 @@ function reducer(state = defaultState, action) {
         dataClassPt: action.payload.dataClassPt
       }
     }
-    case 'FETCH_DATA_CLASS_PT_LOADING': {
+    case 'FETCH_DATA_MY_JOINED_CLASS_PT_SUCCESS': {
       return {
         ...state,
-        loading: true,
+        loading: false,
+        dataMyJoinedClassPt: action.payload.dataMyJoinedClassPt
+      }
+    }
+    case 'RESET_CLASS_PT': {
+      return {
+        ...state,
         dataClassPt: []
       }
     }
