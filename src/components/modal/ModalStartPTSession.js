@@ -20,8 +20,8 @@ class ModalStartPTSession extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.data)
-    if (this.props.data.tblClassPt.date > new Date().getDate()) {
+    // console.log(this.props.data)
+    if (this.props.data.tblClassPt.date > new Date().getDate() || (this.props.data.tblClassPt.date - 1 === new Date().getDate())) {
       this.setState({
         canCancel: false
       })
@@ -39,6 +39,7 @@ class ModalStartPTSession extends Component {
       await this.props.fetchDataMyJoinedClassPt(this.getDate())
 
       swal("Batal gabung kelas pt sukses", "", "success")
+      this.props.cancelJoinClass()
       this.props.close()
     } catch (err) {
       swal("please try again")
@@ -46,7 +47,15 @@ class ModalStartPTSession extends Component {
   }
 
   submit = () => {
-    window.open(this.props.data.tblClassPt.linkZoom)
+    let url
+
+    if (this.props.data.tblClassPt.linkZoom.slice(0, 4) === "http") {
+      url = this.props.data.tblClassPt.linkZoom
+    } else {
+      url = "http://" + this.props.data.tblClassPt.linkZoom
+    }
+
+    window.open(url, '_blank')
     this.props.close()
   }
 
@@ -102,7 +111,12 @@ class ModalStartPTSession extends Component {
                 <Typography style={{ fontSize: 25, textAlign: 'center' }}>
                   Klik <b>MULAI</b> untuk memulai sesi atau klik <b>BATAL</b> untuk membatalkan sesi
                 </Typography>
-                <p style={{ margin: 0, textAlign: 'center', fontStyle: 'italic' }}>pastikan internet kamu lancar</p>
+
+                {
+                  this.props.data.tblClassPt.linkZoom
+                    ? <p style={{ margin: 0, textAlign: 'center', fontStyle: 'italic' }}>pastikan internet kamu lancar</p>
+                    : <p style={{ margin: 0, textAlign: 'center', color: 'red', fontStyle: 'italic' }}>link zoom belum tersedia</p>
+                }
 
                 <Grid style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
                   <Button style={{ width: 130, marginRight: 20 }} onClick={this.props.close}>
@@ -111,7 +125,7 @@ class ModalStartPTSession extends Component {
                   <Button style={{ width: 130, marginRight: 20 }} color="secondary" variant="contained" onClick={this.cancel} disabled={this.state.canCancel}>
                     Batal
                   </Button>
-                  <Button style={{ backgroundColor: '#8cb32e', width: 130, color: 'white' }} onClick={this.submit}>
+                  <Button style={{ backgroundColor: this.props.data.tblClassPt.linkZoom ? '#8cb32e' : '#e0e0e0', width: 130, color: this.props.data.tblClassPt.linkZoom ? 'white' : '#a8a8a8' }} onClick={this.submit} disabled={!this.props.data.tblClassPt.linkZoom}>
                     Mulai
                 </Button>
                 </Grid>

@@ -39,10 +39,10 @@ class Home extends Component {
     openModalSelectTimePT: false,
     openModalStartPTSession: false,
 
-    hasJadwalkan: false,
     classPt: [],
     myJoinedClassPt: [],
-    hasJoinedClassPt: false
+    hasJoinedClassPt: false,
+    ptSessionRemaining: 0
   }
 
   async componentDidMount() {
@@ -61,7 +61,6 @@ class Home extends Component {
     }
 
     if (prevProps.dataMyJoinedClassPt !== this.props.dataMyJoinedClassPt) {
-      console.log("MASUK LAGI")
       let closestClass = this.props.dataMyJoinedClassPt[0]
       if (closestClass) {
         this.setState({
@@ -72,22 +71,16 @@ class Home extends Component {
           hasJoinedClassPt: false
         })
       }
-      // if (new Date().getDate() === closestClass.tblClassPt.date && this.getNumberOfWeek() === closestClass.tblClassPt.week &&
-      //   new Date().getMonth() + 1 === closestClass.tblClassPt.month &&
-      //   new Date().getFullYear() === closestClass.tblClassPt.year &&
-      //   new Date().getHours() >= (Number(closestClass.tblClassPt.time.slice(0, 2)) - 1) &&
-      //   new Date().getHours() < (Number(closestClass.tblClassPt.time.slice(0, 2)) )
-      // ) {
-      // this.setState({
-      //   hasJoinedClassPt: true
-      // })
-      // }
     }
   }
 
   fetchData = async () => {
     await this.props.fetchDataUserDetail(this.props.userId)
     await this.props.fetchDataMyJoinedClassPt(this.getDate())
+
+    this.setState({
+      ptSessionRemaining: this.props.dataUserDetail.tblMember.ptSession
+    })
   }
 
   handleChange = name => event => {
@@ -136,11 +129,12 @@ class Home extends Component {
     this.handleModalSelectTimePT()
   }
 
-  jadwalkan = () => {
-    this.setState({
-      hasJadwalkan: true
-    })
-    this.handleModalSelectTimePT()
+  joinClass = () => {
+    this.setState({ ptSessionRemaining: this.state.ptSessionRemaining - 1 })
+  }
+
+  cancelJoinClass = () => {
+    this.setState({ ptSessionRemaining: this.state.ptSessionRemaining + 1 })
   }
 
   getDate = () => {
@@ -161,8 +155,8 @@ class Home extends Component {
 
     target.setDate(target.getDate() - dayNr + 3);
 
-    var jan4 = new Date(target.getFullYear(), 0, 4);
-    var dayDiff = (target - jan4) / 86400000;
+    var reference = new Date(target.getFullYear(), 0, 4);
+    var dayDiff = (target - reference) / 86400000;
     var weekNr = 1 + Math.ceil(dayDiff / 7);
 
     return weekNr;
@@ -250,9 +244,7 @@ class Home extends Component {
                     <p style={{ margin: 0, marginBottom: 10 }}>Paket PT</p>
                     <Grid style={{ backgroundColor: '#92cbf7', padding: 10, borderRadius: 5, width: 250, height: 80, display: 'flex', marginBottom: 10 }}>
                       <Grid style={{ backgroundColor: '#3183c2', borderRadius: 5, width: 60, height: 60, position: 'relative' }}>
-                        {
-                          this.props.dataUserDetail && <p style={{ margin: 0, fontSize: 35, color: 'white', fontWeight: 'bold', textAlign: 'center' }}>{this.props.dataUserDetail.tblMember.ptSession}</p>
-                        }
+                        <p style={{ margin: 0, fontSize: 35, color: 'white', fontWeight: 'bold', textAlign: 'center' }}>{this.state.ptSessionRemaining}</p>
                         <p style={{ margin: '5px 0px', color: 'white', position: 'absolute', bottom: 0, left: 18, marginBottom: 3 }}>sisa</p>
                       </Grid>
 
@@ -275,7 +267,7 @@ class Home extends Component {
                           </Button>
                             <Grid style={{ display: 'flex' }}>
                               <p style={{ margin: 0, color: 'white' }}>aktif s/d</p>
-                              <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.ptSession)}</p>
+                              <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.activeExpired)}</p>
                             </Grid>
                           </Grid>
                       }
@@ -408,11 +400,11 @@ class Home extends Component {
         }
 
         {
-          this.state.openModalSelectTimePT && <ModalSelectTimePT open={this.state.openModalSelectTimePT} close={this.handleModalSelectTimePT} jadwalkan={this.jadwalkan} />
+          this.state.openModalSelectTimePT && <ModalSelectTimePT open={this.state.openModalSelectTimePT} close={this.handleModalSelectTimePT} joinClass={this.joinClass} />
         }
 
         {
-          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} />
+          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} cancelJoinClass={this.cancelJoinClass} />
         }
 
       </>

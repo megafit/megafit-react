@@ -85,7 +85,7 @@ export default class ModalAddLinkZoom extends Component {
                   margin="normal"
                   variant="outlined"
                   style={{ marginBottom: 15, width: '100%' }}
-                  disabled={this.state.proses}
+                  disabled={this.state.proses || this.props.hasPassed}
                 />
 
                 <Grid style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>

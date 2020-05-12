@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -12,8 +11,6 @@ import ModalAddLinkZoom from './modal/ModalAddLinkZoom';
 
 import { API } from '../config/API';
 
-import { fetchDataClassPt } from '../store/action';
-
 import swal from 'sweetalert';
 
 class CardJamSesiPT extends Component {
@@ -21,34 +18,56 @@ class CardJamSesiPT extends Component {
     status: false,
     openModalDetailMemberClassPt: false,
     openModalAddLinkZoom: false,
+    hasPassed: false,
+    hasPartisipan: false
   }
 
   componentDidMount() {
     if (this.props.data.classPt) {
-      this.setState({
-        status: true
-      })
+      if (this.props.data.classPt.tblHistoryPTs.length > 0) {
+        this.setState({
+          status: true,
+          hasPartisipan: true
+        })
+      } else {
+        this.setState({
+          status: true
+        })
+      }
     } else {
       this.setState({
         status: false
       })
     }
+
+    if ((new Date(this.props.date).getDate() === new Date().getDate() && new Date().getHours() >= Number(this.props.data.jam.slice(0, 2))) || (new Date(this.props.date).getDate() < new Date().getDate())) {
+      this.setState({
+        hasPassed: true
+      })
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.status !== this.state.status) {
-      this.props.thereActive()
-    }
-
-    if (prevProps.activeAll !== this.props.activeAll) {
-      if (this.props.activeAll === false) {
+    if (prevProps.data !== this.props.data) {
+      if (!this.props.data.classPt) {
         this.setState({
           status: false
         })
       }
     }
-  }
 
+    if (prevState.status !== this.state.status) {
+      if (this.state.status) {
+        this.props.thereActive()
+      }
+    }
+
+    if (prevProps.activeAll !== this.props.activeAll) {
+      this.setState({
+        status: this.props.activeAll
+      })
+    }
+  }
 
   handleChangeStatus = async () => {
     try {
@@ -76,12 +95,8 @@ class CardJamSesiPT extends Component {
     }
   }
 
-  fetchNewDataClassPt = () => {
-
-    let newDate = new Date(this.props.date.getFullYear(), this.props.date.getMonth(), this.props.date.getDate() - (this.props.date.getDay() - 1))
-
-    this.props.fetchDataClassPt({ date: newDate, week: this.props.weekSelected, year: new Date(newDate).getFullYear() })
-
+  fetchNewDataClassPt = async () => {
+    await this.props.fetchDataClassPt()
   }
 
   handleModalAddLinkZoom = () => {
@@ -114,24 +129,30 @@ class CardJamSesiPT extends Component {
     return (
       <>
         {
-          this.props.data.partisipan !== ""
-            ? <Grid style={{ marginTop: 10, backgroundColor: '#8eb52f', padding: 10, borderRadius: 10 }}>
-              <Grid style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                <p style={{ margin: 0, fontSize: 18, color: 'white' }}>{this.props.data.jam}</p>
-                <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: '#22dd21', borderRadius: 15 }} onClick={this.handleModalAddLinkZoom} />
-              </Grid>
-              <Divider style={{ backgroundColor: 'white' }} />
-              <p style={{ margin: 0, fontSize: 18, color: 'white' }} onClick={() => this.props.history.push('/pt/detail-user')}>{this.props.data.partisipan}</p>
-            </Grid>
-            : this.state.status
-              ? <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, backgroundColor: 'white', padding: 10, borderRadius: 10 }} >
+          this.state.status
+            ? <Grid style={{ display: 'flex', marginTop: 10, backgroundColor: this.state.hasPartisipan ? '#8eb52f' : 'white', padding: 10, borderRadius: 10, flexDirection: 'column' }} >
+
+              <Grid style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                 <p style={{ margin: 0, fontSize: 18, cursor: 'pointer' }} onClick={this.handleModalAddLinkZoom}>{this.props.data.jam}</p>
-                <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: '#22dd21', borderRadius: 15, cursor: 'pointer' }} onClick={this.handleChangeStatus} />
+                <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: '#22dd21', borderRadius: 15, cursor: (this.state.hasPassed || this.state.hasPartisipan) ? null : 'pointer' }} onClick={(this.state.hasPassed || this.state.hasPartisipan) ? null : this.handleChangeStatus} />
               </Grid>
-              : <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, backgroundColor: this.state.status ? 'white' : '#d1d1d1', padding: 10, borderRadius: 10 }}>
-                <p style={{ margin: 0, fontSize: 18 }}>{this.props.data.jam}</p>
-                <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: 'red', borderRadius: 15, cursor: 'pointer' }} onClick={this.handleChangeStatus} />
-              </Grid>
+
+              {
+                this.state.hasPartisipan &&
+                <>
+                  <Divider style={{ backgroundColor: 'white', margin: '7px 0px 5px 0px' }} />
+                  {
+                    this.props.data.classPt.tblHistoryPTs.map((user, index) =>
+                      <p style={{ margin: 0, fontSize: 18, color: 'white', cursor: 'pointer' }} onClick={() => this.props.history.push('/pt/detail-user', { userId: user.tblUser.userId })} key={index}>{user.tblUser.nickname}</p>
+                    )
+                  }
+                </>
+              }
+            </Grid>
+            : <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, backgroundColor: this.state.status ? 'white' : '#d1d1d1', padding: 10, borderRadius: 10 }}>
+              <p style={{ margin: 0, fontSize: 18 }}>{this.props.data.jam}</p>
+              <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: 'red', borderRadius: 15, cursor: this.state.hasPassed ? null : 'pointer' }} onClick={this.state.hasPassed ? null : this.handleChangeStatus} />
+            </Grid>
         }
 
         {
@@ -139,15 +160,12 @@ class CardJamSesiPT extends Component {
         }
 
         {
-          this.state.openModalAddLinkZoom && <ModalAddLinkZoom open={this.state.openModalAddLinkZoom} close={this.handleModalAddLinkZoom} dataClass={this.props.data.classPt} fetchNewDataClassPt={this.fetchNewDataClassPt} />
+          this.state.openModalAddLinkZoom && <ModalAddLinkZoom open={this.state.openModalAddLinkZoom} close={this.handleModalAddLinkZoom} dataClass={this.props.data.classPt} fetchNewDataClassPt={this.fetchNewDataClassPt} hasPassed={this.state.hasPassed} />
         }
       </>
     )
   }
 }
 
-const mapDispatchToProps = {
-  fetchDataClassPt
-}
 
-export default connect(null, mapDispatchToProps)(withRouter(CardJamSesiPT))
+export default withRouter(CardJamSesiPT)

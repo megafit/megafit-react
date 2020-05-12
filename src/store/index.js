@@ -183,7 +183,7 @@ const api = store => next => async action => {
         type: 'FETCH_DATA_LOADING'
       })
 
-      let getData = await API.get(`/class-pts?date=${action.payload}&hour=${new Date().getHours()}`, { headers: { token } })
+      let getData = await API.get(`/history-pts?date=${action.payload}&hour=${new Date().getHours()}`, { headers: { token } })
       // console.log(getData.data.data)
       next({
         type: 'FETCH_DATA_MY_JOINED_CLASS_PT_SUCCESS',

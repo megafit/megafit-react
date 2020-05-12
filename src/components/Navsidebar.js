@@ -49,11 +49,11 @@ function Navsidebar(props) {
       setSelectedIndex(3)
     } else if (props.location.pathname === '/anggota') {
       setSelectedIndex(4)
-    }else if (props.location.pathname === '/gym') {
+    } else if (props.location.pathname === '/gym') {
       setSelectedIndex(5)
-    }else if (props.location.pathname === '/pos') {
+    } else if (props.location.pathname === '/pos') {
       setSelectedIndex(6)
-    }else if (props.location.pathname === '/pt') {
+    } else if (props.location.pathname === '/pt') {
       setSelectedIndex(7)
     }
   }, [props.location.pathname])
@@ -80,8 +80,9 @@ function Navsidebar(props) {
             display: 'flex',
             flexDirection: 'column',
             width: props.roleId === 4 ? 200 : 100,
-            height: '100%',
-            backgroundColor: '#8EB52F'
+            height: '100vh',
+            backgroundColor: '#8EB52F',
+            overflowY: 'auto'
           }} open={false}>
             {
               props.roleId === 4 // FOR MEMBER

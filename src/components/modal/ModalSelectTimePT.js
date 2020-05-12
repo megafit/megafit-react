@@ -13,7 +13,7 @@ import swal from 'sweetalert';
 class ModalSelectTimePT extends Component {
   state = {
     date: '',
-    time: '',
+    indexTime: '',
     optionClass: [],
     classPt: []
   }
@@ -50,21 +50,46 @@ class ModalSelectTimePT extends Component {
     this.setState({ [name]: event.target.value });
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     if (prevState.date !== this.state.date) {
+      console.log(this.state.classPt[this.state.date])
+
+      let data = [], tempTime = 0, tempData = []
+      await this.state.classPt[this.state.date].forEach(classPt => {
+        // console.log(classPt)
+        if (tempTime !== classPt.time) {
+          if (tempTime !== 0) {
+            console.log(tempData)
+            data.push(tempData)
+            tempData = []
+          }
+          tempTime = classPt.time
+        }
+        tempData.push(classPt)
+      })
+      data.push(tempData)
+
       this.setState({
-        optionClass: this.state.classPt[this.state.date]
+        optionClass: data
       })
     }
   }
 
   submit = async () => {
     try {
-      let token = Cookies.get('MEGAFIT_TKN');
+      let token = Cookies.get('MEGAFIT_TKN'), classPtId
 
-      await API.put(`/class-pts/join/${this.state.time}`, {}, { headers: { token } })
+      if (this.state.optionClass[this.state.indexTime].length > 1) {
+        let indexRandom = Math.floor(Math.random() * this.state.optionClass[this.state.indexTime].length)
+        classPtId = this.state.optionClass[this.state.indexTime][indexRandom].classPtId
+      } else {
+        classPtId = this.state.optionClass[this.state.indexTime][0].classPtId
+      }
+
+      await API.put(`/class-pts/join/${classPtId}`, {}, { headers: { token } })
       swal("Join class pt success", "", "success")
-      this.props.jadwalkan()
+      this.props.close()
+      this.props.joinClass()
       await this.props.fetchDataMyJoinedClassPt(this.getDate())
     } catch (err) {
       swal("please try again")
@@ -158,14 +183,14 @@ class ModalSelectTimePT extends Component {
                   <Select
                     labelId="role"
                     id="role"
-                    value={this.state.time}
-                    onChange={this.handleChange('time')}
+                    value={this.state.indexTime}
+                    onChange={this.handleChange('indexTime')}
                     style={{ width: 200 }}
                     disabled={this.state.date === ''}
                   >
                     {
                       this.state.optionClass.map((el, index) =>
-                        <MenuItem value={el.classPtId} key={'key' + index}>{getTime(el.time)}</MenuItem>
+                        <MenuItem value={index} key={'key' + index}>{getTime(el[0].time)}</MenuItem>
                       )
                     }
                   </Select>

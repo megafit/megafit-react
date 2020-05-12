@@ -13,6 +13,10 @@ export default class DetailUserPT extends Component {
     openSejarahPT: true
   }
 
+  componentDidMount() {
+    console.log(this.props.location.state.userId)
+  }
+  
   handleSejarahPT = () => {
     this.setState({
       openSejarahPT: !this.state.openSejarahPT
@@ -29,8 +33,8 @@ export default class DetailUserPT extends Component {
     }
 
     return (
-      <Grid style={{ display: 'flex' }}>
-        <Grid style={{ backgroundColor: '#F0F0F0', minWidth: 250, height: '100vh', paddingTop: 50 }} xs={2}>
+      <Grid container style={{ display: 'flex' }}>
+        <Grid item style={{ backgroundColor: '#F0F0F0', minWidth: 250, height: '100vh', paddingTop: 50 }} xs={2}>
 
           <Avatar alt="icon" src={require('../../asset/icon_user.png')} style={{ height: 150, width: 150, margin: '0px auto', }} />
 
@@ -119,7 +123,7 @@ export default class DetailUserPT extends Component {
           </Grid>
         </Grid>
 
-        <Grid style={{ padding: 30 }}>
+        <Grid item style={{ padding: 30 }}>
           <p style={{ margin: '0px 0px 20px 0px', fontSize: 18, cursor: 'pointer' }} onClick={() => this.props.history.push('/pt')}>{`< Jadwal`}</p>
           <Grid style={{ width: 600, border: '1px solid black', padding: '10px 20px' }}>
             <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>

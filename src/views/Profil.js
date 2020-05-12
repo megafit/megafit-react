@@ -42,7 +42,6 @@ class Profil extends Component {
   fetchData = async () => {
     try {
       if (this.props.userId) {
-        console.log("MASUK")
         let token = Cookies.get('MEGAFIT_TKN')
         let { data } = await API.get(`/users/${this.props.userId}`, { headers: { token } })
         this.setState({
@@ -53,7 +52,6 @@ class Profil extends Component {
           qr: data.data.tblMember.cardImage,
           sisaHari: this.cekMembershipExpired(data.data.tblMember)
         })
-        console.log(data)
       }
     } catch (Error) {
       alert("Server error")
@@ -183,7 +181,7 @@ class Profil extends Component {
           </Grid>
           <Divider />
           <p style={{ margin: 0, marginTop: 15 }}>{this.state.data.fullname}</p>
-          <p style={{ margin: 0, marginTop: 10 }}>{this.state.data.gender}</p>
+          <p style={{ margin: 0, marginTop: 15, marginBottom: 15 }}>{this.state.data.gender}</p>
           {
             this.state.ubahData
               ? <>
@@ -223,21 +221,21 @@ class Profil extends Component {
                 </Grid>
               </>
               : <>
-                <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
                   <p style={{ margin: 0, fontWeight: 'bold', width: 100 }}>No. WA</p>
-                  <p style={{ margin: 0, marginTop: 10 }}>: {this.state.data.phone}</p>
+                  <p style={{ margin: 0 }}>: {this.state.data.phone}</p>
                 </Grid>
-                <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
                   <p style={{ margin: 0, fontWeight: 'bold', width: 100 }}>Email</p>
-                  <p style={{ margin: 0, marginTop: 10 }}>: {this.state.data.email}</p>
+                  <p style={{ margin: 0 }}>: {this.state.data.email}</p>
                 </Grid>
-                <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
                   <p style={{ margin: 0, fontWeight: 'bold', width: 100 }}>Username</p>
-                  <p style={{ margin: 0, marginTop: 10 }}>: {this.state.data.username}</p>
+                  <p style={{ margin: 0 }}>: {this.state.data.username}</p>
                 </Grid>
-                <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
                   <p style={{ margin: 0, fontWeight: 'bold', width: 100 }}>Password</p>
-                  <p style={{ margin: 0, marginTop: 10 }}>: <Button style={{ backgroundColor: '#8eb52f', color: '#fafafa' }} onClick={this.changePass}>{this.state.isEdit ? 'Batal' : 'Change Password'}</Button></p>
+                  <p style={{ margin: 0 }}>: <Button style={{ backgroundColor: '#8eb52f', color: '#fafafa' }} onClick={this.changePass}>{this.state.isEdit ? 'Batal' : 'Change Password'}</Button></p>
                 </Grid>
               </>
           }
@@ -285,7 +283,7 @@ class Profil extends Component {
 
         </Grid>
         <Grid item lg={6} md={5} sm={12} xs={12} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img src={require('../asset/Group_306_@1x.png')} height='80%' width='80%' alt="logo-megafit" />
+          <img src={require('../asset/Group_306_@1x.png')} height={400} width={500} alt="logo-megafit" />
         </Grid>
       </Grid>
     )

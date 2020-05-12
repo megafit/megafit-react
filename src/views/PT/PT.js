@@ -48,6 +48,7 @@ class PT extends Component {
   }
 
   fetchDataClassPt = async () => {
+    console.log("MASUK fetchDataClassPt")
     let date = new Date(new Date().getFullYear(),
       new Date().getMonth(),
       new Date().getDate() - (new Date().getDay() - 1))
@@ -59,7 +60,7 @@ class PT extends Component {
       new Date(date).getDate() + (selisihWeek * 7))
 
     this.handleClose()
-
+    
     await this.props.fetchDataClassPt({ date: newDate, week: this.state.weekSelected, year: new Date(newDate).getFullYear() })
   }
 
@@ -88,8 +89,8 @@ class PT extends Component {
 
     target.setDate(target.getDate() - dayNr + 3);
 
-    var jan4 = new Date(target.getFullYear(), 0, 4);
-    var dayDiff = (target - jan4) / 86400000;
+    var reference = new Date(target.getFullYear(), 0, 4);
+    var dayDiff = (target - reference) / 86400000;
     var weekNr = 1 + Math.ceil(dayDiff / 7);
 
     return weekNr;
