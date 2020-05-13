@@ -124,7 +124,7 @@ class PT extends Component {
     return (
       <>
         <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
-          <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo cek jadwalnya.</p>
+          <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo cek jadwalmu.</p>
 
 
           <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>

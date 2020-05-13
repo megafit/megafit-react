@@ -404,7 +404,7 @@ class Home extends Component {
         }
 
         {
-          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} cancelJoinClass={this.cancelJoinClass} />
+          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} cancelJoinClass={this.Class} />
         }
 
       </>

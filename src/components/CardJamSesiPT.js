@@ -125,6 +125,15 @@ class CardJamSesiPT extends Component {
     return weekNr;
   }
 
+  navigateDetailMember = (userId, historyPt) => {
+    this.props.history.push('/pt/detail-user',
+      {
+        userId: userId,
+        historyPtId: historyPt.id,
+      }
+    )
+  }
+
   render() {
     return (
       <>
@@ -143,7 +152,7 @@ class CardJamSesiPT extends Component {
                   <Divider style={{ backgroundColor: 'white', margin: '7px 0px 5px 0px' }} />
                   {
                     this.props.data.classPt.tblHistoryPTs.map((user, index) =>
-                      <p style={{ margin: 0, fontSize: 18, color: 'white', cursor: 'pointer' }} onClick={() => this.props.history.push('/pt/detail-user', { userId: user.tblUser.userId })} key={index}>{user.tblUser.nickname}</p>
+                      <p style={{ margin: 0, fontSize: 18, color: 'white', cursor: 'pointer' }} onClick={() => this.navigateDetailMember(user.tblUser.userId, { id: user.id, catatan: user.catatan })} key={index}>{user.tblUser.nickname}</p>
                     )
                   }
                 </>

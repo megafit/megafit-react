@@ -35,7 +35,7 @@ class ModalStartPTSession extends Component {
   cancel = async () => {
     try {
       let token = Cookies.get('MEGAFIT_TKN');
-      await API.put(`/class-pts/cancelJoin/${this.props.data.id}`, {}, { headers: { token } })
+      await API.delete(`/history-pts/${this.props.data.id}`, {}, { headers: { token } })
       await this.props.fetchDataMyJoinedClassPt(this.getDate())
 
       swal("Batal gabung kelas pt sukses", "", "success")
@@ -46,17 +46,24 @@ class ModalStartPTSession extends Component {
     }
   }
 
-  submit = () => {
+  submit = async () => {
     let url
 
-    if (this.props.data.tblClassPt.linkZoom.slice(0, 4) === "http") {
-      url = this.props.data.tblClassPt.linkZoom
-    } else {
-      url = "http://" + this.props.data.tblClassPt.linkZoom
-    }
 
-    window.open(url, '_blank')
-    this.props.close()
+    try {
+      let token = Cookies.get("MEGAFIT_TKN")
+      await API.put(`/history-pts/${this.props.data.id}`, { hasJoined: 1 }, { headers: { token } })
+
+      if (this.props.data.tblClassPt.linkZoom.slice(0, 4) === "http") {
+        url = this.props.data.tblClassPt.linkZoom
+      } else {
+        url = "http://" + this.props.data.tblClassPt.linkZoom
+      }
+      window.open(url, '_blank')
+      this.props.close()
+    } catch (err) {
+      swal("Please try again !")
+    }
   }
 
   getDate = () => {
