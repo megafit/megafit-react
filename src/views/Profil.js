@@ -155,7 +155,7 @@ class Profil extends Component {
         <Grid item lg={2} />
         <Grid item lg={4} md={6} sm={12} xs={12} style={{ padding: 30, paddingTop: 0 }}>
           <p style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 10 }}>Member ID : {this.state.data.userId}</p>
-          <img src={`${BaseURL}${this.state.qr}`} style={{ alignSelf: 'center' }} height={200} width={200} alt="logo-megafit" />
+          <img src={`${BaseURL}${this.state.qr}`} style={{ alignSelf: 'center' }} height={200} width={200} alt="qr-code" />
           <Grid style={{ display: 'flex' }}>
             <p style={{ margin: 0 }}>berlaku sampai</p>
             {
