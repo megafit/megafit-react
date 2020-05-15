@@ -16,8 +16,9 @@ import swal from 'sweetalert';
 
 import CardItemOrderPOS from '../components/CardItemOrderPOS';
 
-import { API } from '../config/API';
 import { fetchDataPackageMemberships, fetchDataStaff } from '../store/action';
+
+import { API } from '../config/API';
 
 class POS extends Component {
   constructor(props) {
@@ -75,13 +76,11 @@ class POS extends Component {
   };
 
   handleBayar = () => {
-    console.log(this.state.orderList.length, this.state.idSales)
     if (this.state.orderList.length === 0) {
-      swal('Daftar pesanan masih kosong','', 'warning')
+      swal('Daftar pesanan masih kosong', '', 'warning')
     } else if (this.state.idSales === '') {
-      swal('Pilih sales terlebih dahulu','', 'warning')
+      swal('Pilih sales terlebih dahulu', '', 'warning')
     } else {
-      console.log("MASUK")
       this.setState({
         bayar: !this.state.bayar
       })
@@ -108,7 +107,6 @@ class POS extends Component {
         let token = Cookies.get('MEGAFIT_TKN')
         let { data } = await API.get(`/users/${this.state.searchUserId}?idMember=${this.state.searchUserId}`, { headers: { token } })
 
-        console.log(data.data)
         this.setState({
           dataMember1: data.data
         })

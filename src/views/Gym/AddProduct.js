@@ -14,9 +14,9 @@ import {
 
 import swal from 'sweetalert';
 
-import { API } from '../../config/API';
-
 import { fetchDataSubCategoryMemberships, fetchDataCategoryMemberships } from '../../store/action';
+
+import { API } from '../../config/API';
 
 class AddProduct extends Component {
   constructor(props) {
@@ -94,7 +94,7 @@ class AddProduct extends Component {
       })
 
     } catch (err) {
-      console.log(err)
+      swal("Please try again")
     }
   }
 
@@ -166,7 +166,6 @@ class AddProduct extends Component {
         newObj.endPromo = this.state.periodeAkhir
       }
 
-
       let token = Cookies.get('MEGAFIT_TKN')
       if (this.props.location.state.data) {
         await API.put(`/sub-category-memberships/${this.props.location.state.data.id}`, newObj, { headers: { token } })
@@ -180,7 +179,7 @@ class AddProduct extends Component {
       this.props.history.goBack()
 
     } catch (err) {
-      console.log(err)
+      swal("Please try again")
     }
   }
 

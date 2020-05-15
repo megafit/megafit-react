@@ -21,7 +21,6 @@ const api = store => next => async action => {
       })
 
     } catch (err) {
-      console.log(err)
       next({
         type: 'FETCH_DATA_ERROR',
         payload: err
@@ -184,7 +183,7 @@ const api = store => next => async action => {
       })
 
       let getData = await API.get(`/history-pts?date=${action.payload}&hour=${new Date().getHours()}`, { headers: { token } })
-      // console.log(getData.data.data)
+
       next({
         type: 'FETCH_DATA_MY_JOINED_CLASS_PT_SUCCESS',
         payload: { dataMyJoinedClassPt: getData.data.data }

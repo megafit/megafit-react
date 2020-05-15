@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import TextField from '@material-ui/core/TextField';
-import Chip from '@material-ui/core/Chip';
+
+import {
+  Button, Grid, Divider, TextField, Chip
+} from '@material-ui/core';
+
+import swal from 'sweetalert';
 
 import { API, BaseURL } from '../config/API';
-import { Button } from '@material-ui/core';
 
 class Profil extends Component {
   state = {
@@ -54,11 +55,9 @@ class Profil extends Component {
         })
       }
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
-
 
   ubahData = async () => {
     if (this.state.ubahData === false) {
@@ -79,8 +78,7 @@ class Profil extends Component {
           data: data.data
         })
       } catch (Error) {
-        alert("Server error")
-        console.log(Error)
+        swal("Please try again")
       }
     }
   }
@@ -110,7 +108,7 @@ class Profil extends Component {
   cekMembershipExpired = args => {
     let sisaHari = new Date(args.activeExpired) - new Date()
     sisaHari = Math.round(Math.round((new Date(args.activeExpired).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)));
-    // console.log("sisaHari", sisaHari)
+
     return sisaHari
   }
 
@@ -132,12 +130,11 @@ class Profil extends Component {
           passwordBaru: "",
           passwordKonfirm: "",
         })
-        alert("Change password success")
+        swal("Change password success", "", "success")
       }
     } catch (Error) {
-      if (Error !== 'Error: Request failed with status code 400') alert("Password lama salah")
-      else alert("Server error")
-      console.log(Error)
+      if (Error !== 'Error: Request failed with status code 400') swal("Password lama salah")
+      else swal("Please try again")
     }
   }
 

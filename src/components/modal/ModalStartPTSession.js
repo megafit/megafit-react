@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import { Modal, Backdrop, Fade, Grid, Button, Typography, IconButton } from '@material-ui/core';
+import {
+  Modal, Backdrop, Fade, Grid, Button, Typography, IconButton
+} from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
-
-import { API } from '../../config/API';
 
 import swal from 'sweetalert';
 
 import { fetchDataMyJoinedClassPt } from '../../store/action';
+
+import { API } from '../../config/API';
 
 class ModalStartPTSession extends Component {
   state = {
@@ -20,7 +22,6 @@ class ModalStartPTSession extends Component {
   }
 
   componentDidMount() {
-    // console.log(this.props.data)
     if (this.props.data.tblClassPt.date > new Date().getDate() || (this.props.data.tblClassPt.date - 1 === new Date().getDate())) {
       this.setState({
         canCancel: false
@@ -62,7 +63,7 @@ class ModalStartPTSession extends Component {
       window.open(url, '_blank')
       this.props.close()
     } catch (err) {
-      swal("Please try again !")
+      swal("please try again")
     }
   }
 

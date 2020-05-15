@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
+
+import {
+  Modal, Backdrop, Fade, Grid, IconButton
+} from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
-
-// import { API } from '../config/API';
 
 export default class ModalDetailAnggota extends Component {
   state = {
@@ -77,7 +74,7 @@ export default class ModalDetailAnggota extends Component {
             </IconButton>
             <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center', width: '100%' }} height={140} alt="modal-background" >
             </img>
-            <h1 id="transition-modal-title" style={{ textAlign: 'center', marginTop:0 }} >Detail Anggota</h1>
+            <h1 id="transition-modal-title" style={{ textAlign: 'center', marginTop: 0 }} >Detail Anggota</h1>
             <Grid style={{ marginLeft: 100 }}>
               <Grid style={{ display: 'flex', marginBottom: 10 }}>
                 <p style={{ margin: 0, width: 100 }}>Fullname</p>

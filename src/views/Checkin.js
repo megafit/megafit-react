@@ -1,24 +1,9 @@
 import React, { Component } from 'react'
 import Cookies from 'js-cookie';
 
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
-import Avatar from '@material-ui/core/Avatar';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
-import Chip from '@material-ui/core/Chip';
+import {
+  Grid, Button, Typography, Paper, InputBase, IconButton, Avatar, Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableHead, TableRow, TablePagination, Chip
+} from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
@@ -28,6 +13,8 @@ import WhereToVoteOutlinedIcon from '@material-ui/icons/WhereToVoteOutlined';
 import ModalCheck from '../components/modal/ModalCheckin';
 import CardCheckIn from '../components/CardCheck';
 
+import swal from 'sweetalert';
+
 import { API } from '../config/API';
 
 export default class Kelas extends Component {
@@ -36,8 +23,6 @@ export default class Kelas extends Component {
     dataCheckin: [],
     dataUser: null,
     hasCheckin: false,
-    dayRemaining: 7,
-    ptRemaining: 1,
     colorMembershipNotif: '',
     colorIconMembershipNotif: '',
     colorPtNotif: '',
@@ -78,8 +63,7 @@ export default class Kelas extends Component {
 
       this.setState({ dataCheckin: data.data, data: data.data, dataUser: null, searchUserId: '' })
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 
@@ -113,12 +97,11 @@ export default class Kelas extends Component {
         this.setState({ proses: false })
       } catch (Error) {
         if (Error.message === "Request failed with status code 400") {
-          alert("Id member/user id tidak ditemukan")
-          console.log(Error.code)
+          swal("Id member/user id tidak ditemukan", "", "error")
+
           this.setState({ proses: false })
         } else {
-          alert(Error)
-          console.log(Error.code)
+          swal("please try again")
           this.setState({ proses: false })
         }
       }
@@ -130,7 +113,7 @@ export default class Kelas extends Component {
   cekMembershipExpired = args => {
     let sisaHari = new Date(args.activeExpired) - new Date()
     sisaHari = Math.round(Math.round((new Date(args.activeExpired).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000)));
-    // console.log("sisaHari", sisaHari)
+
     return sisaHari
   }
 
@@ -225,8 +208,7 @@ export default class Kelas extends Component {
       }
       this.setState({ proses: false })
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
       this.setState({ proses: false })
     }
   }

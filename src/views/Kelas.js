@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import { Link } from 'react-router-dom';
+import {
+  Grid, Typography, Breadcrumbs
+} from '@material-ui/core';
+
+import swal from 'sweetalert';
 
 import CardClass from '../components/CardClass';
 
@@ -58,8 +60,7 @@ class Kelas extends Component {
         data: temp
       })
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 
@@ -83,8 +84,7 @@ class Kelas extends Component {
 
   render() {
     function getWeeks(args) {
-      console.log(args)
-      let theDay = new Date(new Date().getFullYear(),new Date().getMonth(), args)
+      let theDay = new Date(new Date().getFullYear(), new Date().getMonth(), args)
       var target = new Date(theDay);
       var dayNr = (new Date(theDay).getDay() + 6) % 7;
 
@@ -93,7 +93,7 @@ class Kelas extends Component {
       var reference = new Date(target.getFullYear(), 0, 4);
       var dayDiff = (target - reference) / 86400000;
       var weekNr = 1 + Math.ceil(dayDiff / 7);
-       
+
       return weekNr;
     }
 

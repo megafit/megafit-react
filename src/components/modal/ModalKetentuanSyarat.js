@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
-import { Modal, Backdrop, Fade, Grid, FormControlLabel, Checkbox, Button } from '@material-ui/core';
+import {
+  Modal, Backdrop, Fade, Grid, FormControlLabel, Checkbox, Button
+} from '@material-ui/core';
 
 export default class ModalKetentuanSyarat extends Component {
   state = {
@@ -106,7 +108,7 @@ export default class ModalKetentuanSyarat extends Component {
                 </ul>
 
                 <p style={{ margin: '0px 0px 5px 0px', fontWeight: 'bold' }}>
-                Umum
+                  Umum
                 </p>
                 <ul style={{ paddingLeft: 20, marginTop: 5 }}>
                   <li>Berdasarkan syarat dan ketentuan ini Pengguna tidak boleh mengalihkan hak Pengguna  kepada orang lain. MEGAFIT dapat mengalihkan hak MEGAFIT berdasarkan syarat dan ketentuan ini yang secara wajar MEGAFIT yakini tidak akan berpengaruh pada hak Pengguna.</li>

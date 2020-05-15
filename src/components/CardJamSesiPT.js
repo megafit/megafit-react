@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { Grid, Divider } from '@material-ui/core';
+import {
+  Grid, Divider
+} from '@material-ui/core';
 
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
+
+import swal from 'sweetalert';
 
 import ModalDetailMemberClassPt from './modal/ModalDetailMemberClassPt';
 import ModalAddLinkZoom from './modal/ModalAddLinkZoom';
 
 import { API } from '../config/API';
-
-import swal from 'sweetalert';
 
 class CardJamSesiPT extends Component {
   state = {
@@ -40,7 +42,7 @@ class CardJamSesiPT extends Component {
       })
     }
 
-    if ((new Date(this.props.date).getDate() === new Date().getDate() && new Date().getHours() >= Number(this.props.data.jam.slice(0, 2))) || (new Date(this.props.date).getDate() < new Date().getDate())) {
+    if ((new Date(this.props.date).getDate() < new Date().getDate() && new Date(this.props.date).getMonth() <= new Date().getMonth() && new Date(this.props.date).getFullYear() <= new Date().getFullYear()) || (new Date(this.props.date).getDate() === new Date().getDate() && new Date(this.props.date).getMonth() === new Date().getMonth() && new Date(this.props.date).getFullYear() === new Date().getFullYear() && Number(this.props.data.jam.slice(0, 2)) <= new Date().getHours())) {
       this.setState({
         hasPassed: true
       })
@@ -66,6 +68,12 @@ class CardJamSesiPT extends Component {
       this.setState({
         status: this.props.activeAll
       })
+    }
+
+    if (prevState.hasPartisipan !== this.state.hasPartisipan) {
+      if (this.state.hasPartisipan) {
+        this.props.handleHasPartisipan()
+      }
     }
   }
 
@@ -151,7 +159,7 @@ class CardJamSesiPT extends Component {
                 <>
                   <Divider style={{ backgroundColor: 'white', margin: '7px 0px 5px 0px' }} />
                   {
-                    this.props.data.classPt.tblHistoryPTs.map((user, index) =>
+                    this.props.data.classPt && this.props.data.classPt.tblHistoryPTs.map((user, index) =>
                       <p style={{ margin: 0, fontSize: 18, color: 'white', cursor: 'pointer' }} onClick={() => this.navigateDetailMember(user.tblUser.userId, { id: user.id, catatan: user.catatan })} key={index}>{user.tblUser.nickname}</p>
                     )
                   }

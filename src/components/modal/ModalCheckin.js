@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  Modal, Backdrop, Fade, TextField, Button, Checkbox, FormControlLabel, IconButton
+} from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
+
+import swal from 'sweetalert';
 
 import { API } from '../../config/API';
 
@@ -36,7 +33,6 @@ export default class ModalCheckin extends Component {
     if (this.props.titleModal === "Checkin") {
       if ((this.state.lockerKey && (this.state.lockerKey > 999)) || !this.state.lockerKey) {
         try {
-
           let token = Cookies.get('MEGAFIT_TKN')
           let data = {
             userId: this.props.dataUser.userId,
@@ -50,8 +46,7 @@ export default class ModalCheckin extends Component {
             this.props.handleClose()
           }
         } catch (Error) {
-          alert("Server error")
-          console.log(Error)
+          swal("Please try again")
         }
       }
     } else if (this.props.titleModal === "Checkout") {
@@ -59,13 +54,11 @@ export default class ModalCheckin extends Component {
     } else {
       this.kembalikanKunciLoker()
     }
-
   }
 
   checkoutMember = async () => {
     let hasCheckin, checkout
     try {
-
       let token = Cookies.get('MEGAFIT_TKN')
       let data = {
         lockerKey: !this.state.lupaKembalikanKunci,
@@ -80,7 +73,6 @@ export default class ModalCheckin extends Component {
           this.props.handleClose()
         }
 
-
       } else { //checkout dari searchbox
         hasCheckin = await this.props.data.find(el => el.userId === this.props.dataUser.userId)
 
@@ -93,15 +85,13 @@ export default class ModalCheckin extends Component {
         }
       }
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 
   kembalikanKunciLoker = async () => {
     let checkout
     if (String(this.state.lockerKey) === String(this.props.dataUser.lockerKey)) {
-      console.log("MASUK")
       try {
         let token = Cookies.get('MEGAFIT_TKN')
         let data = {
@@ -114,14 +104,11 @@ export default class ModalCheckin extends Component {
           this.setState({ lockerKey: "", open: false })
           this.props.handleClose()
         }
-
-
       } catch (Error) {
-        alert("Server error")
-        console.log(Error)
+        swal("Please try again")
       }
     } else {
-      alert("Kunci loker berbeda")
+      swal("Kunci loker berbeda", "", "error")
     }
   }
 

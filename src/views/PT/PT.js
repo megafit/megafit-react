@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
-import { Grid, Popover, Button, Select, MenuItem, Tooltip } from '@material-ui/core';
+import {
+  Grid, Popover, Button, Select, MenuItem, Tooltip
+} from '@material-ui/core';
 
 import DateRangeOutlinedIcon from '@material-ui/icons/DateRangeOutlined';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
@@ -48,7 +50,6 @@ class PT extends Component {
   }
 
   fetchDataClassPt = async () => {
-    console.log("MASUK fetchDataClassPt")
     let date = new Date(new Date().getFullYear(),
       new Date().getMonth(),
       new Date().getDate() - (new Date().getDay() - 1))
@@ -60,7 +61,7 @@ class PT extends Component {
       new Date(date).getDate() + (selisihWeek * 7))
 
     this.handleClose()
-    
+
     await this.props.fetchDataClassPt({ date: newDate, week: this.state.weekSelected, year: new Date(newDate).getFullYear() })
   }
 
@@ -127,14 +128,14 @@ class PT extends Component {
           <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo cek jadwalmu.</p>
 
 
-          <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <Grid style={{ display: 'flex', alignItems: 'center' }}>
+          <Grid container style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <Grid item xs={12} sm={6} style={{ display: 'flex', alignItems: 'center' }}>
               <p style={{ margin: 0, fontSize: 20, marginRight: 5 }}>Jadwal Kelas</p>
               <Tooltip title="Refresh" aria-label="refresh" placement="bottom-start">
                 <RefreshIcon style={{ cursor: 'pointer' }} onClick={() => this.refresh()} />
               </Tooltip>
             </Grid>
-            <Grid style={{ display: 'flex', alignItems: 'center' }}>
+            <Grid item xs={12} sm={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
               <DateRangeOutlinedIcon />
               <p style={{ margin: 0 }}>{getDate(this.props.dataClassPt)}</p>
               <Grid style={{ border: '0.1px solid #e1e1e1', padding: '5px 10px', borderRadius: 10, marginLeft: 20, display: 'flex', alignItems: 'center', width: 150, justifyContent: 'space-between', cursor: 'pointer' }} onClick={this.handleClick}>
@@ -145,12 +146,12 @@ class PT extends Component {
           </Grid>
 
           {
-            this.state.loading 
+            this.state.loading
               ? <img src={require('../../asset/loading.gif')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 25 }} height={150} width={150} alt="loading" />
               : <Grid container spacing={3}>
                 {
                   this.props.dataClassPt.map((classPT, index) =>
-                    <CardHariSesiPT key={index} data={classPT} weekSelected={this.state.weekSelected} fetchDataClassPt={this.fetchDataClassPt} refresh={this.refresh}/>
+                    <CardHariSesiPT key={index} data={classPT} weekSelected={this.state.weekSelected} fetchDataClassPt={this.fetchDataClassPt} refresh={this.refresh} />
                   )
                 }
 

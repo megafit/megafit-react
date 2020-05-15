@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress';
+import {
+  Modal, Backdrop, Fade, Button, IconButton, LinearProgress
+} from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
+
+import swal from 'sweetalert';
 
 import { API } from '../../config/API';
 
@@ -56,9 +55,8 @@ export default class ModalImportAnggota extends Component {
           this.props.fetchDataAnggota()
         }
       })
-      .catch(Error =>{
-        alert("Server error")
-        console.log(Error)
+      .catch(Error => {
+        swal("Please try again")
       })
   }
 

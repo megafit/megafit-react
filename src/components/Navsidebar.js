@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
-import { Link, withRouter } from 'react-router-dom';
 
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+  CssBaseline, Grid, List, ListItem, ListItemText
+} from '@material-ui/core';
 
-import Appbar from './Appbar';
-import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 // import EventNoteOutlinedIcon from '@material-ui/icons/EventNoteOutlined';
+
+import Appbar from './Appbar';
 
 import { setUser } from '../store/action';
 
@@ -31,7 +30,6 @@ function Navsidebar(props) {
           props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId, hasConfirmTermAndCondition: data.hasConfirmTermAndCondition })
         })
         .catch(err => {
-          console.log(err)
           props.history.push('/')
         })
     } else {
@@ -80,7 +78,7 @@ function Navsidebar(props) {
             display: 'flex',
             flexDirection: 'column',
             width: props.roleId === 4 ? 200 : 100,
-            height: '100vh',
+            height: '100%',
             backgroundColor: '#8EB52F',
             overflowY: 'auto'
           }} open={false}>

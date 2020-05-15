@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import { Modal, Backdrop, Fade, Grid, Button, TextField, Typography } from '@material-ui/core';
+import {
+  Modal, Backdrop, Fade, Grid, Button, TextField, Typography
+} from '@material-ui/core';
+
+import swal from 'sweetalert';
 
 import { API } from '../../config/API';
 
@@ -25,7 +29,6 @@ class ModalFormMember extends Component {
 
   submit = async () => {
     try {
-      console.log("MASUK")
       let token = Cookies.get('MEGAFIT_TKN')
 
       let newData = {
@@ -44,7 +47,7 @@ class ModalFormMember extends Component {
 
       addData && this.props.next()
     } catch (err) {
-
+      swal("Please try again")
     }
   }
 

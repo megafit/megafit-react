@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
-import { Grid, Typography, Breadcrumbs, Link } from '@material-ui/core';
+import {
+  Grid, Typography, Breadcrumbs, Link
+} from '@material-ui/core';
 
 class Paket extends Component {
-
-  componentDidMount(){
-    
-  }
 
   navigateBack = event => {
     event.preventDefault()
@@ -33,7 +31,7 @@ class Paket extends Component {
   }
 }
 
-const mapStateToProps = ({nickname}) => {
+const mapStateToProps = ({ nickname }) => {
   return {
     nickname
   }

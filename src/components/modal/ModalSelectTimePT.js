@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import { Modal, Backdrop, Fade, Grid, Button, Typography, Select, MenuItem } from '@material-ui/core';
+import {
+  Modal, Backdrop, Fade, Grid, Button, Typography, Select, MenuItem
+} from '@material-ui/core';
+
+import swal from 'sweetalert';
 
 import { fetchDataMyJoinedClassPt } from '../../store/action';
 
 import { API } from '../../config/API';
-
-import swal from 'sweetalert';
 
 class ModalSelectTimePT extends Component {
   state = {
@@ -52,14 +54,11 @@ class ModalSelectTimePT extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     if (prevState.date !== this.state.date) {
-      console.log(this.state.classPt[this.state.date])
 
       let data = [], tempTime = 0, tempData = []
       await this.state.classPt[this.state.date].forEach(classPt => {
-        // console.log(classPt)
         if (tempTime !== classPt.time) {
           if (tempTime !== 0) {
-            console.log(tempData)
             data.push(tempData)
             tempData = []
           }

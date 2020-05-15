@@ -47,9 +47,9 @@ class Home extends Component {
 
   async componentDidMount() {
     if (this.props.userId) {
-      if (!this.props.dataUserDetail) {
-        this.fetchData()
-      }
+      // if (!this.props.dataUserDetail) {
+      this.fetchData()
+      // }
     }
   }
 

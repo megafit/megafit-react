@@ -1,37 +1,19 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 
-import Modal from '@material-ui/core/Modal';
-import Grid from '@material-ui/core/Grid';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
-import TextField from '@material-ui/core/TextField';
-import Radio from '@material-ui/core/Radio';
-import Button from '@material-ui/core/Button';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
+import {
+  Modal, Grid, Backdrop, Fade, Typography, TextField, Radio, Button, RadioGroup, FormControl, FormLabel, InputLabel, MenuItem, Select, Checkbox, FormControlLabel, InputAdornment, Stepper, Step, StepLabel
+} from '@material-ui/core';
+
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-// import Switch from '@material-ui/core/Switch';
 import LockIcon from '@material-ui/icons/Lock';
-// import SearchIcon from '@material-ui/icons/Search';
 
-// import CloseIcon from '@material-ui/icons/Close';
+import swal from 'sweetalert';
 
 import { API } from '../../config/API';
 
@@ -112,8 +94,7 @@ export default class ModalCreateEditUser extends Component {
       this._isMounted && this.setState({ dataPackageMembership, dataPackagePT })
 
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 
@@ -161,42 +142,23 @@ export default class ModalCreateEditUser extends Component {
       newData.append("password", this.state.password)
       newData.append("igAccount", this.state.igAccount)
 
-      // if (this.props.roleId === 2) {
-      //   let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
-      //   newData.append("roleId", 4)
-      //   newData.append("packageMembershipId", this.state.packageMembershipId)
-      //   newData.append("activeExpired", this.state.activeExpired)
-      //   newData.append("ptSession", ptSession.times)
-      // }
-      // else 
       newData.append("roleId", 4)
 
-
-
-      // if (this.state.roleId === 4) {
       let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
       newData.append("packageMembershipId", this.state.packageMembershipId)
       newData.append("activeExpired", this.state.activeExpired)
       newData.append("ptSession", ptSession.times)
-      // } else {
-      //   newData.append("positionId", this.state.positionId)
-      //   newData.append("isPermanent", this.state.isPermanent)
-      //   newData.append("available", this.state.available)
-      // }
 
-      console.log(newData)
       let addAnggota = await API.post('/users/signup', newData, { headers: { token } })
 
       if (addAnggota) {
-        console.log(addAnggota)
         this.props.fetchData()
         this.reset()
         this.props.handleModalDetailAnggota()
       }
 
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 

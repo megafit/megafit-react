@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import Cookies from 'js-cookie';
 
-import { Grid, Avatar, Chip, Divider, TextField, Button } from '@material-ui/core';
+import {
+  Grid, Avatar, Chip, Divider, TextField, Button
+} from '@material-ui/core';
 
 import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
-import { API } from '../../config/API';
-
 import swal from 'sweetalert';
+
+import { API } from '../../config/API';
 
 export default class DetailUserPT extends Component {
   state = {
@@ -27,7 +29,6 @@ export default class DetailUserPT extends Component {
     umur: '',
     tinggiBadan: '',
     beratBadan: '',
-    tanggalInput: '',
     triceps: '',
     dada: '',
     perut: '',
@@ -41,23 +42,31 @@ export default class DetailUserPT extends Component {
       let token = await Cookies.get('MEGAFIT_TKN')
 
       let member = await API.get(`/users/${this.props.location.state.userId}`, { headers: { token } })
-      let listHistory = await API.get(`/history-pts?userId=${this.props.location.state.userId}&hasPassed=true&hour=${new Date().getHours()}&date=${this.getDate()}`, { headers: { token } })
-
-      console.log("member", member.data.data)
+      // let listHistory = await API.get(`/history-pts?userId=${this.props.location.state.userId}&hasPassed=true&hour=${new Date().getHours()}&date=${this.getDate()}`, { headers: { token } })
+      let listHistory = await API.get(`/history-pts?userId=${this.props.location.state.userId}`, { headers: { token } })
       let historyPtSelected = await listHistory.data.data.find(history => history.id === this.props.location.state.historyPtId)
+      let listHistoryPassed = await listHistory.data.data.filter(history => (history.tblClassPt.date < new Date().getDate() && history.tblClassPt.month <= new Date().getMonth() + 1 && history.tblClassPt.year <= new Date().getFullYear()) || (Number(history.tblClassPt.time.slice(0, 2)) < new Date().getHours() && history.tblClassPt.date === new Date().getDate() && history.tblClassPt.month === new Date().getMonth() + 1 && history.tblClassPt.year === new Date().getFullYear()))
 
 
       this.setState({
-        dataHistoryPt: listHistory.data.data,
+        dataHistoryPt: listHistoryPassed,
         dataMember: member.data.data,
         newCatatan: historyPtSelected.catatan,
         linkZoom: historyPtSelected.tblClassPt.linkZoom,
         nickname: member.data.data.nickname,
         sisaHari: this.cekMembershipExpired(member.data.data.tblMember.activeExpired),
         flagActive: member.data.data.flagActive,
-        expiredDate: member.data.data.tblMember.activeExpired
+        expiredDate: member.data.data.tblMember.activeExpired,
+        umur: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].umur,
+        tinggiBadan: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].height,
+        beratBadan: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].weight,
+        triceps: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].triceps,
+        dada: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].dada,
+        perut: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].perut,
+        pinggul: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].pinggul,
+        pinggang: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].pinggang,
+        paha: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].paha
       })
-      console.log(listHistory.data.data)
     } catch (err) {
       swal("Please try again")
     }
@@ -81,7 +90,7 @@ export default class DetailUserPT extends Component {
       this.handleEditCatatan()
       swal("Tambah catatan berhasil", "", "success")
     } catch (err) {
-      swal("Please try again !")
+      swal("please try again")
     }
   }
 
@@ -117,8 +126,8 @@ export default class DetailUserPT extends Component {
     }
 
     return (
-      <Grid container style={{ display: 'flex' }}>
-        <Grid item style={{ backgroundColor: '#F0F0F0', minWidth: 250, height: '100%', paddingTop: 50 }} xs={2}>
+      <Grid container style={{ display: 'flex', height: '100%' }}>
+        <Grid item style={{ backgroundColor: '#F0F0F0', minWidth: 250, paddingTop: 50 }} xs={2}>
 
           <Avatar alt="icon" src={require('../../asset/icon_user.png')} style={{ height: 150, width: 150, margin: '0px auto', }} />
 
@@ -142,6 +151,7 @@ export default class DetailUserPT extends Component {
           }
 
           <p style={{ margin: 0, fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>{this.state.nickname}</p>
+
           <Grid style={{ display: 'flex', justifyContent: 'center' }}>
             <p style={{ margin: 0, }}>aktif s/d</p>
             {
@@ -149,62 +159,58 @@ export default class DetailUserPT extends Component {
             }
           </Grid>
 
-          <Grid style={{ padding: '15px 20px', minHeight: 100 }}>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+          <Grid style={{ padding: '15px 20px 5px 20px' }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>Umur</p>
-              <p style={{ margin: 0 }}>{this.state.umur}</p>
+              <p style={{ margin: 0 }}>{this.state.umur} Tahun</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>Tinggi Badan</p>
-              <p style={{ margin: 0 }}>{this.state.tinggiBadan}</p>
+              <p style={{ margin: 0 }}>{this.state.tinggiBadan} cm</p>
             </Grid>
             <Grid style={{ display: 'flex', marginBottom: 10 }}>
               <p style={{ margin: 0, width: 100 }}>Berat Badan</p>
-              <p style={{ margin: 0 }}>{this.state.beratBadan}</p>
+              <p style={{ margin: 0 }}>{this.state.beratBadan} kg</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
-              <p style={{ margin: 0, width: 100 }}>Tanggal Input</p>
-              <p style={{ margin: 0 }}>{this.state.tanggalInput}</p>
-            </Grid>
-            <p style={{ margin: '10px 0', fontWeight: 'bold' }}>Ukuran</p>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <p style={{ margin: '10px 0 5px 0', fontWeight: 'bold' }}>Ukuran</p>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>Triceps</p>
-              <p style={{ margin: 0 }}>{this.state.triceps}</p>
+              <p style={{ margin: 0 }}>{this.state.triceps} cm</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>dada</p>
-              <p style={{ margin: 0 }}>{this.state.dada}</p>
+              <p style={{ margin: 0 }}>{this.state.dada} cm</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>perut</p>
-              <p style={{ margin: 0 }}>{this.state.perut}</p>
+              <p style={{ margin: 0 }}>{this.state.perut} cm</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>pinggul</p>
-              <p style={{ margin: 0 }}>{this.state.pinggul}</p>
+              <p style={{ margin: 0 }}>{this.state.pinggul} cm</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>pinggang</p>
-              <p style={{ margin: 0 }}>{this.state.pinggang}</p>
+              <p style={{ margin: 0 }}>{this.state.pinggang} cm</p>
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex' }}>
               <p style={{ margin: 0, width: 100 }}>paha</p>
-              <p style={{ margin: 0 }}>{this.state.paha}</p>
+              <p style={{ margin: 0 }}>{this.state.paha} cm</p>
             </Grid>
           </Grid>
 
-          <Grid style={{ padding: 10, margin: '10px 20px', border: '1px solid black' }}>
-            {this.state.dataHistoryPt.length > 0 && this.state.dataHistoryPt[this.state.dataHistoryPt.length - 1].catatan}
+          <Grid style={{ padding: 10, margin: '5px 20px 20px 20px', border: '1px solid black' }}>
+            {this.state.dataHistoryPt.length > 0 && (this.state.dataHistoryPt[this.state.dataHistoryPt.length - 1].catatan ? this.state.dataHistoryPt[this.state.dataHistoryPt.length - 1].catatan : "Tidak ada catatan di sesi PT terakhir")}
           </Grid>
 
           <Divider style={{ marginTop: 15 }} />
-          <Grid style={{ padding: '10px 20px', minHeight: 100 }}>
+          <Grid style={{ padding: '10px 20px', minHeight: 250 }}>
             <Grid style={{ display: 'flex', justifyContent: 'space-between' }}>
               <p style={{ margin: 0 }}>Sejarah PT</p>
               <ArrowDropDownIcon onClick={this.handleSejarahPT} />
             </Grid>
             {
-              this.state.openHistoryPt && <Grid style={{ overflow: 'scroll', maxHeight: 70 }}>
+              this.state.openHistoryPt && <Grid style={{ overflow: 'scroll', maxHeight: 200 }}>
                 {
                   this.state.dataHistoryPt.map((history, index) =>
                     <Grid key={index}>
@@ -214,7 +220,7 @@ export default class DetailUserPT extends Component {
                           <p style={{ margin: 0 }}>{history.tblClassPt.tblUser.nickname}</p>
                         </Grid>
                         <Grid item sm={7}>
-                          <p style={{ margin: 0 }}>{history.catatan}</p>
+                          <p style={{ margin: 0 }}>{history.catatan ? history.catatan : "-"}</p>
                         </Grid>
                       </Grid>
                       <Divider />

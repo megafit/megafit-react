@@ -2,35 +2,23 @@ import 'date-fns';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
-import InputBase from '@material-ui/core/InputBase';
-import IconButton from '@material-ui/core/IconButton';
+import {
+  Typography, Grid, Paper, Button, Checkbox, InputBase, IconButton, Table, TableBody, TableCell, TableHead, TableRow, TablePagination
+} from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
-
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TablePagination from '@material-ui/core/TablePagination';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import ArrowDropUpOutlinedIcon from '@material-ui/icons/ArrowDropUpOutlined';
 import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
-
-import { Typography } from '@material-ui/core';
 
 import CardAnggota from '../components/CardAnggota';
 import ModalDetailAnggota from '../components/modal/ModalDetailAnggota';
 import ModalImportAnggota from '../components/modal/ModalImportAnggota';
 import ModalCreateEditUser from '../components/modal/ModalCreateEditUser';
 
-// import Download from '../components/exportToExcel';
-
 import orderBy from 'lodash/orderBy';
+
+import swal from 'sweetalert';
 
 import { fetchDataMember } from '../store/action';
 
@@ -145,8 +133,7 @@ class Anggota extends Component {
       this._isMounted && this.setState({ dataAnggotaSearch: listAnggota, dataAnggota: listAnggota })
 
     } catch (Error) {
-      alert("Server error")
-      console.log(Error)
+      swal("Please try again")
     }
   }
 

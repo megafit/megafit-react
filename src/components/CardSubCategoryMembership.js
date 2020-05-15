@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
 import {
   Grid, Button, Paper, Switch,
-  // Checkbox, 
 } from '@material-ui/core';
 
 import PeopleAltRoundedIcon from '@material-ui/icons/PeopleAltRounded';
@@ -17,9 +16,9 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import swal from 'sweetalert';
 
-import { API } from '../config/API';
-
 import { fetchDataSubCategoryMemberships } from '../store/action';
+
+import { API } from '../config/API';
 
 class CardSubCategoryMembership extends Component {
   state = {

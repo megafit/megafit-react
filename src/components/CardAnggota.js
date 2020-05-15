@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Avatar, Checkbox, Grid, Button, Popover, MenuList, MenuItem } from '@material-ui/core';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
+
+import {
+  Avatar, Checkbox, Grid, Button, Popover, MenuList, MenuItem, TableCell, TableRow
+} from '@material-ui/core';
 
 import Download from './exportToExcel';
 
@@ -39,10 +40,6 @@ export default class CardAnggota extends Component {
       }
     ],
   }
-
-  // componentDidMount() {
-  //   console.log(this.props.data)
-  // }
 
   checkoutMember = () => {
     this.props.checkoutMember(this.props.data)
@@ -96,7 +93,6 @@ export default class CardAnggota extends Component {
 
     return (
       <>
-        {/* <TableRow onClick={this.detailAnggota} style={{ cursor: 'pointer' }}> */}
         <TableRow>
           <TableCell>
             <Checkbox
@@ -210,7 +206,7 @@ export default class CardAnggota extends Component {
               <p style={{ margin: 0 }}>unduh</p>
             </MenuItem> */}
             <MenuItem style={{ height: 40 }}>
-              <Download                
+              <Download
                 nameSheet="unduh"
                 title="Unduh"
                 labelValueReportNilai={this.state.labelValue}

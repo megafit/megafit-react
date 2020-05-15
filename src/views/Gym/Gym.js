@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import {
-  Grid, Tabs, Tab, Divider, Box, Typography, Button, Paper, InputBase, IconButton, MenuItem, Select,
-  // Checkbox
+  Grid, Tabs, Tab, Divider, Box, Typography, Button, Paper, InputBase, IconButton, MenuItem, Select
 } from '@material-ui/core';
 
 import SearchIcon from '@material-ui/icons/Search';
@@ -62,7 +61,7 @@ class ListProduct extends Component {
 
   fetchDataProduct = async () => {
     await this.props.fetchDataSubCategoryMemberships()
-    console.log(this.props.dataSubCategoryMemberships)
+
     this.setState({
       data: this.props.dataSubCategoryMemberships
     })
@@ -77,7 +76,6 @@ class ListProduct extends Component {
   };
 
   handleChangeCheck = event => {
-    console.log(event.target.name, event.target.checked)
     this.setState({ [event.target.name]: event.target.checked });
   };
 

@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'js-cookie';
 
-import TextField from '@material-ui/core/TextField';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {
+  TextField, InputAdornment, Typography, Button, CircularProgress, Grid
+} from '@material-ui/core';
 
 import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 
-import { API } from '../config/API';
+import swal from 'sweetalert';
+
 import { setUser } from '../store/action';
+
+import { API } from '../config/API';
 
 class Login extends Component {
   constructor(props) {
@@ -34,7 +35,6 @@ class Login extends Component {
       }
     }
   }
-
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -82,7 +82,7 @@ class Login extends Component {
         }
       }
     } catch (err) {
-      alert('Login failed')
+      swal("Login failed")
       this.setState({
         proses: false,
         editableInput: true
@@ -92,9 +92,9 @@ class Login extends Component {
 
   render() {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '5% 0 0 auto' }}>
-        <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
-          <img src={require('../asset/pola-megafit_black.png')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 25 }} height={80} width={500} alt="logo-megafit" />
+      <Grid container style={{ display: 'flex', justifyContent: 'center', margin: '3% 0 0 auto' }}>
+        <Grid item xs={8} md={3} style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+          <img src={require('../asset/pola-megafit_black.png')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 25 }} height={60} width="100%" alt="logo-megafit" />
 
           <Typography style={{ margin: 10, fontSize: 13 }}>SIGN IN TO CONTINUE.</Typography>
           <form noValidate autoComplete="off" onSubmit={this.signin} style={{ display: 'flex', flexDirection: 'column' }}>
@@ -108,7 +108,7 @@ class Login extends Component {
               InputProps={{
                 endAdornment: <InputAdornment position="end"><MailIcon /></InputAdornment>,
               }}
-              style={{ marginBottom: 15, width: 350 }}
+              style={{ marginBottom: 15 }}
               disabled={this.state.proses}
             />
             <TextField
@@ -123,8 +123,8 @@ class Login extends Component {
               }}
               disabled={this.state.proses}
             />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <div style={{ position: 'relative', }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <Grid style={{ position: 'relative', }}>
                 <Button
                   type="submit"
                   fullWidth
@@ -142,13 +142,13 @@ class Login extends Component {
                   marginTop: -12,
                   marginLeft: -12,
                 }} />}
-              </div>
-            </div>
+              </Grid>
+            </Grid>
           </form>
 
-          <Typography style={{ fontSize: 12 }}>2019 - Version 1.0.0</Typography>
-        </div>
-      </div>
+          <Typography style={{ fontSize: 12 }}>2020 - Version 1.0.0</Typography>
+        </Grid>
+      </Grid>
     )
   }
 }
