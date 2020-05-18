@@ -22,7 +22,6 @@ export default class DetailUserPT extends Component {
     openHistoryPt: true,
     dataHistoryPt: [],
     newCatatan: '',
-    editCatatan: false,
     nickname: '',
     expiredDate: '',
     lastCatatan: '',
@@ -34,10 +33,16 @@ export default class DetailUserPT extends Component {
     perut: '',
     pinggul: '',
     pinggang: '',
-    paha: ''
+    paha: '',
+    tanggalInput: new Date(),
+    statusEdit: false
   }
 
   async componentDidMount() {
+    this.fetchDataMember()
+  }
+
+  fetchDataMember = async () => {
     try {
       let token = await Cookies.get('MEGAFIT_TKN')
 
@@ -47,11 +52,10 @@ export default class DetailUserPT extends Component {
       let historyPtSelected = await listHistory.data.data.find(history => history.id === this.props.location.state.historyPtId)
       let listHistoryPassed = await listHistory.data.data.filter(history => (history.tblClassPt.date < new Date().getDate() && history.tblClassPt.month <= new Date().getMonth() + 1 && history.tblClassPt.year <= new Date().getFullYear()) || (Number(history.tblClassPt.time.slice(0, 2)) < new Date().getHours() && history.tblClassPt.date === new Date().getDate() && history.tblClassPt.month === new Date().getMonth() + 1 && history.tblClassPt.year === new Date().getFullYear()))
 
-
       this.setState({
         dataHistoryPt: listHistoryPassed,
         dataMember: member.data.data,
-        newCatatan: historyPtSelected.catatan,
+        newCatatan: historyPtSelected.catatan ? historyPtSelected.catatan : '',
         linkZoom: historyPtSelected.tblClassPt.linkZoom,
         nickname: member.data.data.nickname,
         sisaHari: this.cekMembershipExpired(member.data.data.tblMember.activeExpired),
@@ -65,7 +69,8 @@ export default class DetailUserPT extends Component {
         perut: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].perut,
         pinggul: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].pinggul,
         pinggang: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].pinggang,
-        paha: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].paha
+        paha: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].paha,
+        tanggalInput: member.data.data.tblMember.tblDataSizeMembers[member.data.data.tblMember.tblDataSizeMembers.length - 1].createdAt
       })
     } catch (err) {
       swal("Please try again")
@@ -87,15 +92,10 @@ export default class DetailUserPT extends Component {
       let token = await Cookies.get("MEGAFIT_TKN")
       await API.put(`/history-pts/${this.props.location.state.historyPtId}`, { catatan: this.state.newCatatan }, { headers: { token } })
 
-      this.handleEditCatatan()
       swal("Tambah catatan berhasil", "", "success")
     } catch (err) {
       swal("please try again")
     }
-  }
-
-  handleEditCatatan = () => {
-    this.setState({ editCatatan: !this.state.editCatatan })
   }
 
   cekMembershipExpired = args => {
@@ -114,6 +114,59 @@ export default class DetailUserPT extends Component {
     if (month < 10) month = `0${month}`
 
     return `${year}-${month}-${date}`
+  }
+
+  handleEditDataMember = () => {
+    this.setState({
+      statusEdit: !this.state.statusEdit
+    })
+  }
+
+  handleCancelEditDataMember = () => {
+    if (this.state.dataMember) {
+      this.setState({
+        umur: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].umur,
+        tinggiBadan: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].height,
+        beratBadan: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].weight,
+        triceps: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].triceps,
+        dada: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].dada,
+        perut: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].perut,
+        pinggul: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].pinggul,
+        pinggang: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].pinggang,
+        paha: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].paha,
+        tanggalInput: this.state.dataMember.tblMember.tblDataSizeMembers[this.state.dataMember.tblMember.tblDataSizeMembers.length - 1].createdAt
+      })
+    }
+    this.handleEditDataMember()
+  }
+
+  editDataMember = async () => {
+    try {
+      let token = Cookies.get("MEGAFIT_TKN")
+
+      let newData = {
+        umur: this.state.umur || 0,
+        height: this.state.tinggiBadan || 0,
+        weight: this.state.beratBadan || 0,
+        triceps: this.state.triceps || 0,
+        dada: this.state.dada || 0,
+        perut: this.state.perut || 0,
+        pinggul: this.state.pinggul || 0,
+        pinggang: this.state.pinggang || 0,
+        paha: this.state.paha || 0
+      }
+
+      await API.post(`/users/data-member/${this.props.location.state.userId}`, newData, { headers: { token } })
+
+      this.setState({
+        dataMember: null,
+        tanggalInput: new Date()
+      })
+      this.handleEditDataMember()
+      swal("Ubah data member berhasil", "", "success")
+    } catch (err) {
+      swal("Please try again")
+    }
   }
 
   render() {
@@ -159,43 +212,130 @@ export default class DetailUserPT extends Component {
             }
           </Grid>
 
-          <Grid style={{ padding: '15px 20px 5px 20px' }}>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
+          <Grid style={{ padding: '10px 20px 5px 20px' }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>Umur</p>
-              <p style={{ margin: 0 }}>{this.state.umur} Tahun</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.umur} onChange={this.handleChange("umur")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.umur} Tahun</p>
+              }
+
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
               <p style={{ margin: 0, width: 100 }}>Tinggi Badan</p>
-              <p style={{ margin: 0 }}>{this.state.tinggiBadan} cm</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.tinggiBadan} onChange={this.handleChange("tinggiBadan")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.tinggiBadan} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 10 }}>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
               <p style={{ margin: 0, width: 100 }}>Berat Badan</p>
-              <p style={{ margin: 0 }}>{this.state.beratBadan} kg</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.beratBadan} onChange={this.handleChange("beratBadan")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.beratBadan} kg</p>
+              }
             </Grid>
+
             <p style={{ margin: '10px 0 5px 0', fontWeight: 'bold' }}>Ukuran</p>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
-              <p style={{ margin: 0, width: 100 }}>Triceps</p>
-              <p style={{ margin: 0 }}>{this.state.triceps} cm</p>
+            {
+              !this.state.statusEdit && <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+                <p style={{ margin: 0, width: 130 }}>Terakhir diubah</p>
+                <p style={{ margin: 0 }}>: {formatDate(this.state.tanggalInput)}</p>
+              </Grid>
+            }
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>Triceps</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.triceps} onChange={this.handleChange("triceps")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.triceps} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
-              <p style={{ margin: 0, width: 100 }}>dada</p>
-              <p style={{ margin: 0 }}>{this.state.dada} cm</p>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>dada</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.dada} onChange={this.handleChange("dada")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.dada} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
-              <p style={{ margin: 0, width: 100 }}>perut</p>
-              <p style={{ margin: 0 }}>{this.state.perut} cm</p>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>perut</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.perut} onChange={this.handleChange("perut")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.perut} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
-              <p style={{ margin: 0, width: 100 }}>pinggul</p>
-              <p style={{ margin: 0 }}>{this.state.pinggul} cm</p>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>pinggul</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.pinggul} onChange={this.handleChange("pinggul")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.pinggul} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex', marginBottom: 5 }}>
-              <p style={{ margin: 0, width: 100 }}>pinggang</p>
-              <p style={{ margin: 0 }}>{this.state.pinggang} cm</p>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>pinggang</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.pinggang} onChange={this.handleChange("pinggang")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.pinggang} cm</p>
+              }
             </Grid>
-            <Grid style={{ display: 'flex' }}>
-              <p style={{ margin: 0, width: 100 }}>paha</p>
-              <p style={{ margin: 0 }}>{this.state.paha} cm</p>
+            <Grid style={{ display: 'flex', alignItems: 'center', marginBottom: 5 }}>
+              <p style={{ margin: 0, width: 130 }}>paha</p>
+              {
+                this.state.statusEdit
+                  ? <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                    <p style={{ margin: 0, marginRight: 5 }}>:</p>
+                    <TextField value={this.state.paha} onChange={this.handleChange("paha")} style={{ width: 50 }} />
+                  </Grid>
+                  : <p style={{ margin: 0 }}>: {this.state.paha} cm</p>
+              }
+            </Grid>
+            <Grid style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              {
+                this.state.statusEdit
+                  ? <>
+                    <Button onClick={this.handleCancelEditDataMember}>
+                      Cancel
+                    </Button>
+                    <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={this.editDataMember}>
+                      Save
+                    </Button>
+                  </>
+                  : <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={this.handleEditDataMember}>
+                    Edit
+                  </Button>
+              }
             </Grid>
           </Grid>
 
@@ -249,40 +389,18 @@ export default class DetailUserPT extends Component {
             </Grid>
 
             <p style={{ margin: '0px 0px 5px 0px' }}>Catatan</p>
-            {
-              this.state.editCatatan
-                ? <>
-                  <TextField
-                    id="outlined-multiline-static"
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    value={this.state.newCatatan}
-                    onChange={this.handleChange('newCatatan')}
-                    style={{ width: '100%', marginBottom: 20 }}
-                  />
-                  <Grid>
-                    <Button style={{ width: 80, marginRight: 20 }} onClick={this.handleEditCatatan}>
-                      Cancel
-                    </Button>
-                    <Button style={{ backgroundColor: '#8eb52f', color: 'white', width: 80 }} onClick={this.submitCatatan}>
-                      Save
-                    </Button>
-                  </Grid>
-                </>
-                : <>
-                  <Grid style={{ width: "100%", border: '1px solid black', padding: 10, marginBottom: 20, minHeight: 40 }}>
-                    {
-                      this.state.newCatatan
-                        ? this.state.newCatatan
-                        : "Tidak ada catatan"
-                    }
-                  </Grid>
-                  <Button style={{ backgroundColor: '#8eb52f', color: 'white', width: 80 }} onClick={this.handleEditCatatan}>
-                    Edit
-                  </Button>
-                </>
-            }
+            <TextField
+              id="outlined-multiline-static"
+              multiline
+              rows={4}
+              variant="outlined"
+              value={this.state.newCatatan}
+              onChange={this.handleChange('newCatatan')}
+              style={{ width: '100%', marginBottom: 20 }}
+            />
+            <Button style={{ backgroundColor: '#8eb52f', color: 'white', width: 80 }} onClick={this.submitCatatan}>
+              Save
+            </Button>
           </Grid>
         </Grid>
       </Grid >

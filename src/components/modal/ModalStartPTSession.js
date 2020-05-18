@@ -18,13 +18,23 @@ class ModalStartPTSession extends Component {
   state = {
     date: '',
     time: '',
-    canCancel: true
+    canCancel: false
   }
 
   componentDidMount() {
-    if (this.props.data.tblClassPt.date > new Date().getDate() || (this.props.data.tblClassPt.date - 1 === new Date().getDate())) {
+
+    // console.log("bulan depan",(this.props.data.tblClassPt.month > new Date().getMonth() + 1 && this.props.data.tblClassPt.year >= new Date().getFullYear()))
+
+    // console.log("bulan sama tanggal depan", (this.props.data.tblClassPt.date > new Date().getDate() + 1 && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
+
+    // console.log("bulan sama tanggal sama jam depan", (Number(this.props.data.tblClassPt.time.slice(0, 2)) >= new Date().getHours() && this.props.data.tblClassPt.date - 1 === new Date().getDate() && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
+    if (
+      (this.props.data.tblClassPt.month > new Date().getMonth() + 1 && this.props.data.tblClassPt.year >= new Date().getFullYear()) || 
+      (this.props.data.tblClassPt.date > new Date().getDate() + 1 && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()) ||
+      (Number(this.props.data.tblClassPt.time.slice(0, 2)) >= new Date().getHours() && this.props.data.tblClassPt.date - 1 === new Date().getDate() && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()) // Validation Hour
+    ) {
       this.setState({
-        canCancel: false
+        canCancel: true
       })
     }
   }
@@ -36,14 +46,14 @@ class ModalStartPTSession extends Component {
   cancel = async () => {
     try {
       let token = Cookies.get('MEGAFIT_TKN');
-      await API.delete(`/history-pts/${this.props.data.id}`, {}, { headers: { token } })
-      await this.props.fetchDataMyJoinedClassPt(this.getDate())
+      await API.delete(`/history-pts/${this.props.data.id}`, { headers: { token } })
 
       swal("Batal gabung kelas pt sukses", "", "success")
       this.props.cancelJoinClass()
       this.props.close()
     } catch (err) {
       swal("please try again")
+      console.log(err)
     }
   }
 
@@ -101,7 +111,7 @@ class ModalStartPTSession extends Component {
             <div style={{
               backgroundColor: 'white',
               boxShadow: 5,
-              height: 330,
+              height: 360,
               width: 600,
               overflow: 'hidden',
               paddingBottom: 50,
@@ -120,6 +130,8 @@ class ModalStartPTSession extends Component {
                   Klik <b>MULAI</b> untuk memulai sesi atau klik <b>BATAL</b> untuk membatalkan sesi
                 </Typography>
 
+                <p style={{ margin: '5px 0px', textAlign: 'center', fontWeight: 'bold' }}>Pembatalan kelas PT hanya bisa dilakukan 24 jam sebelum sesi dimulai</p>
+
                 {
                   this.props.data.tblClassPt.linkZoom
                     ? <p style={{ margin: 0, textAlign: 'center', fontStyle: 'italic' }}>pastikan internet kamu lancar</p>
@@ -130,7 +142,7 @@ class ModalStartPTSession extends Component {
                   <Button style={{ width: 130, marginRight: 20 }} onClick={this.props.close}>
                     Cancel
                 </Button>
-                  <Button style={{ width: 130, marginRight: 20 }} color="secondary" variant="contained" onClick={this.cancel} disabled={this.state.canCancel}>
+                  <Button style={{ width: 130, marginRight: 20 }} color="secondary" variant="contained" onClick={this.cancel} disabled={!this.state.canCancel}>
                     Batal
                   </Button>
                   <Button style={{ backgroundColor: this.props.data.tblClassPt.linkZoom ? '#8cb32e' : '#e0e0e0', width: 130, color: this.props.data.tblClassPt.linkZoom ? 'white' : '#a8a8a8' }} onClick={this.submit} disabled={!this.props.data.tblClassPt.linkZoom}>

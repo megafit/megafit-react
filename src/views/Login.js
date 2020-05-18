@@ -75,8 +75,10 @@ class Login extends Component {
           password: ''
         })
 
-        if (data.data.roleId === 4) {
+        if (data.data.roleId === 4) { // FOR MEMBER
           this.props.history.push('/home')
+        } else if (data.data.positionId === 3) { // FOR PT
+          this.props.history.push('/pt')
         } else {
           this.props.history.push('/checkin')
         }

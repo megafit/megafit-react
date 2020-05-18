@@ -27,6 +27,11 @@ function Navsidebar(props) {
     if (Cookies.get('MEGAFIT_TKN')) {
       API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
+          if (data.roleId === 4) {
+            props.history.push('/home')
+          } else if (data.positionId === 3) {
+            props.history.push('/pt')
+          }
           props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId, hasConfirmTermAndCondition: data.hasConfirmTermAndCondition })
         })
         .catch(err => {
@@ -59,10 +64,10 @@ function Navsidebar(props) {
   useEffect(() => {
     if (props.roleId === 4) {
       props.history.push('/home')
-    } else {
-      // props.history.push('/checkin')
+    } else if (props.positionId === 3) {
+      props.history.push('/pt')
     }
-  }, [props.roleId, props.history])
+  }, [props.roleId, props.history, props.positionId])
 
 
   return (
@@ -104,31 +109,36 @@ function Navsidebar(props) {
                 : <>
                   <img src={require('../asset/logo-megafit-2.png')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 30 }} height={80} width={80} alt="logo-megafit" />
                   <List component="nav" style={{ color: "white" }} >
-                    <Link to='/checkin' onClick={event => handleListItemClick(event, 3)} style={{ textDecoration: "none" }}>
-                      <ListItem button selected={selectedIndex === 3} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/checkin.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-checkin" />
-                      </ListItem>
-                    </Link>
-                    <Link to='/anggota' onClick={event => handleListItemClick(event, 4)} style={{ textDecoration: "none" }}>
-                      <ListItem button selected={selectedIndex === 4} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/anggota.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-anggota" />
-                      </ListItem>
-                    </Link>
-                    <Link to='/gym' onClick={event => handleListItemClick(event, 5)} style={{ textDecoration: "none" }}>
-                      <ListItem button selected={selectedIndex === 5} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/gym.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-gym" />
-                      </ListItem>
-                    </Link>
-                    <Link to='/pos' onClick={event => handleListItemClick(event, 6)} style={{ textDecoration: "none" }}>
-                      <ListItem button selected={selectedIndex === 6} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/POS.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pos" />
-                      </ListItem>
-                    </Link>
-                    <Link to='/pt' onClick={event => handleListItemClick(event, 7)} style={{ textDecoration: "none" }}>
-                      <ListItem button selected={selectedIndex === 7} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
-                        <img src={require('../asset/menu_pt.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pt" />
-                      </ListItem>
-                    </Link>
+                    {
+                      props.positionId === 3 //FOR PT
+                        ? <Link to='/pt' onClick={event => handleListItemClick(event, 7)} style={{ textDecoration: "none" }}>
+                          <ListItem button selected={selectedIndex === 7} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                            <img src={require('../asset/menu_pt.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pt" />
+                          </ListItem>
+                        </Link>
+                        : <>
+                          <Link to='/checkin' onClick={event => handleListItemClick(event, 3)} style={{ textDecoration: "none" }}>
+                            <ListItem button selected={selectedIndex === 3} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                              <img src={require('../asset/checkin.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-checkin" />
+                            </ListItem>
+                          </Link>
+                          <Link to='/anggota' onClick={event => handleListItemClick(event, 4)} style={{ textDecoration: "none" }}>
+                            <ListItem button selected={selectedIndex === 4} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                              <img src={require('../asset/anggota.png')} style={{ alignSelf: 'center' }} height={60} width={50} alt="logo-anggota" />
+                            </ListItem>
+                          </Link>
+                          <Link to='/gym' onClick={event => handleListItemClick(event, 5)} style={{ textDecoration: "none" }}>
+                            <ListItem button selected={selectedIndex === 5} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                              <img src={require('../asset/gym.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-gym" />
+                            </ListItem>
+                          </Link>
+                          <Link to='/pos' onClick={event => handleListItemClick(event, 6)} style={{ textDecoration: "none" }}>
+                            <ListItem button selected={selectedIndex === 6} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
+                              <img src={require('../asset/POS.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pos" />
+                            </ListItem>
+                          </Link>
+                        </>
+                    }
                   </List>
                 </>
             }
@@ -145,10 +155,11 @@ const mapDispatchToProps = {
   setUser
 }
 
-const mapStateToProps = ({ roleId, userId }) => {
+const mapStateToProps = ({ roleId, userId, positionId }) => {
   return {
     roleId,
-    userId
+    userId,
+    positionId
   }
 }
 

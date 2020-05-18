@@ -147,7 +147,7 @@ class CardJamSesiPT extends Component {
       <>
         {
           this.state.status
-            ? <Grid style={{ display: 'flex', marginTop: 10, backgroundColor: this.state.hasPartisipan ? '#8eb52f' : 'white', padding: 10, borderRadius: 10, flexDirection: 'column' }} >
+            ? <Grid style={{ display: 'flex', marginTop: 10, backgroundColor: this.state.hasPartisipan ? '#8eb52f' : 'white', padding: 10, borderRadius: 10, flexDirection: 'column', opacity: this.state.hasPassed ? 0.5 : 1 }} >
 
               <Grid style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                 <p style={{ margin: 0, fontSize: 18, cursor: 'pointer' }} onClick={this.handleModalAddLinkZoom}>{this.props.data.jam}</p>
@@ -166,7 +166,7 @@ class CardJamSesiPT extends Component {
                 </>
               }
             </Grid>
-            : <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, backgroundColor: this.state.status ? 'white' : '#d1d1d1', padding: 10, borderRadius: 10 }}>
+            : <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, backgroundColor: this.state.status ? 'white' : '#d1d1d1', padding: 10, borderRadius: 10, opacity: this.state.hasPassed ? 0.5 : 1 }}>
               <p style={{ margin: 0, fontSize: 18 }}>{this.props.data.jam}</p>
               <PowerSettingsNewIcon style={{ color: 'white', backgroundColor: 'red', borderRadius: 15, cursor: this.state.hasPassed ? null : 'pointer' }} onClick={this.state.hasPassed ? null : this.handleChangeStatus} />
             </Grid>

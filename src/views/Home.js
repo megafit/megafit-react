@@ -133,7 +133,8 @@ class Home extends Component {
     this.setState({ ptSessionRemaining: this.state.ptSessionRemaining - 1 })
   }
 
-  cancelJoinClass = () => {
+  cancelJoinClass = async () => {
+    await this.props.fetchDataMyJoinedClassPt(this.getDate())
     this.setState({ ptSessionRemaining: this.state.ptSessionRemaining + 1 })
   }
 
@@ -404,7 +405,7 @@ class Home extends Component {
         }
 
         {
-          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} cancelJoinClass={this.Class} />
+          this.state.openModalStartPTSession && <ModalStartPTSession open={this.state.openModalStartPTSession} close={this.handleModalStartPTSession} data={this.props.dataMyJoinedClassPt[0]} cancelJoinClass={this.cancelJoinClass} />
         }
 
       </>

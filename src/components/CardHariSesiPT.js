@@ -131,7 +131,7 @@ export default class CardHariSesiPT extends Component {
     }
 
     return (
-      <Grid item style={{ width: 210, backgroundColor: '#e8e8e8', padding: 15, marginBottom: 10, marginRight: 10 }} >
+      <Grid item style={{ width: 210, backgroundColor: '#e8e8e8', padding: 15, marginBottom: 10, marginRight: 10, opacity: this.state.hasPassed ? 0.5 : 1 }} >
         <p style={{ margin: 0, fontSize: 10 }}>{getDate(this.props.data.date)}</p>
         <Grid style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <p style={{ margin: 0, fontWeight: ' bold', fontSize: 18 }}>{this.props.data.day}</p>
