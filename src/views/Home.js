@@ -190,33 +190,34 @@ class Home extends Component {
 
     return (
       <>
-        <Grid>
-          <Grid style={{ backgroundColor: '#8eb52f', minHeight: 40, padding: '15px 50px', color: 'white', fontSize: 15 }}>
-            Pengumuman: Megafit tutup sementara sampai batas waktu yang tidak ditentukan. Membership dibekukan & disesuaikan ketika buka kembali
+        <Grid style={{ flex: 1,display: 'flex', height: '100%', minHeight: '100%', position: 'relative', justifyContent: 'space-between', backgroundColor: 'green', flexDirection: 'column' }}>
+          <Grid >
+            <Grid style={{ backgroundColor: '#8eb52f', minHeight: 40, padding: '15px 50px', color: 'white', fontSize: 15 }}>
+              Pengumuman: Megafit tutup sementara sampai batas waktu yang tidak ditentukan. Membership dibekukan & disesuaikan ketika buka kembali
           </Grid>
-          <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
-            <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo kita mulai sehat bareng.</p>
+            <Grid container style={{ paddingLeft: 50, paddingRight: 50, paddingTop: 5, display: 'flex', flexDirection: 'column' }}>
+              <p style={{ fontSize: 35, marginBottom: 20 }}>Hi {this.props.nickname}, ayo kita mulai sehat bareng.</p>
 
-            <Grid container spacing={3}>
-              {/* BAGIAN KIRI */}
-              <Grid item md={7} sm={12}>
-                <Grid style={{ backgroundColor: '#f6f6fa', marginBottom: 20, display: 'flex', alignItems: 'center' }}>
-                  <Grid style={{ position: 'relative' }}>
-                    <img src={require('../asset/home2.png')} height={200} width={240} alt="logo-home2" style={{ marginRight: 10 }} />
-                    <img src={require('../asset/home1.png')} height={130} width={150} alt="logo-home1" style={{ marginRight: 10, position: 'absolute', left: 0, bottom: 0 }} />
-                  </Grid>
+              <Grid container spacing={3}>
+                {/* BAGIAN KIRI */}
+                <Grid item md={7} sm={12}>
+                  <Grid style={{ backgroundColor: '#f6f6fa', marginBottom: 20, display: 'flex', alignItems: 'center' }}>
+                    <Grid style={{ position: 'relative' }}>
+                      <img src={require('../asset/home2.png')} height={200} width={240} alt="logo-home2" style={{ marginRight: 10 }} />
+                      <img src={require('../asset/home1.png')} height={130} width={150} alt="logo-home1" style={{ marginRight: 10, position: 'absolute', left: 0, bottom: 0 }} />
+                    </Grid>
 
-                  <Grid style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Grid>
-                      <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>Workout</Typography>
-                      <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>From</Typography>
-                      <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>Home</Typography>
+                    <Grid style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <Grid>
+                        <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>Workout</Typography>
+                        <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>From</Typography>
+                        <Typography style={{ margin: 0, color: '#93ccf9', fontSize: 30 }}>Home</Typography>
+                      </Grid>
                     </Grid>
                   </Grid>
-                </Grid>
-                <Grid container spacing={2}>
-                  {/* MEMBERSHIPS */}
-                  {/* <Grid item>
+                  <Grid container spacing={2}>
+                    {/* MEMBERSHIPS */}
+                    {/* <Grid item>
                     <p style={{ margin: 0, marginBottom: 10 }}>Paket Keanggotaan</p>
                     <Grid style={{ backgroundColor: '#8eb52f', padding: 10, borderRadius: 5, width: 250, height: 80, display: 'flex', marginBottom: 10 }}>
                       <Grid style={{ backgroundColor: '#5f810c', borderRadius: 5, width: 60, height: 60, position: 'relative' }}>
@@ -240,66 +241,66 @@ class Home extends Component {
                     </Grid>
                   </Grid> */}
 
-                  {/* PT */}
-                  <Grid item>
-                    <p style={{ margin: 0, marginBottom: 10 }}>Paket PT</p>
-                    <Grid style={{ backgroundColor: '#92cbf7', padding: 10, borderRadius: 5, width: 250, height: 80, display: 'flex', marginBottom: 10 }}>
-                      <Grid style={{ backgroundColor: '#3183c2', borderRadius: 5, width: 60, height: 60, position: 'relative' }}>
-                        <p style={{ margin: 0, fontSize: 35, color: 'white', fontWeight: 'bold', textAlign: 'center' }}>{this.state.ptSessionRemaining}</p>
-                        <p style={{ margin: '5px 0px', color: 'white', position: 'absolute', bottom: 0, left: 18, marginBottom: 3 }}>sisa</p>
+                    {/* PT */}
+                    <Grid item>
+                      <p style={{ margin: 0, marginBottom: 10 }}>Paket PT</p>
+                      <Grid style={{ backgroundColor: '#92cbf7', padding: 10, borderRadius: 5, width: 250, height: 80, display: 'flex', marginBottom: 10 }}>
+                        <Grid style={{ backgroundColor: '#3183c2', borderRadius: 5, width: 60, height: 60, position: 'relative' }}>
+                          <p style={{ margin: 0, fontSize: 35, color: 'white', fontWeight: 'bold', textAlign: 'center' }}>{this.state.ptSessionRemaining}</p>
+                          <p style={{ margin: '5px 0px', color: 'white', position: 'absolute', bottom: 0, left: 18, marginBottom: 3 }}>sisa</p>
+                        </Grid>
+
+                        {
+                          this.state.hasJoinedClassPt
+                            ? <Grid style={{ marginLeft: 10 }}>
+                              <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalStartPTSession}>
+                                mulai / batal
+                        </Button>
+                              <Grid style={{ display: 'flex' }}>
+                                {
+                                  this.props.dataMyJoinedClassPt[0] && <p style={{ margin: 0, color: 'white' }}>{getTimeCloestClass(this.props.dataMyJoinedClassPt[0])}</p>
+                                }
+                                {/* <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.ptSession)}</p> */}
+                              </Grid>
+                            </Grid>
+                            : <Grid style={{ marginLeft: 10 }}>
+                              <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalKetentuanSyarat} disabled={this.props.dataUserDetail && this.props.dataUserDetail.tblMember.ptSession === 0}>
+                                pilih sesi
+                          </Button>
+                              <Grid style={{ display: 'flex' }}>
+                                <p style={{ margin: 0, color: 'white' }}>aktif s/d</p>
+                                <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.activeExpired)}</p>
+                              </Grid>
+                            </Grid>
+                        }
+
+                      </Grid>
+                      <Grid style={{ borderRadius: 5, width: 250, height: 80, display: 'flex', border: '1px dashed #e5e3e3', alignItems: 'center', justifyContent: 'center' }}>
+                        <AddIcon style={{ color: '#d5d3d3' }} />
                       </Grid>
 
-                      {
-                        this.state.hasJoinedClassPt
-                          ? <Grid style={{ marginLeft: 10 }}>
-                            <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalStartPTSession}>
-                              mulai / batal
-                        </Button>
-                            <Grid style={{ display: 'flex' }}>
-                              {
-                                this.props.dataMyJoinedClassPt[0] && <p style={{ margin: 0, color: 'white' }}>{getTimeCloestClass(this.props.dataMyJoinedClassPt[0])}</p>
-                              }
-                              {/* <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.ptSession)}</p> */}
-                            </Grid>
-                          </Grid>
-                          : <Grid style={{ marginLeft: 10 }}>
-                            <Button style={{ color: '#92cbf7', backgroundColor: 'white', borderRadius: 5, width: 150, padding: 5, marginBottom: 5 }} onClick={this.handleModalKetentuanSyarat} disabled={this.props.dataUserDetail && this.props.dataUserDetail.tblMember.ptSession === 0}>
-                              pilih sesi
-                          </Button>
-                            <Grid style={{ display: 'flex' }}>
-                              <p style={{ margin: 0, color: 'white' }}>aktif s/d</p>
-                              <p style={{ margin: '0px 0px 0px 5px', color: 'white', fontWeight: 'bold' }}>{this.props.dataUserDetail && formatDate(this.props.dataUserDetail.tblMember.activeExpired)}</p>
-                            </Grid>
-                          </Grid>
-                      }
-
-                    </Grid>
-                    <Grid style={{ borderRadius: 5, width: 250, height: 80, display: 'flex', border: '1px dashed #e5e3e3', alignItems: 'center', justifyContent: 'center' }}>
-                      <AddIcon style={{ color: '#d5d3d3' }} />
-                    </Grid>
-
-                  </Grid>
-                </Grid>
-              </Grid>
-
-              <Grid item md={1} />
-
-              {/* BAGIAN KANAN */}
-              <Grid item md={4} sm={12}>
-
-                <Grid style={{ position: 'relative' }}>
-                  <img src={require('../asset/home3.png')} height={200} width={270} alt="logo-home3" style={{ marginRight: 10 }} />
-                  <Grid style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', top: 60, left: 40 }}>
-                    <Grid>
-                      <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>PERSONAL</Typography>
-                      <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>TRAINING</Typography>
-                      <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>ONLINE</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
 
-                {/* Konfirmasi Pembayaran */}
-                {/* <Grid style={{ backgroundColor: '#f6f6fa', borderRadius: 15, padding: 20 }}>
+                <Grid item md={1} />
+
+                {/* BAGIAN KANAN */}
+                <Grid item md={4} sm={12}>
+
+                  <Grid style={{ position: 'relative' }}>
+                    <img src={require('../asset/home3.png')} height={200} width={270} alt="logo-home3" style={{ marginRight: 10 }} />
+                    <Grid style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', top: 60, left: 40 }}>
+                      <Grid>
+                        <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>PERSONAL</Typography>
+                        <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>TRAINING</Typography>
+                        <Typography style={{ margin: 0, color: '#2248a8', fontSize: 18 }}>ONLINE</Typography>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+
+                  {/* Konfirmasi Pembayaran */}
+                  {/* <Grid style={{ backgroundColor: '#f6f6fa', borderRadius: 15, padding: 20 }}>
                   <p style={{ margin: 0, fontSize: 18 }}>Konfirmasi Pembayaran</p>
                   <Grid style={{ display: 'flex', marginBottom: 10 }}>
                     <p style={{ margin: 0 }}>Total Tagihan: </p>
@@ -379,11 +380,13 @@ class Home extends Component {
                     Konfirmasi
                 </Button>
                 </Grid> */}
+                </Grid>
               </Grid>
             </Grid>
+
           </Grid>
 
-          <Grid style={{ marginTop: 50, color: '#658517', backgroundColor: '#c7c7c7', padding: '13px 50px', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Grid style={{ marginTop: 50, color: '#658517', backgroundColor: '#c7c7c7', padding: '13px 50px', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
             <Grid style={{ display: 'flex' }}>
               <p style={{ margin: 0 }}>kebijakan data</p>
               <p style={{ margin: 0, marginLeft: 30 }}>hubungi kami</p>

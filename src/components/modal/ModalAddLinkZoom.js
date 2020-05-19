@@ -34,9 +34,9 @@ export default class ModalAddLinkZoom extends Component {
       await API.put(`/class-pts/${this.props.dataClass.classPtId}`, { linkZoom: this.state.linkZoom }, { headers: { token } })
       this.props.fetchNewDataClassPt()
       this.props.close()
-      swal("Link zoom berhasil ditambahkan", "", "success")
+      swal("Zoom link added successfully", "", "success")
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

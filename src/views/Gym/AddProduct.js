@@ -169,10 +169,10 @@ class AddProduct extends Component {
       let token = Cookies.get('MEGAFIT_TKN')
       if (this.props.location.state.data) {
         await API.put(`/sub-category-memberships/${this.props.location.state.data.id}`, newObj, { headers: { token } })
-        swal("Edit Package Memberships Success", "", "success")
+        swal("Edit package memberships success", "", "success")
       } else {
         await API.post('/sub-category-memberships', newObj, { headers: { token } })
-        swal("Add Package Memberships Success", "", "success")
+        swal("Add package memberships success", "", "success")
       }
 
       this.props.fetchDataSubCategoryMemberships()

@@ -99,7 +99,7 @@ class CardJamSesiPT extends Component {
         status: !this.state.status
       })
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

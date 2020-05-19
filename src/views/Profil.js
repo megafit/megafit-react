@@ -133,7 +133,7 @@ class Profil extends Component {
         swal("Change password success", "", "success")
       }
     } catch (Error) {
-      if (Error !== 'Error: Request failed with status code 400') swal("Password lama salah")
+      if (Error !== 'Error: Request failed with status code 400') swal("The old password is incorrect")
       else swal("Please try again")
     }
   }

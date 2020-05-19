@@ -92,9 +92,9 @@ export default class DetailUserPT extends Component {
       let token = await Cookies.get("MEGAFIT_TKN")
       await API.put(`/history-pts/${this.props.location.state.historyPtId}`, { catatan: this.state.newCatatan }, { headers: { token } })
 
-      swal("Tambah catatan berhasil", "", "success")
+      swal("Add note successful", "", "success")
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 
@@ -163,7 +163,7 @@ export default class DetailUserPT extends Component {
         tanggalInput: new Date()
       })
       this.handleEditDataMember()
-      swal("Ubah data member berhasil", "", "success")
+      swal("Change member data successfully", "", "success")
     } catch (err) {
       swal("Please try again")
     }

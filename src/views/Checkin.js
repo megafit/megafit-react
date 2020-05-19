@@ -97,11 +97,11 @@ export default class Kelas extends Component {
         this.setState({ proses: false })
       } catch (Error) {
         if (Error.message === "Request failed with status code 400") {
-          swal("Id member/user id tidak ditemukan", "", "error")
+          swal("Id member/user not found", "", "error")
 
           this.setState({ proses: false })
         } else {
-          swal("please try again")
+          swal("Please try again")
           this.setState({ proses: false })
         }
       }

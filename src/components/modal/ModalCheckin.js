@@ -108,7 +108,7 @@ export default class ModalCheckin extends Component {
         swal("Please try again")
       }
     } else {
-      swal("Kunci loker berbeda", "", "error")
+      swal("The locker key is different", "", "error")
     }
   }
 

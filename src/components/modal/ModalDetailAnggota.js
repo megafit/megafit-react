@@ -8,7 +8,6 @@ import CloseIcon from '@material-ui/icons/Close';
 
 export default class ModalDetailAnggota extends Component {
   state = {
-    open: false,
     statusMember: "",
   }
 
@@ -35,11 +34,6 @@ export default class ModalDetailAnggota extends Component {
     }
   }
 
-  handleCloseModalDetailAnggota = () => {
-    this.setState({ open: false });
-    this.props.handleCloseModalDetailAnggota()
-  };
-
   render() {
     return (
       <Modal
@@ -50,15 +44,15 @@ export default class ModalDetailAnggota extends Component {
           alignItems: 'center',
           justifyContent: 'center'
         }}
-        open={this.state.open}
-        onClose={this.handleCloseModalDetailAnggota}
+        open={this.props.open}
+        onClose={this.props.close}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={this.state.open}>
+        <Fade in={this.props.open}>
           <div style={{
             backgroundColor: 'white',
             boxShadow: 5,
@@ -69,7 +63,7 @@ export default class ModalDetailAnggota extends Component {
             paddingBottom: 50,
             position: 'relative'
           }}>
-            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleCloseModalDetailAnggota}>
+            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.props.data}>
               <CloseIcon />
             </IconButton>
             <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center', width: '100%' }} height={140} alt="modal-background" >

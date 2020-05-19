@@ -64,7 +64,7 @@ export default class CardHariSesiPT extends Component {
         status: false
       })
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 
@@ -90,7 +90,7 @@ export default class CardHariSesiPT extends Component {
 
       await this.props.fetchDataClassPt()
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

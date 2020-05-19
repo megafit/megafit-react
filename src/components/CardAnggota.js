@@ -4,7 +4,8 @@ import {
   Avatar, Checkbox, Grid, Button, Popover, MenuList, MenuItem, TableCell, TableRow
 } from '@material-ui/core';
 
-import Download from './exportToExcel';
+// import Download from './exportToExcel';
+import ModalCreateEditUser from './modal/ModalCreateEditUser';
 
 export default class CardAnggota extends Component {
   state = {
@@ -39,6 +40,7 @@ export default class CardAnggota extends Component {
         value: "lastCheckin"
       }
     ],
+    openModalCreateEditUser: false
   }
 
   checkoutMember = () => {
@@ -85,6 +87,12 @@ export default class CardAnggota extends Component {
     })
   };
 
+  handleModalCreateEditUser = () => {
+    this.setState({
+      openModalCreateEditUser: !this.state.openModalCreateEditUser
+    });
+  };
+
   render() {
     function dateFormatGabung(args) {
       let date = new Date(args)
@@ -103,8 +111,7 @@ export default class CardAnggota extends Component {
             />
           </TableCell>
           <TableCell>{this.props.data.tblMember ? this.props.data.tblMember.memberId : "-"}</TableCell>
-
-          <TableCell >
+          <TableCell>
             <Grid style={{ display: 'flex', alignItems: 'center' }}>
               <Avatar alt="icon" src={require('../asset/icon_user.png')} style={{ marginRight: 10 }} />
               <Grid style={{ display: 'flex', flexDirection: 'column' }}>
@@ -132,7 +139,7 @@ export default class CardAnggota extends Component {
               <p style={{ margin: 0 }}>{this.props.data.phone ? this.props.data.phone : '-'}</p>
             </Grid>
           </TableCell>
-          <TableCell>{this.props.data.tblMember ? this.props.data.tblMember.tblPackageMembership.package : '-'}</TableCell>
+          <TableCell>{this.props.data.tblMember ? (this.props.data.tblMember.tblPackageMembership ? this.props.data.tblMember.tblPackageMembership.package : '-') : '-'}</TableCell>
           <TableCell>{this.props.data.tblMember ? this.props.data.tblMember.ptSession : '-'}</TableCell>
           <TableCell>{this.props.data.tblMember ? dateFormatGabung(this.props.data.tblMember.lastCheckin) : '-'}</TableCell>
           <TableCell>PT</TableCell>
@@ -199,51 +206,26 @@ export default class CardAnggota extends Component {
           }}
         >
           <MenuList style={{ width: 200 }} >
-            <MenuItem>
+            <MenuItem onClick={this.handleModalCreateEditUser} style={{ cursor: 'pointer' }}>
               <p style={{ margin: 0 }}>ubah data pribadi</p>
             </MenuItem>
             {/* <MenuItem onClick={this.handleClickSubMenu}>
               <p style={{ margin: 0 }}>unduh</p>
             </MenuItem> */}
-            <MenuItem style={{ height: 40 }}>
+            {/* <MenuItem style={{ height: 40 }}>
               <Download
                 nameSheet="unduh"
                 title="Unduh"
                 labelValueReportNilai={this.state.labelValue}
                 dataReportAll={this.props.data.dataReportAll} />
-            </MenuItem>
+            </MenuItem> */}
           </MenuList>
         </Popover>
 
-        {/* <Popover id="Sub menu unduh"
-          open={this.state.openSubMenu}
-          anchorEl={this.state.anchorElSubMenu}
-          onClose={this.handleCloseSubMenu}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuList style={{ width: 150 }} >
-            {
-              this.state.unduhLaporan.map((el, index) =>
-                <MenuItem key={index}>
-                  <MenuItem>
-                    <Download
-                      nameSheet={el}
-                      title={el}
-                      labelValueReportNilai={this.state.labelValue}
-                      dataReportAll={this.props.data.dataReportAll} />
-                  </MenuItem>
-                </MenuItem>
-              )
-            }
-          </MenuList>
-        </Popover> */}
+        {
+          this.state.openModalCreateEditUser && <ModalCreateEditUser open={this.state.openModalCreateEditUser} close={this.handleModalCreateEditUser} fetchData={this.props.fetchData} data={this.props.data} />
+        }
+
       </>
     )
   }

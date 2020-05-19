@@ -44,7 +44,7 @@ class ModalSelectTimePT extends Component {
         classPt: data
       })
     } catch (err) {
-      swal("please refresh this page")
+      swal("Please refresh this page")
     }
   }
 
@@ -86,12 +86,12 @@ class ModalSelectTimePT extends Component {
       }
 
       await API.put(`/class-pts/join/${classPtId}`, {}, { headers: { token } })
-      swal("Join class pt success", "", "success")
+      swal("Join class PT success", "", "success")
       this.props.close()
       this.props.joinClass()
       await this.props.fetchDataMyJoinedClassPt(this.getDate())
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

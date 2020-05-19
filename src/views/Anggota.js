@@ -104,7 +104,6 @@ class Anggota extends Component {
     this._isMounted = false
   }
 
-
   fetchData = async () => {
     try {
       await this.props.fetchDataMember()
@@ -116,7 +115,7 @@ class Anggota extends Component {
         element.sisaHariMembership = sisaHari
 
         let dateGabung = new Date(element.tblMember.activeDate)
-        element.gabung = `${dateGabung.getDate()}/${dateGabung.getMonth() + 1}/${dateGabung.getFullYear()}`
+        element.gabung = element.tblMember.activeDate ? `${dateGabung.getDate()}/${dateGabung.getMonth() + 1}/${dateGabung.getFullYear()}` : "-"
         let dateLastCheckin = new Date(element.tblMember.lastCheckin)
 
         element.dataReportAll = [{
@@ -202,10 +201,12 @@ class Anggota extends Component {
   }
 
   handleOpenModalDetailAnggota = args => {
+    console.log("MASUK", args)
     this.setState({ openModalDetailAnggota: true, dataUserSelected: args });
   };
 
   handleCloseModalDetailAnggota = () => {
+    console.log("DELETE")
     this.setState({ openModalDetailAnggota: false, dataUserSelected: {} });
   };
 
@@ -270,7 +271,7 @@ class Anggota extends Component {
     // }
   };
 
-  handleModalDetailAnggota = () => {
+  handleModalCreateEditUser = () => {
     this.setState({
       openModalCreateEditUser: !this.state.openModalCreateEditUser
     });
@@ -282,7 +283,7 @@ class Anggota extends Component {
         <Grid style={{ padding: 30, width: '100%' }}>
           <Grid style={{ width: '100%', display: 'flex', alignItems: 'center', marginBottom: 15, justifyContent: 'space-between' }}>
             <Typography style={{ fontSize: 30, }}>Daftar Megarangers</Typography>
-            <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={this.handleModalDetailAnggota}>
+            <Button style={{ backgroundColor: '#8eb52f', color: 'white' }} onClick={this.handleModalCreateEditUser}>
               tambah baru
             </Button>
           </Grid>
@@ -416,7 +417,7 @@ class Anggota extends Component {
               <TableBody>
                 {
                   orderBy(this.state.dataAnggotaSearch, this.state.columnToSort, this.state.sortDirection).slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((el, index) => (
-                    <CardAnggota data={el} key={index} detailAnggota={this.handleOpenModalDetailAnggota} />
+                    <CardAnggota data={el} key={index} detailAnggota={this.handleOpenModalDetailAnggota} fetchData={this.fetchData}/>
                   ))
                 }
               </TableBody>
@@ -439,13 +440,16 @@ class Anggota extends Component {
           </Paper>
         </Grid>
 
-        <ModalDetailAnggota open={this.state.openModalDetailAnggota} data={this.state.dataUserSelected} handleCloseModalDetailAnggota={this.handleCloseModalDetailAnggota} />
+        {/* {
+          this.state.openModalDetailAnggota && <ModalDetailAnggota open={this.state.openModalDetailAnggota} data={this.state.dataUserSelected} close={this.handleCloseModalDetailAnggota} />
+        } */}
 
         {
-          this.state.openModalImportAnggota && <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} handleCloseModalImportAnggota={this.handleCloseModalImportAnggota} fetchDataAnggota={this.fetchData} />
+          this.state.openModalImportAnggota && <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} close={this.handleCloseModalImportAnggota} fetchDataAnggota={this.fetchData} />
         }
+
         {
-          this.state.openModalCreateEditUser && <ModalCreateEditUser open={this.state.openModalCreateEditUser} handleModalDetailAnggota={this.handleModalDetailAnggota} fetchData={this.fetchData} />
+          this.state.openModalCreateEditUser && <ModalCreateEditUser open={this.state.openModalCreateEditUser} close={this.handleModalCreateEditUser} fetchData={this.fetchData} />
         }
 
       </Grid >

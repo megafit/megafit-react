@@ -65,14 +65,14 @@ class CardSubCategoryMembership extends Component {
       await API.put(`/sub-category-memberships/${this.props.data.id}`, newData, { headers: { token } })
       await this.props.fetchDataSubCategoryMemberships()
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 
   delete = async () => {
     try {
       swal({
-        title: "Apa kamu yakin menghapus paket ini?",
+        title: "Are you sure to delete this package ?",
         text: "",
         icon: "warning",
         buttons: true,
@@ -86,7 +86,7 @@ class CardSubCategoryMembership extends Component {
           }
         });
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

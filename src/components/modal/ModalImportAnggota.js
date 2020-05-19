@@ -28,11 +28,6 @@ export default class ModalImportAnggota extends Component {
     }
   }
 
-  handleCloseModalImportAnggota = () => {
-    this.setState({ open: false });
-    this.props.handleCloseModalImportAnggota()
-  };
-
   handleFileSelect = e => {
     this.setState({ fileSelected: e.target.files[0] })
   }
@@ -51,7 +46,7 @@ export default class ModalImportAnggota extends Component {
     })
       .then(data => {
         if (this.state.completed === 100 && data) {
-          this.handleCloseModalImportAnggota()
+          this.props.close()
           this.props.fetchDataAnggota()
         }
       })
@@ -71,7 +66,7 @@ export default class ModalImportAnggota extends Component {
           justifyContent: 'center'
         }}
         open={this.state.open}
-        onClose={this.handleCloseModalImportAnggota}
+        onClose={this.props.close}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -90,7 +85,7 @@ export default class ModalImportAnggota extends Component {
             position: 'relative',
             textAlign: 'center'
           }}>
-            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.handleCloseModalImportAnggota}>
+            <IconButton aria-label="close" style={{ position: "absolute", top: 10, right: 16, backgroundColor: '#BEBEBE' }} onClick={this.props.close}>
               <CloseIcon />
             </IconButton>
             <img src={require('../../asset/background-modal.png')} style={{ alignSelf: 'center', }} height={140} alt="modal-background" >

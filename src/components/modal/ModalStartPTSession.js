@@ -23,11 +23,11 @@ class ModalStartPTSession extends Component {
 
   componentDidMount() {
 
-    // console.log("bulan depan",(this.props.data.tblClassPt.month > new Date().getMonth() + 1 && this.props.data.tblClassPt.year >= new Date().getFullYear()))
+    console.log("bulan depan",(this.props.data.tblClassPt.month > new Date().getMonth() + 1 && this.props.data.tblClassPt.year >= new Date().getFullYear()))
 
-    // console.log("bulan sama tanggal depan", (this.props.data.tblClassPt.date > new Date().getDate() + 1 && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
+    console.log("bulan sama tanggal depan", (this.props.data.tblClassPt.date > new Date().getDate() + 1 && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
 
-    // console.log("bulan sama tanggal sama jam depan", (Number(this.props.data.tblClassPt.time.slice(0, 2)) >= new Date().getHours() && this.props.data.tblClassPt.date - 1 === new Date().getDate() && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
+    console.log("bulan sama tanggal sama jam depan", (Number(this.props.data.tblClassPt.time.slice(0, 2)) >= new Date().getHours() && this.props.data.tblClassPt.date - 1 === new Date().getDate() && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()))
     if (
       (this.props.data.tblClassPt.month > new Date().getMonth() + 1 && this.props.data.tblClassPt.year >= new Date().getFullYear()) || 
       (this.props.data.tblClassPt.date > new Date().getDate() + 1 && this.props.data.tblClassPt.month === new Date().getMonth() + 1 && this.props.data.tblClassPt.year === new Date().getFullYear()) ||
@@ -48,11 +48,11 @@ class ModalStartPTSession extends Component {
       let token = Cookies.get('MEGAFIT_TKN');
       await API.delete(`/history-pts/${this.props.data.id}`, { headers: { token } })
 
-      swal("Batal gabung kelas pt sukses", "", "success")
+      swal("Cancel joining PT class success", "", "success")
       this.props.cancelJoinClass()
       this.props.close()
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
       console.log(err)
     }
   }
@@ -73,7 +73,7 @@ class ModalStartPTSession extends Component {
       window.open(url, '_blank')
       this.props.close()
     } catch (err) {
-      swal("please try again")
+      swal("Please try again")
     }
   }
 

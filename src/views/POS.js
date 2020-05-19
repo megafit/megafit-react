@@ -77,9 +77,9 @@ class POS extends Component {
 
   handleBayar = () => {
     if (this.state.orderList.length === 0) {
-      swal('Daftar pesanan masih kosong', '', 'warning')
+      swal('The order list is still empty', '', 'warning')
     } else if (this.state.idSales === '') {
-      swal('Pilih sales terlebih dahulu', '', 'warning')
+      swal('Choose sales first', '', 'warning')
     } else {
       this.setState({
         bayar: !this.state.bayar
@@ -116,7 +116,7 @@ class POS extends Component {
         })
       }
     } catch (err) {
-      swal('please try again')
+      swal('Please try again')
     }
   }
 

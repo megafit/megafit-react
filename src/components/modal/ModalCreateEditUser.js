@@ -58,14 +58,18 @@ export default class ModalCreateEditUser extends Component {
       openModalImportAnggota: false,
 
       nextRegister: false,
+      statusEdit: false
     }
   }
 
   componentDidMount() {
     this._isMounted = true
     this._isMounted && this.fetchData()
-  }
 
+    if (this.props.data) {
+      this.setState({ statusEdit: true })
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.fullname !== this.state.fullname || prevState.nickname !== this.state.nickname || prevState.activeExpired !== this.state.activeExpired || prevState.gender !== this.state.gender || prevState.noKtp !== this.state.noKtp || prevState.email !== this.state.email || prevState.phone !== this.state.phone) {
@@ -78,12 +82,29 @@ export default class ModalCreateEditUser extends Component {
         this.setState({ nextRegister: false })
       }
     }
+
+    if (prevState.statusEdit !== this.state.statusEdit) {
+      console.log(this.props.data)
+      this.setState({
+        username: this.props.data.username,
+        fullname: this.props.data.fullname,
+        nickname: this.props.data.nickname,
+        noKtp: this.props.data.noKtp,
+        dateOfBirth: new Date(this.props.data.dateOfBirth),
+        email: this.props.data.email,
+        phone: this.props.data.phone,
+        gender: this.props.data.gender,
+        igAccount: this.props.data.igAccount,
+        haveWhatsapp: this.props.data.haveWhatsapp,
+        activeExpired: this.props.data.tblMember.activeExpired,
+      })
+    }
   }
 
   fetchData = async () => {
     try {
       let token = Cookies.get('MEGAFIT_TKN')
-      let allPackageMembership = await API.get('package-memberships', { headers: { token } })
+      let allPackageMembership = await API.get('package-memberships?onlyActive=true', { headers: { token } })
 
       let dataPackageMembership = allPackageMembership.data.data.filter(el => el.tblSubCategoryMembership.categoryMembershipId === 1
       )
@@ -139,24 +160,35 @@ export default class ModalCreateEditUser extends Component {
       newData.append("phone", this.state.phone)
       newData.append("haveWhatsapp", this.state.haveWhatsapp)
       newData.append("username", this.state.username)
-      newData.append("password", this.state.password)
       newData.append("igAccount", this.state.igAccount)
+      newData.append("activeExpired", this.state.activeExpired)
 
       newData.append("roleId", 4)
 
-      let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
-      newData.append("packageMembershipId", this.state.packageMembershipId)
-      newData.append("activeExpired", this.state.activeExpired)
-      newData.append("ptSession", ptSession.times)
-
-      let addAnggota = await API.post('/users/signup', newData, { headers: { token } })
-
-      if (addAnggota) {
-        this.props.fetchData()
-        this.reset()
-        this.props.handleModalDetailAnggota()
+      if (this.state.statusEdit) {
+        this.state.password && newData.append("password", this.state.password)
+        this.state.packageMembershipId && newData.append("packageMembershipId", this.state.packageMembershipId)
+      } else {
+        newData.append("password", this.state.password)
+        newData.append("packageMembershipId", this.state.packageMembershipId)
       }
 
+      if (this.state.packagePTSelected) {
+        let ptSession = await this.state.dataPackagePT.find(el => el.packageMembershipId === this.state.packagePTSelected)
+        newData.append("ptSession", ptSession.times)
+      }
+
+      if (this.state.statusEdit) {
+        await API.post('/users/signup', newData, { headers: { token } })
+      } else {
+        await API.put(`/users/${this.props.data}`, newData, { headers: { token } })
+      }
+
+      this.props.fetchData()
+      this.reset()
+      this.props.handleModalDetailAnggota()
+
+      swal("Add members successfully", "", "success")
     } catch (Error) {
       swal("Please try again")
     }
@@ -198,7 +230,7 @@ export default class ModalCreateEditUser extends Component {
         }}
         scroll='paper'
         open={this.props.open}
-        onClose={this.props.handleModalDetailAnggota}
+        onClose={this.props.close}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -216,7 +248,12 @@ export default class ModalCreateEditUser extends Component {
             paddingBottom: 50,
             position: 'relative'
           }}>
-            <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member</Typography>
+            {
+              this.state.statusEdit
+                ? <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member</Typography>
+                : <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member</Typography>
+            }
+
             <Stepper activeStep={this.state.activeStep} alternativeLabel style={{ paddingBottom: 5 }}>
               {this.state.steps.map(label => (
                 <Step key={label}>
@@ -228,7 +265,7 @@ export default class ModalCreateEditUser extends Component {
               <form autoComplete="off" onSubmit={this.submit} style={{ display: 'flex', flexDirection: 'column', width: '80%', margin: '30px auto', marginTop: 0 }}>
                 {
                   this.state.activeStep === 0
-                    ? <Grid conteiner style={{ display: 'flex' }}>
+                    ? <Grid container style={{ display: 'flex' }}>
                       <Grid item md={6} style={{ display: 'flex', flexDirection: 'column', padding: 20 }}>
                         <TextField
                           id="fullname"
@@ -470,7 +507,7 @@ export default class ModalCreateEditUser extends Component {
                       //     </>
                       // } */}
 
-                      {
+                      {/* {
                         this.props.roleId === 2 && <> MEMBER
                         <FormControl style={{ marginBottom: 15 }}>
                             <InputLabel id="packageMembership">Paket langganan</InputLabel>
@@ -482,7 +519,7 @@ export default class ModalCreateEditUser extends Component {
                             >
                               {
                                 this.state.dataPackageMembership.map(el =>
-                                  <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.package}</MenuItem>
+                                  <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}> ===- {el.package}</MenuItem>
                                 )
                               }
                             </Select>
@@ -513,13 +550,13 @@ export default class ModalCreateEditUser extends Component {
                             >
                               {
                                 this.state.dataPackagePT.map(el =>
-                                  <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.package}</MenuItem>
+                                  <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.packageMembershipId} - {el.package}</MenuItem>
                                 )
                               }
                             </Select>
                           </FormControl>
                         </>
-                      }
+                      } */}
 
                     </>
                 }
