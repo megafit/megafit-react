@@ -209,11 +209,10 @@ const mapDispatchToProps = {
   resetClassPt
 }
 
-const mapStateToProps = ({ loading, nickname, positionId, dataClassPt }) => {
+const mapStateToProps = ({ loading, nickname, dataClassPt }) => {
   return {
     loading,
     nickname,
-    positionId,
     dataClassPt
   }
 }

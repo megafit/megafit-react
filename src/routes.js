@@ -33,7 +33,7 @@ function Routes(props) {
   const classes = useStyles();
 
   return (
-    <main style={{ flexGrow: 1, marginLeft: !Cookies.get('MEGAFIT_TKN') ? 0 : props.roleId === 4 ? 200 : 100 }}>
+    <main style={{ flexGrow: 1, marginLeft: !Cookies.get('MEGAFIT_TKN') ? 0 : props.roleId === 2 ? 200 : 100 }}>
       <div className={classes.toolbar} />
       <Switch>
         <Route exact path="/" component={Login} />

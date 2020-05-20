@@ -27,7 +27,7 @@ class Profil extends Component {
   }
 
   async componentDidMount() {
-    if (this.props.roleId !== 4) {
+    if (this.props.roleId !== 2) {
       this.props.history.goBack()
     }
 

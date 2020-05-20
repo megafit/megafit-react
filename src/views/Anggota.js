@@ -12,7 +12,6 @@ import ArrowDropUpOutlinedIcon from '@material-ui/icons/ArrowDropUpOutlined';
 import ArrowDropDownOutlinedIcon from '@material-ui/icons/ArrowDropDownOutlined';
 
 import CardAnggota from '../components/CardAnggota';
-import ModalDetailAnggota from '../components/modal/ModalDetailAnggota';
 import ModalImportAnggota from '../components/modal/ModalImportAnggota';
 import ModalCreateEditUser from '../components/modal/ModalCreateEditUser';
 
@@ -41,7 +40,6 @@ class Anggota extends Component {
       page: 0,
       rowsPerPage: 10,
 
-      openModalDetailAnggota: false,
       dataUserSelected: {},
       openModalImportAnggota: false,
 
@@ -169,7 +167,6 @@ class Anggota extends Component {
       igAccount: "",
       roleId: "",
       haveWhatsapp: false,
-      positionId: "",
       isPermanent: "",
       available: false,
       ptSession: "",
@@ -200,23 +197,9 @@ class Anggota extends Component {
     }
   }
 
-  handleOpenModalDetailAnggota = args => {
-    console.log("MASUK", args)
-    this.setState({ openModalDetailAnggota: true, dataUserSelected: args });
-  };
-
-  handleCloseModalDetailAnggota = () => {
-    console.log("DELETE")
-    this.setState({ openModalDetailAnggota: false, dataUserSelected: {} });
-  };
-
   handleOpenModalImportAnggota = () => {
-    this.setState({ openModalImportAnggota: true });
-  };
-
-  handleCloseModalImportAnggota = () => {
-    this.setState({ openModalImportAnggota: false });
-  };
+    this.setState({ openModalImportAnggota: !this.state.openModalImportAnggota });
+  }
 
   handleSort = columnName => {
     this.setState(state => ({
@@ -417,7 +400,7 @@ class Anggota extends Component {
               <TableBody>
                 {
                   orderBy(this.state.dataAnggotaSearch, this.state.columnToSort, this.state.sortDirection).slice(this.state.page * this.state.rowsPerPage, this.state.page * this.state.rowsPerPage + this.state.rowsPerPage).map((el, index) => (
-                    <CardAnggota data={el} key={index} detailAnggota={this.handleOpenModalDetailAnggota} fetchData={this.fetchData}/>
+                    <CardAnggota data={el} key={index} fetchData={this.fetchData}/>
                   ))
                 }
               </TableBody>
@@ -440,12 +423,9 @@ class Anggota extends Component {
           </Paper>
         </Grid>
 
-        {/* {
-          this.state.openModalDetailAnggota && <ModalDetailAnggota open={this.state.openModalDetailAnggota} data={this.state.dataUserSelected} close={this.handleCloseModalDetailAnggota} />
-        } */}
 
         {
-          this.state.openModalImportAnggota && <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} close={this.handleCloseModalImportAnggota} fetchDataAnggota={this.fetchData} />
+          this.state.openModalImportAnggota && <ModalImportAnggota open={this.state.openModalImportAnggota} data={this.state.dataUserSelected} close={this.handleOpenModalImportAnggota} fetchDataAnggota={this.fetchData} />
         }
 
         {

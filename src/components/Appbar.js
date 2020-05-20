@@ -89,7 +89,7 @@ function AppNavBar(props) {
                     <ClickAwayListener onClickAway={handleClose}>
                       <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                         {
-                          props.roleId === 4 &&
+                          props.roleId === 2 &&
                           <MenuItem onClick={profil}>Profile</MenuItem>
                         }
                         <MenuItem onClick={signout}>Signout</MenuItem>

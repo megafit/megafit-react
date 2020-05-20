@@ -28,7 +28,7 @@ class Login extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.roleId !== this.props.roleId) {
-      if (this.props.roleId === 4) {
+      if (this.props.roleId === 2) {
         this.props.history.push('/home')
       } else {
         this.props.history.push('/checkin')
@@ -63,7 +63,6 @@ class Login extends Component {
           roleId: data.data.roleId,
           fullname: data.data.fullname,
           nickname: data.data.nickname,
-          positionId: data.data.positionId,
           hasConfirmTermAndCondition: data.data.hasConfirmTermAndCondition
         }
 
@@ -75,9 +74,9 @@ class Login extends Component {
           password: ''
         })
 
-        if (data.data.roleId === 4) { // FOR MEMBER
+        if (data.data.roleId === 2) { // FOR MEMBER
           this.props.history.push('/home')
-        } else if (data.data.positionId === 3) { // FOR PT
+        } else if (data.data.roleId === 6) { // FOR PT
           this.props.history.push('/pt')
         } else {
           this.props.history.push('/checkin')

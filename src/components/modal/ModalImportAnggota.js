@@ -45,12 +45,15 @@ export default class ModalImportAnggota extends Component {
       }
     })
       .then(data => {
+        console.log(data)
         if (this.state.completed === 100 && data) {
           this.props.close()
           this.props.fetchDataAnggota()
+          swal("Import member success", "", "success")
         }
       })
       .catch(Error => {
+        console.log(Error)
         swal("Please try again")
       })
   }
@@ -65,7 +68,7 @@ export default class ModalImportAnggota extends Component {
           alignItems: 'center',
           justifyContent: 'center'
         }}
-        open={this.state.open}
+        open={this.props.open}
         onClose={this.props.close}
         closeAfterTransition
         BackdropComponent={Backdrop}
@@ -73,7 +76,7 @@ export default class ModalImportAnggota extends Component {
           timeout: 500,
         }}
       >
-        <Fade in={this.state.open}>
+        <Fade in={this.props.open}>
           <div style={{
             backgroundColor: 'white',
             boxShadow: 5,

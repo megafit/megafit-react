@@ -27,12 +27,12 @@ function Navsidebar(props) {
     if (Cookies.get('MEGAFIT_TKN')) {
       API.get('/users/check-token', { headers: { token: Cookies.get('MEGAFIT_TKN') } })
         .then(({ data }) => {
-          if (data.roleId === 4) {
+          if (data.roleId === 2) {
             props.history.push('/home')
-          } else if (data.positionId === 3) {
+          } else if (data.roleId === 6) {
             props.history.push('/pt')
           }
-          props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, positionId: data.positionId, hasConfirmTermAndCondition: data.hasConfirmTermAndCondition })
+          props.setUser({ userId: data.userId, roleId: data.roleId, fullname: data.fullname, nickname: data.nickname, hasConfirmTermAndCondition: data.hasConfirmTermAndCondition })
         })
         .catch(err => {
           props.history.push('/')
@@ -62,12 +62,12 @@ function Navsidebar(props) {
   }, [props.location.pathname])
 
   useEffect(() => {
-    if (props.roleId === 4) {
+    if (props.roleId === 2) {
       props.history.push('/home')
-    } else if (props.positionId === 3) {
+    } else if (props.roleId === 6) {
       props.history.push('/pt')
     }
-  }, [props.roleId, props.history, props.positionId])
+  }, [props.roleId, props.history])
 
 
   return (
@@ -82,13 +82,13 @@ function Navsidebar(props) {
             position: 'fixed',
             display: 'flex',
             flexDirection: 'column',
-            width: props.roleId === 4 ? 200 : 100,
+            width: props.roleId === 2 ? 200 : 100,
             height: '100%',
             backgroundColor: '#8EB52F',
             overflowY: 'auto'
           }} open={false}>
             {
-              props.roleId === 4 // FOR MEMBER
+              props.roleId === 2 // FOR MEMBER
                 ? <>
                   <img src={require('../asset/logo-megafit.png')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 25 }} height={20} width={170} alt="logo-megafit" />
                   <List component="nav" style={{ color: "white", marginLeft: 30 }} >
@@ -110,7 +110,7 @@ function Navsidebar(props) {
                   <img src={require('../asset/logo-megafit-2.png')} style={{ alignSelf: 'center', marginTop: 20, marginBottom: 30 }} height={80} width={80} alt="logo-megafit" />
                   <List component="nav" style={{ color: "white" }} >
                     {
-                      props.positionId === 3 //FOR PT
+                      props.roleId === 6 //FOR PT
                         ? <Link to='/pt' onClick={event => handleListItemClick(event, 7)} style={{ textDecoration: "none" }}>
                           <ListItem button selected={selectedIndex === 7} style={{ display: 'flex', flexDirection: "column", justifyContent: 'center', alignItems: "center", marginBottom: 5 }}>
                             <img src={require('../asset/menu_pt.png')} style={{ alignSelf: 'center' }} height={70} width={45} alt="logo-pt" />
@@ -155,11 +155,10 @@ const mapDispatchToProps = {
   setUser
 }
 
-const mapStateToProps = ({ roleId, userId, positionId }) => {
+const mapStateToProps = ({ roleId, userId }) => {
   return {
     roleId,
-    userId,
-    positionId
+    userId
   }
 }
 

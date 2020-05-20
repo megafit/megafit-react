@@ -47,10 +47,6 @@ export default class CardAnggota extends Component {
     this.props.checkoutMember(this.props.data)
   }
 
-  detailAnggota = () => {
-    this.props.detailAnggota(this.props.data)
-  }
-
   handleChangeCheck = () => {
     this.setState({
       checked: !this.state.checked

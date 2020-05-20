@@ -190,7 +190,7 @@ class Home extends Component {
 
     return (
       <>
-        <Grid style={{ flex: 1,display: 'flex', height: '100%', minHeight: '100%', position: 'relative', justifyContent: 'space-between', backgroundColor: 'green', flexDirection: 'column' }}>
+        <Grid style={{ flex: 1,display: 'flex', height: '100%', minHeight: '100%', position: 'relative', justifyContent: 'space-between', flexDirection: 'column' }}>
           <Grid >
             <Grid style={{ backgroundColor: '#8eb52f', minHeight: 40, padding: '15px 50px', color: 'white', fontSize: 15 }}>
               Pengumuman: Megafit tutup sementara sampai batas waktu yang tidak ditentukan. Membership dibekukan & disesuaikan ketika buka kembali

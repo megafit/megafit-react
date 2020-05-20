@@ -1,7 +1,6 @@
 const defaultState = {
   userId: null,
-  roleId: null, // 1 superadmin, 2 admin, 3 staff, 4 member
-  positionId: null, // 1 superadmin, 2 customer service, 3 pt
+  roleId: null, 
   fullname: "",
   nickname: "",
   hasConfirmTermAndCondition: false,
@@ -24,7 +23,6 @@ function reducer(state = defaultState, action) {
         roleId: action.payload.roleId,
         fullname: action.payload.fullname,
         nickname: action.payload.nickname,
-        positionId: action.payload.positionId,
         hasConfirmTermAndCondition: action.payload.hasConfirmTermAndCondition
       }
     }

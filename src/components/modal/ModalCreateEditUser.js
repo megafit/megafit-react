@@ -36,7 +36,6 @@ export default class ModalCreateEditUser extends Component {
       igAccount: "",
       roleId: "",
       haveWhatsapp: false,
-      positionId: "",
       isPermanent: "",
       available: false,
       ptSession: "",
@@ -84,7 +83,6 @@ export default class ModalCreateEditUser extends Component {
     }
 
     if (prevState.statusEdit !== this.state.statusEdit) {
-      console.log(this.props.data)
       this.setState({
         username: this.props.data.username,
         fullname: this.props.data.fullname,
@@ -163,7 +161,7 @@ export default class ModalCreateEditUser extends Component {
       newData.append("igAccount", this.state.igAccount)
       newData.append("activeExpired", this.state.activeExpired)
 
-      newData.append("roleId", 4)
+      newData.append("roleId", 2)
 
       if (this.state.statusEdit) {
         this.state.password && newData.append("password", this.state.password)
@@ -179,16 +177,20 @@ export default class ModalCreateEditUser extends Component {
       }
 
       if (this.state.statusEdit) {
-        await API.post('/users/signup', newData, { headers: { token } })
+        await API.put(`/users/${this.props.data.userId}`, newData, { headers: { token } })
       } else {
-        await API.put(`/users/${this.props.data}`, newData, { headers: { token } })
+        await API.post('/users/signup', newData, { headers: { token } })
       }
 
       this.props.fetchData()
       this.reset()
-      this.props.handleModalDetailAnggota()
+      this.props.close()
 
-      swal("Add members successfully", "", "success")
+      if (this.state.statusEdit) {
+        swal("Edit members successfully", "", "success")  
+      }else{
+        swal("Add members successfully", "", "success")
+      }
     } catch (Error) {
       swal("Please try again")
     }
@@ -209,7 +211,6 @@ export default class ModalCreateEditUser extends Component {
       igAccount: "",
       roleId: "",
       haveWhatsapp: false,
-      positionId: "",
       isPermanent: "",
       available: false,
       ptSession: "",
@@ -250,7 +251,7 @@ export default class ModalCreateEditUser extends Component {
           }}>
             {
               this.state.statusEdit
-                ? <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member</Typography>
+                ? <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Edit member</Typography>
                 : <Typography style={{ fontSize: 30, textAlign: 'center', marginBottom: 20, marginTop: 50 }}>Add member</Typography>
             }
 
@@ -416,68 +417,77 @@ export default class ModalCreateEditUser extends Component {
 
 
                       {/* {
-                        this.state.roleId === 4
+                        this.state.roleId === 2
                           ? this.state.roleId !== "" && <>  MEMBER */}
-                      <FormControl style={{ marginBottom: 15 }}>
-                        <InputLabel id="packageMembership">Paket langganan</InputLabel>
-                        <Select
-                          labelId="packageMembership"
-                          id="packageMembership"
-                          value={this.state.packageMembershipId}
-                          onChange={this.handleChangeExpired('packageMembershipId')}
-                        >
-                          {
-                            this.state.dataPackageMembership.map(el =>
-                              <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.package}</MenuItem>
-                            )
-                          }
-                        </Select>
-                      </FormControl>
-                      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                          disableToolbar
-                          variant="inline"
-                          format="MM/dd/yyyy"
-                          margin="normal"
-                          id="tanggalExpired"
-                          label="Tanggal Expired"
-                          value={this.state.activeExpired}
-                          onChange={this.handleDateChange('activeExpired')}
-                          KeyboardButtonProps={{
-                            'aria-label': 'change date',
-                          }}
-                          style={{ marginBottom: 20 }}
-                        />
-                      </MuiPickersUtilsProvider>
-                      <FormControl style={{ marginBottom: 15 }}>
-                        <InputLabel id="packageMembership">Paket PT</InputLabel>
-                        <Select
-                          labelId="packageMembership"
-                          id="packageMembership"
-                          value={this.state.packagePTSelected}
-                          onChange={this.handleChange('packagePTSelected')}
-                        >
-                          {
-                            this.state.dataPackagePT.map(el =>
-                              <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.package}</MenuItem>
-                            )
-                          }
-                        </Select>
-                      </FormControl>
+                      {
+                        this.state.statusEdit
+                          ? <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                            <KeyboardDatePicker
+                              disableToolbar
+                              variant="inline"
+                              format="MM/dd/yyyy"
+                              margin="normal"
+                              id="tanggalExpired"
+                              label="Tanggal Expired"
+                              value={this.state.activeExpired}
+                              onChange={this.handleDateChange('activeExpired')}
+                              KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                              }}
+                              style={{ marginBottom: 20 }}
+                            />
+                          </MuiPickersUtilsProvider>
+                          : <>
+                            <FormControl style={{ marginBottom: 15 }}>
+                              <InputLabel id="packageMembership">Paket langganan</InputLabel>
+                              <Select
+                                labelId="packageMembership"
+                                id="packageMembership"
+                                value={this.state.packageMembershipId}
+                                onChange={this.handleChangeExpired('packageMembershipId')}
+                              >
+                                {
+                                  this.state.dataPackageMembership.map(el =>
+                                    <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.packageMembershipId} - {el.package}</MenuItem>
+                                  )
+                                }
+                              </Select>
+                            </FormControl>
+                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                              <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="MM/dd/yyyy"
+                                margin="normal"
+                                id="tanggalExpired"
+                                label="Tanggal Expired"
+                                value={this.state.activeExpired}
+                                onChange={this.handleDateChange('activeExpired')}
+                                KeyboardButtonProps={{
+                                  'aria-label': 'change date',
+                                }}
+                                style={{ marginBottom: 20 }}
+                              />
+                            </MuiPickersUtilsProvider>
+                            <FormControl style={{ marginBottom: 15 }}>
+                              <InputLabel id="packageMembership">Paket PT</InputLabel>
+                              <Select
+                                labelId="packageMembership"
+                                id="packageMembership"
+                                value={this.state.packagePTSelected}
+                                onChange={this.handleChange('packagePTSelected')}
+                              >
+                                {
+                                  this.state.dataPackagePT.map(el =>
+                                    <MenuItem value={el.packageMembershipId} key={el.packageMembershipId}>{el.packageMembershipId} - {el.package}</MenuItem>
+                                  )
+                                }
+                              </Select>
+                            </FormControl>
+                          </>
+                      }
                       {/* //   </>
                       //     : this.state.roleId !== "" && <> STAFF
-                      //     <FormControl style={{ marginBottom: 15 }}>
-                      //         <InputLabel id="position">Posisi</InputLabel>
-                      //         <Select
-                      //           labelId="position"
-                      //           id="position"
-                      //           value={this.state.positionId}
-                      //           onChange={this.handleChange('positionId')}
-                      //         >
-                      //           <MenuItem value={2}>Costumer service</MenuItem>
-                      //           <MenuItem value={3}>PT</MenuItem>
-                      //         </Select>
-                      //       </FormControl>
                       //       <FormControl component="fieldset">
                       //         <FormLabel component="legend">Jam masuk</FormLabel>
                       //         <RadioGroup aria-label="permanent" name="permanent" value={this.state.isPermanent} onChange={this.handleChange("isPermanent")}>
