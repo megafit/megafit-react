@@ -20,7 +20,7 @@
     "react-swipeable-views": "^0.13.9",
     "redux": "^4.0.4",
     "sweetalert": "^2.1.2",
-    "xlsx": "^0.15.6"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "react-scripts start",
